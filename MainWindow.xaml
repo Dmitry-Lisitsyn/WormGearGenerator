@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WormGearGenerator"
         mc:Ignorable="d"
-        Title="Worm Gear Generator" Height="650" Width="932" FontFamily="Javanese Text" VerticalAlignment="Center" ResizeMode="NoResize">
-    <TabControl HorizontalAlignment="Left" Height="618" VerticalAlignment="Top" Width="919" RenderTransformOrigin="0.399,0.434">
+        Title="Worm Gear Generator" Height="660" Width="932" FontFamily="Javanese Text" VerticalAlignment="Center" ResizeMode="NoResize" >
+    <TabControl HorizontalAlignment="Left" Height="630" VerticalAlignment="Top" Width="919" RenderTransformOrigin="0.399,0.434">
         <TabItem Margin="2,0,-1.8,-0.4" RenderTransformOrigin="0.5,0.506" Width="82">
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
@@ -63,7 +63,7 @@
                         <ColumnDefinition Width="40*"/>
                         <ColumnDefinition Width="83*"/>
                     </Grid.ColumnDefinitions>
-                    <GroupBox Header="Параметры червяка" Margin="0,0,4,18" Grid.ColumnSpan="2" BorderBrush="Black">
+                    <GroupBox Header="Параметры червяка" Margin="0,4,4,18" Grid.ColumnSpan="2" BorderBrush="Black">
                         <Grid Margin="5,5,4.6,4.8">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="34*"/>
@@ -93,7 +93,7 @@
                             <Label Content="Средний диаметр, [мм]" Margin="0,11.4,0,8" HorizontalAlignment="Center" Grid.Row="5" Height="26" Width="173" HorizontalContentAlignment="Center" Padding="5,5,5,0"/>
                         </Grid>
                     </GroupBox>
-                    <GroupBox Header="Параметры червячного колеса" Margin="0,0,4,18" Grid.Column="2" BorderBrush="Black" HorizontalAlignment="Left">
+                    <GroupBox Header="Параметры червячного колеса" Margin="0,4,4,18" Grid.Column="2" BorderBrush="Black" HorizontalAlignment="Left">
                         <Grid Margin="5,5,4.6,4.8">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="34*"/>
@@ -224,89 +224,126 @@
                     <TextBlock Text="  Расчет" />
                 </StackPanel>
             </TabItem.Header>
-            <Grid Margin="0,0,0,0.4">
+            <Grid Margin="0,0,-0.4,4.6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="679.2"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="112"/>
-                    <RowDefinition Height="228.8"/>
-                    <RowDefinition Height="84.8"/>
-                    <RowDefinition Height="153"/>
+                    <RowDefinition Height="187.2"/>
+                    <RowDefinition Height="238.4"/>
+                    <RowDefinition Height="0"/>
+                    <RowDefinition Height="160"/>
                 </Grid.RowDefinitions>
 
-                <Expander x:Name="ExpanderModel" Header="Дополнительно" HorizontalAlignment="Left" Height="153" Margin="1,1.4,-0.4,-1.6" VerticalAlignment="Top" Width="913" IsExpanded="False" Grid.ColumnSpan="2" Grid.Row="3" Expanded="Expander_Expanded" Collapsed="Expander_Collapsed">
-                    <Border BorderBrush="Black" BorderThickness="1" Height="107" Margin="0,0,8,0">
-                        <Grid Margin="3.2,0.2,-6,0.4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="169*"/>
-                                <ColumnDefinition Width="169*"/>
-                                <ColumnDefinition Width="115*"/>
-                            </Grid.ColumnDefinitions>
-                        </Grid>
-                    </Border>
-
-
+                <Expander x:Name="ExpanderModel" Header="Дополнительно" HorizontalAlignment="Left" Height="158" Margin="0,0,0,0" VerticalAlignment="Top" Width="677" Grid.Row="3" Expanded="Expander_Expanded" Collapsed="Expander_Collapsed">
+                    <Grid Margin="0,0,0,0" Height="122" VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="338.5"/>
+                            <ColumnDefinition Width="338.5"/>
+                        </Grid.ColumnDefinitions>
+                        <GroupBox Header="Коэффициенты" Margin="0,0,0,0" BorderBrush="Black" Height="117" VerticalAlignment="Top">
+                            <Grid Margin="0" Height="88">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="163.2"/>
+                                    <ColumnDefinition Width="163.2"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="22"/>
+                                    <RowDefinition Height="22"/>
+                                    <RowDefinition Height="22"/>
+                                    <RowDefinition Height="22"/>
+                                </Grid.RowDefinitions>
+                                <Label Content="Коэффициент перегрузки Ko" Margin="0" RenderTransformOrigin="0.188,0.097" Padding="0" HorizontalContentAlignment="Center"/>
+                                <Label Content="Коэффициент скорости Kv" Margin="0" RenderTransformOrigin="0.188,0.097" Padding="0" HorizontalContentAlignment="Center" Grid.Row="1"/>
+                                <Label Content="Коэффициент льюиса (y)" Margin="0" RenderTransformOrigin="0.188,0.097" Padding="0" HorizontalContentAlignment="Center" Grid.Row="2"/>
+                                <Label Content="Срок службы, (ч)" Margin="0" RenderTransformOrigin="0.188,0.097" Padding="0" HorizontalContentAlignment="Center" Grid.Row="3"/>
+                                <TextBox x:Name="KoValue" Grid.Column="1" Height="17" Margin="0" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11"/>
+                                <TextBox x:Name="KvValue" Grid.Column="1" Height="17" Margin="0" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" Grid.Row="1" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11"/>
+                                <TextBox x:Name="yValue" Grid.Column="1" Height="17" Margin="0" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" Grid.Row="2" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11"/>
+                                <TextBox x:Name="timeValue" Grid.Column="1" Margin="22,2,21,4" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" Grid.Row="3" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11"/>
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox x:Name="groupType" Header="Тип расчета" Margin="338,0,2,5" Grid.ColumnSpan="2" BorderBrush="Black" Height="117">
+                            <Grid x:Name="panelType" Margin="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="29.0666666666667"/>
+                                    <RowDefinition Height="29.0666666666667"/>
+                                    <RowDefinition Height="29.0666666666667"/>
+                                </Grid.RowDefinitions>
+                                <RadioButton x:Name="RadioType_Calc" Content="Мощность, Скорость -&gt; Момент" HorizontalAlignment="Left" Margin="0" Height="23"  Tag="0"  />
+                                <RadioButton x:Name="RadioType_Calc1" Content="Момент, Скорость -&gt; Мощность" HorizontalAlignment="Left" Margin="0" Height="23" Grid.Row="1"  Tag="1" />
+                                <RadioButton x:Name="RadioType_Calc2" Content="Мощность, Момент -&gt; Скорость" HorizontalAlignment="Left" Margin="0" Height="23" Grid.Row="2"  Tag="2" />
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
                 </Expander>
 
-                <GroupBox Header="Общее" BorderBrush="Black" HorizontalAlignment="Left" Width="678">
-                    <Grid Margin="0,0,-1.6,-1.6" HorizontalAlignment="Left" Height="80" Width="668">
+                <GroupBox Header="Общее" BorderBrush="Black" HorizontalAlignment="Left" Width="678" Margin="0,0,0,2.2">
+                    <Grid x:Name="panelGeneral" Margin="0" HorizontalAlignment="Left" Width="671">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="37.4"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="61.8"/>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="165"/>
-                            <ColumnDefinition Width="165"/>
-                            <ColumnDefinition Width="165"/>
-                            <ColumnDefinition Width="165"/>
+                            <ColumnDefinition Width="181.8"/>
+                            <ColumnDefinition Width="225"/>
+                            <ColumnDefinition Width="259"/>
                         </Grid.ColumnDefinitions>
-                        <Border BorderBrush="#7F000000" BorderThickness="1" HorizontalAlignment="Left" Height="24" VerticalAlignment="Top" Width="132" Margin="14,2,0,0"/>
-                        <Label Content="Мощность (кВт)" Margin="33,29,32.6,0" VerticalAlignment="Top" Height="20" HorizontalAlignment="Center" Padding="5,0"/>
-                        <Label Content="Скорость (об/мин)" Grid.Column="1" Margin="0.4,29,0.4,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Height="20" Padding="5,0"/>
-                        <Label Content="Крутящий момент (Нм)" Grid.Column="1" Margin="164.4,29,0.2,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Height="20" Grid.ColumnSpan="2" Padding="5,0"/>
-                        <Button x:Name="Expander_Calculations1"  Grid.Column="3" HorizontalAlignment="Left" Margin="143.2,0,-2.6,54" VerticalAlignment="Bottom" Width="25" Height="26" BorderBrush="Black" Background="White" Click="Expander_Calculations_Click" >
+                        <Border BorderBrush="Black" BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="99" Margin="224.6,6,0,0" Grid.RowSpan="5" VerticalAlignment="Top" Width="152" Grid.ColumnSpan="2"/>
+                        <Border BorderBrush="Black" BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="99" Margin="73.6,6,0,0" Grid.RowSpan="5" VerticalAlignment="Top" Width="152"/>
+                        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="27" Margin="12,6,0,0" VerticalAlignment="Top" Width="161"/>
+                        <Label Content="Мощность (кВт)" Margin="0" Height="18" Padding="5,0" Width="104" Grid.Row="1"/>
+                        <Label Content="Скорость (об/мин)" Margin="0" HorizontalContentAlignment="Center" Height="20" Padding="5,0" Grid.Row="2"/>
+                        <Label Content="Крутящий момент (Нм)" Margin="0" HorizontalContentAlignment="Center" Padding="5,0" Grid.Row="3"/>
+                        <Button x:Name="Expander_Calculations1" HorizontalAlignment="Left" Margin="233,0,0,8.6" VerticalAlignment="Bottom" Width="25" Height="26" BorderBrush="Black" Background="White" Click="Expander_Calculations_Click" Grid.Column="2" >
                             <StackPanel>
                                 <Image Source="img/openCalculation.png" Height="18" Width="17"/>
                             </StackPanel>
                         </Button>
-                        <TextBox x:Name="PowerValue" HorizontalAlignment="Left" Height="25" Margin="20,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13"/>
-                        <TextBox x:Name="VelocityValue" HorizontalAlignment="Left" Height="25" Margin="20.4,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="1" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13"/>
-                        <TextBox x:Name="MomentValue" HorizontalAlignment="Left" Height="25" Margin="19.6,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="2" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13"/>
-                        <TextBox x:Name="KPDValue" HorizontalAlignment="Left" Height="25" Margin="19.8,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.Column="3" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13"/>
-                        <CheckBox x:Name="boolKPD" Content="КПД" Grid.Column="3" HorizontalAlignment="Center" Margin="60.8,31,61,31" VerticalAlignment="Center" Height="18" Checked="CheckBox_KPD_Changed" Unchecked="CheckBox_KPD_Changed" Padding="4,2,0,0" VerticalContentAlignment="Bottom" />
-                        <Button x:Name="buOpen_json_Calc" HorizontalAlignment="Left" Margin="18,3,0,57" Width="20" Height="20" Background="White" BorderBrush="White" Click="buOpen_json_Click">
+                        <TextBox x:Name="PowerValue" HorizontalAlignment="Center" Height="16" Margin="88.6,2.4,17,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="1"/>
+                        <TextBox x:Name="VelocityValue" Height="16" Margin="88.6,2.4,17,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="2"/>
+                        <TextBox x:Name="MomentValue" Height="16" Margin="88.6,2.4,17,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="3"/>
+                        <TextBox x:Name="KPDValue" Height="16" Margin="88.6,22.4,17,23.2" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="4"/>
+                        <CheckBox x:Name="boolKPD" Content="КПД" Margin="69,18.4,70.4,25.2 " Checked="CheckBox_KPD_Changed" Unchecked="CheckBox_KPD_Changed" Padding="0,0,0,0" VerticalContentAlignment="Bottom" Width="43" Grid.Row="4" />
+                        <Button x:Name="buOpen_json_Calc" HorizontalAlignment="Left" Margin="15,10,0,7.6" Width="20" Background="White" BorderBrush="White" Click="buOpen_json_Click" Height="20">
                             <StackPanel>
                                 <Image Source="img/open.png" Height="18" Width="17"/>
-                                <Label Content="Settings" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="buSave_json_Calc"  HorizontalAlignment="Left" Margin="41,0,0,57" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_json_Click">
+                        <Button x:Name="buSave_json_Calc"  HorizontalAlignment="Left" Margin="42,0,0,7.6" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_json_Click">
                             <StackPanel>
                                 <Image Source="img/save.png" Height="18" Width="17"/>
-                                <Label Content="Settings" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="buSave_PDF_Calc"  HorizontalAlignment="Left" Margin="75,0,0,57" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White">
+                        <Button x:Name="buSave_PDF_Calc"  HorizontalAlignment="Left" Margin="98,0,0,8.6" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_PDF_Click">
                             <StackPanel>
                                 <Image Source="img/ToPdf.png" Height="18" Width="17"/>
-                                <Label Content="Settings" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="buSave_docx_Calc" HorizontalAlignment="Left" Margin="99,0,0,57" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White">
+                        <Button x:Name="buSave_docx_Calc" HorizontalAlignment="Left" Margin="123,0,0,7.6" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_docx_Click">
                             <StackPanel>
                                 <Image Source="img/ToWord.png" Height="18" Width="17"/>
-                                <Label Content="Settings" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="buSave_excel_Calc" HorizontalAlignment="Left" Margin="123,0,0,57" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" >
+                        <Button x:Name="buSave_excel_Calc" HorizontalAlignment="Left" Margin="150,0,0,7.6" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_excel_Click">
                             <StackPanel>
                                 <Image Source="img/ToExcel.png" Height="18" Width="17"/>
-                                <Label Content="Settings" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
+                        <TextBox x:Name="PowerValue_Gear" Height="16" Margin="16,2.4,123,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="2" Grid.Row="1"/>
+                        <TextBox x:Name="VelocityValue_Gear" Height="16" Margin="16,2.4,123,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="2" Grid.Row="2"/>
+                        <TextBox x:Name="MomentValue_Gear" Height="16" Margin="16,2.4,123,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="2" Grid.Row="3" />
+                        <RadioButton x:Name="radioWormSel" Content="Червяк" Grid.Column="1" Margin="115.6,9,45,6.6" Height="22"  Tag="_0" RenderTransformOrigin="0.502,0.5"/>
+                        <RadioButton x:Name="radioGearSel" Content="Червячное колесо" Grid.Column="2" Margin="16,9,119,6.6" Height="22"  Tag="_1"/>
                     </Grid>
                 </GroupBox>
-                <Grid Height="230" Grid.Row="1" VerticalAlignment="Top" Grid.RowSpan="2" Margin="0,0,2.2,0">
-                    <GroupBox Header="Характеристики материалов" Margin="0,0,-1,0" BorderBrush="Black">
-                        <Grid Margin="0">
+                <Grid Height="229" Grid.Row="1" VerticalAlignment="Top" Margin="0,0,2.2,0" Grid.RowSpan="3">
+                    <GroupBox Header="Характеристики материалов" Margin="0,0,0,-13" BorderBrush="Black">
+                        <Grid Margin="0,0,0,-12">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="60"/>
                                 <RowDefinition/>
@@ -322,10 +359,10 @@
                                 </Grid.RowDefinitions>
                                 <Label Content="Материал червяка" Margin="0" Height="28" HorizontalContentAlignment="Center" Padding="5,5,5,0"/>
                                 <Label Content="Материал червячного колеса" Margin="0,30,333.4,5.4" HorizontalContentAlignment="Center" Padding="5,5,5,0" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
-                                <ComboBox x:Name="MatWorm_combo" Grid.Column="1" HorizontalAlignment="Center" Margin="25.2,6,25.4,5.4" VerticalAlignment="Center" Width="283" Height="19" FontFamily="Times New Roman"/>
+                                <ComboBox x:Name="MatWorm_combo" Grid.Column="1" HorizontalAlignment="Center" Margin="26,6,24.8,5.4" VerticalAlignment="Center" Width="285" Height="19" FontFamily="Times New Roman"/>
                                 <ComboBox x:Name="MatGear_combo" Grid.Column="1" HorizontalAlignment="Center" Margin="25.2,3.6,23.4,7.8" VerticalAlignment="Center" Width="285" Height="19" Grid.Row="1" FontFamily="Times New Roman"/>
                             </Grid>
-                            <Grid Margin="0" Grid.Row="1">
+                            <Grid Margin="0,0,-0.2,22.8" Grid.Row="1">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="27.2"/>
                                     <RowDefinition Height="27.2"/>
@@ -342,40 +379,18 @@
                                 <Label Content="Контактная усталостная прочность (Kw), [МПа]" Margin="0,0.8,0.4,26.6" HorizontalContentAlignment="Center" Grid.RowSpan="2" Grid.Row="1" Padding="5,5,5,0"/>
                                 <Label Content="Модуль упругости (Е), [МПа]" Margin="0,26.8,0.4,0.6" HorizontalContentAlignment="Center" Grid.RowSpan="2" Grid.Row="1" Padding="5,5,5,0"/>
                                 <Label Content="Коэффициент Пуассона (μ)" Margin="0,0.4,0.4,27" HorizontalContentAlignment="Center" Grid.RowSpan="2" Grid.Row="3" Padding="5,5,5,0"/>
-                                <Label Content="Коэффициент материала червяка (Kmat)" Margin="0,0.2,0.4,0" HorizontalContentAlignment="Center" Grid.Row="4" Padding="5,5,5,0"/>
+                                <Label Content="Коэффициент материала червяка (Kmat)" Margin="0,0.2,0.6,-6" HorizontalContentAlignment="Center" Grid.Row="4" Padding="5,5,5,0"/>
                                 <TextBox x:Name="SnValue" Grid.Column="2" Height="23" Margin="5,0" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
                                 <TextBox x:Name="KwValue" Grid.Column="2" Height="23" Margin="23.2,1.8,22.4,2.4" TextWrapping="Wrap" Width="120" Grid.Row="1" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
                                 <TextBox x:Name="E_gearValue" Grid.Column="2" Height="23" Margin="23.2,2.6,22.4,1.6" TextWrapping="Wrap" Width="120" Grid.Row="2" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
                                 <TextBox x:Name="Puasson_gearValue" Grid.Column="2" Height="23" Margin="23.2,2.4,22.4,1.8" TextWrapping="Wrap" Width="120" Grid.Row="3" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
                                 <TextBox x:Name="Puasson_wormValue" Grid.Column="1" Margin="22.6,1.4,23.8,2.8" TextWrapping="Wrap" Grid.Row="3" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
                                 <TextBox x:Name="E_wormValue" Grid.Column="1" Margin="22.6,1.6,23.8,2.6" TextWrapping="Wrap" Grid.Row="2" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
-                                <TextBox x:Name="Kmat_wormValue" Grid.Column="1" Margin="22.6,1.2,23.8,3" TextWrapping="Wrap" Grid.Row="4" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
+                                <TextBox x:Name="Kmat_wormValue" Grid.Column="1" Margin="22.4,1.2,24.2,3" TextWrapping="Wrap" Grid.Row="4" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
                             </Grid>
                         </Grid>
                     </GroupBox>
                 </Grid>
-                <GroupBox Header="Коэффициенты" Margin="0,3.2,0.2,3.6" Grid.Row="2" BorderBrush="Black">
-                    <Grid Margin="0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="23*"/>
-                            <RowDefinition Height="24*"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="166*"/>
-                            <ColumnDefinition Width="166*"/>
-                            <ColumnDefinition Width="167*"/>
-                            <ColumnDefinition Width="166*"/>
-                        </Grid.ColumnDefinitions>
-                        <Label Content="Коэф. перегрузки (Ko)" Margin="0" HorizontalContentAlignment="Center" Padding="5,5,5,0"/>
-                        <Label Content="Коэффициент скорости (Kv)" Margin="0" HorizontalContentAlignment="Center" Padding="5,5,5,0" Grid.Row="1"/>
-                        <Label Content="Коэффициент Льюиса (y)" Margin="0" HorizontalContentAlignment="Center" Padding="5,5,5,0" Grid.Column="2"/>
-                        <Label Content="Требуемый срок службы, [ч]" Margin="0.2,0.4,161.2,-0.2" HorizontalContentAlignment="Center" Padding="5,5,5,0" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2"/>
-                        <TextBox x:Name="KoValue" Grid.Column="1" HorizontalAlignment="Center" Margin="0" TextWrapping="Wrap" VerticalAlignment="Center" Width="117" Padding="0" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                        <TextBox x:Name="KvValue" Grid.Column="1" HorizontalAlignment="Center" Margin="24.6,3.4,24.8,4.8" TextWrapping="Wrap" VerticalAlignment="Center" Width="117" Padding="0" Grid.Row="1" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                        <TextBox x:Name="timeValue" Grid.Column="3" HorizontalAlignment="Center" Margin="25.2,3.4,23.2,4.8" TextWrapping="Wrap" VerticalAlignment="Center" Width="118" Padding="0" Grid.Row="1" Height="15" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                        <TextBox x:Name="yValue" Grid.Column="3" HorizontalAlignment="Center" Margin="25.2,3,24.2,3.6" TextWrapping="Wrap" VerticalAlignment="Center" Width="117" Padding="0" Height="15" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                    </Grid>
-                </GroupBox>
 
                 <Grid Grid.Column="1" Margin="15.8,2,13.6,0.4" Grid.RowSpan="4">
                     <Grid.RowDefinitions>

@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Newtonsoft.Json;
@@ -27,7 +28,7 @@ namespace WormGearGenerator
         float PressureAngle;
         float Peredat;
         float aw, Alpha, da1, da2, d1, d2, df1, df2;
-        float Fr, Ft1, Ft2, Fa1, Fa2, vk, bending_stress, contact_stress;
+        float Fn, Fr, Ft1, Ft2, Fa1, Fa2, vk, bending_stress, contact_stress;
 
         public MainWindow()
         {
@@ -113,6 +114,14 @@ namespace WormGearGenerator
 
             radioParam1.IsChecked = true;
             radioWorm.IsChecked = true;
+
+            radioWormSel.IsChecked = true;
+            radioWormSel.Checked += RadioSelectComp_Checked;
+            radioGearSel.Checked += RadioSelectComp_Checked;
+            RadioType_Calc.Checked += RadioSelectType_Checked;
+            RadioType_Calc1.Checked += RadioSelectType_Checked;
+            RadioType_Calc2.Checked += RadioSelectType_Checked;
+            RadioType_Calc.IsChecked = true;
         }
 
         private void InitializeCalculate()
@@ -164,9 +173,7 @@ namespace WormGearGenerator
                     / float.Parse(Koef_diamValue.Text)) * 180 / Math.PI).ToString(".00");
             }
 
-            //Крутящий момент
-            MomentValue.Text = ((60000 * Convert.ToDouble(PowerValue.Text, NumberFormatInfo.InvariantInfo)) /
-                (2 * Math.PI * Convert.ToDouble(VelocityValue.Text, NumberFormatInfo.InvariantInfo))).ToString("0.000");
+            
 
             //Делительные диаметры
             d1 = float.Parse(Koef_diamValue.Text) * Module;
@@ -192,8 +199,12 @@ namespace WormGearGenerator
             aw = ((float.Parse(Teeth_gearValue.Text) + float.Parse(Koef_diamValue.Text)) * Module) / 2;
 
             //КПД
-            float v1 = (float)((Math.PI * d1 * float.Parse(VelocityValue.Text)) / 60000);
-            float tgy = (float)(Math.Atan(float.Parse(Kol_vitkovValue.Text) / float.Parse(Koef_diamValue.Text)) * 180 / Math.PI);
+            float v1 = (float)((Math.PI * dw1 * float.Parse(VelocityValue.Text)) / 60000);
+            //Делительный угол подъема
+            float tgy = (float)(Math.Atan((float.Parse(Kol_vitkovValue.Text) / float.Parse(Koef_diamValue.Text))) * 180 / Math.PI);
+            //Начальный угол подъема
+            float tgyW = (float)(Math.Atan(float.Parse(Kol_vitkovValue.Text) /( float.Parse(Koef_diamValue.Text)+2*float.Parse(Koef_smeshValue.Text))) * 180 / Math.PI);
+
             float v2 = v1 * (float.Parse(Kol_vitkovValue.Text) / float.Parse(Koef_diamValue.Text));
 
             //Скорость скольжения
@@ -201,26 +212,98 @@ namespace WormGearGenerator
 
             float phiz = (float)(Math.Atan(0.02 + (0.03) / (vk)) * 180 / Math.PI);
             float Kv = (1200 + v2) / (1200);
-            float KPD = (float)(((Math.Tan(tgy * Math.PI / 180)) / (Math.Tan((tgy + phiz) * Math.PI / 180))) * 0.96);
-            KPDValue.Text = KPD.ToString("0.00");
+            float KPD = (float)(((Math.Tan(tgyW * Math.PI / 180)) / (Math.Tan((tgyW + phiz) * Math.PI / 180))) * 0.96);
+            KPDValue.Text = KPD.ToString("0.000");
+
+            //Крутящий момент
+          //  MomentValue.Text = ((60000 * float.Parse(PowerValue.Text)) / (2 * Math.PI * float.Parse(VelocityValue.Text))).ToString("0.000");
+
+            //значения на червяке
+            float Power = float.Parse(PowerValue.Text);
+            float Velocity = float.Parse(VelocityValue.Text);
+            float Moment = 0;
 
             //значения на колесе
-            float Velocity_WG = float.Parse(VelocityValue.Text) / Peredat;
-            float Power_WG = float.Parse(PowerValue.Text) * float.Parse(KPDValue.Text);
-            float Moment_WG = float.Parse(KPDValue.Text) * float.Parse(MomentValue.Text) * Peredat;
+            float Velocity_WG = 0;
+            float Power_WG = 0;
+            float Moment_WG = 0;
+
+            if (radioWormSel.IsChecked == true & RadioType_Calc.IsChecked == true)
+            {
+                Power = float.Parse(PowerValue.Text);
+                Velocity = float.Parse(VelocityValue.Text);
+                Moment = (float)((60000 * Power) / (2 * Math.PI * Velocity));
+                Power_WG = Power * KPD;
+                Velocity_WG = Velocity / Peredat;
+                Moment_WG = (float)((60000 * Power_WG) / (2 * Math.PI * Velocity_WG));
+
+            }
+            else if (radioWormSel.IsChecked == true & RadioType_Calc1.IsChecked == true)
+            {
+                Velocity = float.Parse(VelocityValue.Text);
+                Moment = float.Parse(MomentValue.Text);
+                Moment_WG = Moment * Peredat * KPD;
+                Velocity_WG = Velocity / Peredat;
+                Power = (float)((Math.PI * Velocity_WG * Moment_WG) / (30 * KPD))/1000;
+                Power_WG = Power * KPD;
+            }
+            else if (radioWormSel.IsChecked == true & RadioType_Calc2.IsChecked == true)
+            {
+                Power = float.Parse(PowerValue.Text);
+                Moment = float.Parse(MomentValue.Text);
+                Velocity = (float)((60000 * Power) / (2 * Math.PI * Moment));
+                Velocity_WG = Velocity / Peredat;
+                Power_WG = Power * KPD;
+                Moment_WG = Moment * Peredat * KPD;
+
+            }
+            //Колесо
+            else if (radioGearSel.IsChecked == true & RadioType_Calc.IsChecked == true)
+            {
+                Power_WG = float.Parse(PowerValue_Gear.Text);
+                Velocity_WG = float.Parse(VelocityValue_Gear.Text);
+                Power = Power_WG * KPD;
+                Velocity = Velocity_WG * Peredat;
+                Moment_WG = (float)((60000 * Power_WG) / (2 * Math.PI * Velocity_WG));
+                Moment = (float)((60000 * Power) / (2 * Math.PI * Velocity));
+
+            }
+            else if (radioGearSel.IsChecked == true & RadioType_Calc1.IsChecked == true)
+            {
+                Velocity_WG = float.Parse(VelocityValue_Gear.Text);
+                Moment_WG = float.Parse(MomentValue_Gear.Text);
+                Power_WG = (float)((Math.PI*Velocity_WG*Moment_WG) / (30))/1000;
+                Moment = (Moment_WG / Peredat) * KPD;
+                Velocity = Velocity_WG * Peredat;
+                Power = Power_WG * KPD;
+            }
+            else if (radioGearSel.IsChecked == true & RadioType_Calc2.IsChecked == true)
+            {
+                Power_WG = float.Parse(PowerValue_Gear.Text);
+                Moment_WG = float.Parse(MomentValue_Gear.Text);
+                Velocity_WG = (float)((60000*Power_WG) / (2*Math.PI*Moment_WG));
+                Power = Power_WG * KPD;
+                Velocity = Velocity_WG * Peredat;
+                Moment = (Moment_WG / Peredat) * KPD;
+            }
+            VelocityValue.Text = Velocity.ToString("0.00");
+            PowerValue.Text = Power.ToString("0.000");
+            MomentValue.Text = Moment.ToString("0.000");
+            VelocityValue_Gear.Text = Velocity_WG.ToString("0.00");
+            PowerValue_Gear.Text = Power_WG.ToString("0.000");
+            MomentValue_Gear.Text = Moment_WG.ToString("0.000");
 
             //окружная сила на червяке, Осевая на колесе
-            Ft1 = (2000 * float.Parse(MomentValue.Text)) / dw1;
+            Ft1 = (2000 * float.Parse(MomentValue.Text)) / (dw1);
             //(dw1 * (float.Parse(Teeth_gearValue.Text) / float.Parse(Kol_vitkovValue.Text)) * KPD);
             Fa2 = Ft1;
 
             //осевая сила на червяке, окружная на колесе
-            Fa1 = (2000 * Moment_WG) / (d2);
+            Fa1 = (2000 * Moment_WG) / (dw2);
             Ft2 = Fa1;
 
             //Радиальная сила передачи
-            Fr = (float)((Ft2 * Math.Tan(PressureAngle * (Math.PI / 180))));
-            /// (Math.Cos(tgy * Math.PI / 180)));
+            Fr = (float)(Ft2 * Math.Tan(PressureAngle * (Math.PI / 180))/Math.Cos(tgyW * Math.PI / 180));
 
             //Контактное напряжение
             float Koef = 0;
@@ -231,10 +314,11 @@ namespace WormGearGenerator
             else if (vk <= 5)
                 Koef = 1;
 
-            contact_stress = (float)(340 * Math.Sqrt((Koef * Ft2) / (d2 * dw1)));
+            //contact_stress = (float)(340 * Math.Sqrt((Koef * Ft2) / (d2 * dw1)));
+            contact_stress = (float)((475 / d2) * Math.Sqrt((Moment_WG * Koef) /dw1));
 
             //Напряжение изгиба
-            float zv2 = (float)((float.Parse(Teeth_gearValue.Text)) / (Math.Pow(Math.Cos(tgy * Math.PI / 180), 3)));
+            float zv2 = (float)((float.Parse(Teeth_gearValue.Text)) / (Math.Pow(Math.Cos(tgyW * Math.PI / 180), 3)));
             float Yf2 = 0;
             if (zv2 < 37)
                 Yf2 = (float)(2.4 - 0.0214 * zv2);
@@ -243,11 +327,13 @@ namespace WormGearGenerator
             else if (zv2 > 45)
                 Yf2 = (float)(1.72 - 0.0053 * zv2);
 
-            bending_stress = (float)((0.7 * Ft2 * Koef) / (float.Parse(Width_gearValue.Text) * Module * Math.Cos(tgy * Math.PI / 180)) * Yf2);
+            bending_stress = (float)(((0.7 * Ft2 * Koef) / (float.Parse(Width_gearValue.Text) * Module * Math.Cos(tgyW * Math.PI / 180))) * Yf2);
 
+            //Нормальная сила
+            Fn = (float)(Ft2 / (Math.Cos(PressureAngle * (Math.PI / 180)) * Math.Cos(tgy * (Math.PI / 180))));
 
             RefreshTable_Model(aw, Module, Alpha, da1, d1, df1, da2, d2, df2);
-            RefreshTable_Calc(Fr, vk, Ft1, Fa1, Ft2, Fa2, contact_stress, bending_stress);
+            RefreshTable_Calc(Fr, vk, Ft1, Fa1, Ft2, Fa2, Fn, contact_stress, bending_stress);
         }
 
         private void RefreshTable_Model(float aw_Table, float Module_Table, float Alpha_Table,
@@ -278,11 +364,12 @@ namespace WormGearGenerator
         }
 
         private void RefreshTable_Calc(float Fr_Table, float Vk_Table, float Ft1_Table,
-            float Fa1_Table, float Ft2_Table, float Fa2_Table, float contactPres_Table, float bending_Table)
+            float Fa1_Table, float Ft2_Table, float Fa2_Table, float Fn_Table, float contactPres_Table, float bending_Table)
         {
 
             ObservableCollection<Parameter_values> general = new ObservableCollection<Parameter_values>();
             general.Add(new Parameter_values { parameter = "Радиальная сила (Fr), Н:", value = Fr_Table.ToString("0.00") });
+            general.Add(new Parameter_values { parameter = "Нормальная сила (Fn), Н:", value = Fn_Table.ToString("0.00") });
             general.Add(new Parameter_values { parameter = "Скорость скольжения (Vk), м/с:", value = Vk_Table.ToString("0.00") });
             TableGeneral_Calc.ItemsSource = general;
             TableGeneral_Calc.RowHeight = TableGeneral_Calc.Height / general.Count;
@@ -303,7 +390,115 @@ namespace WormGearGenerator
 
         }
 
-        
+        private void RadioSelectComp_Checked(object sender, RoutedEventArgs e)
+        {
+            RadioButton pressed = (RadioButton)sender;
+            string name = pressed.Content.ToString();
+            var tag = int.Parse((panelType.Children.OfType<RadioButton>().FirstOrDefault(r => (bool)r.IsChecked)).Tag.ToString());
+
+            PowerValue_Gear.IsEnabled = false;
+            VelocityValue_Gear.IsEnabled = false;
+            MomentValue_Gear.IsEnabled = false;
+            PowerValue.IsEnabled = false;
+            VelocityValue.IsEnabled = false;
+            MomentValue.IsEnabled = false;
+
+            //Червяк
+            if (name == "Червяк" & tag == 0)
+            {
+                PowerValue.IsEnabled = true;
+                VelocityValue.IsEnabled = true;
+                MomentValue.IsEnabled = false;
+            }
+            else if (name == "Червяк" & tag == 1)
+            {
+                PowerValue.IsEnabled = false;
+                VelocityValue.IsEnabled = true;
+                MomentValue.IsEnabled = true;
+            }
+            else if (name == "Червяк" & tag == 2)
+            {
+                PowerValue.IsEnabled = true;
+                VelocityValue.IsEnabled = false;
+                MomentValue.IsEnabled = true;
+            }
+
+            //Колесо
+            if (name == "Червячное колесо" & tag == 0)
+            {
+                PowerValue_Gear.IsEnabled = true;
+                VelocityValue_Gear.IsEnabled = true;
+                MomentValue_Gear.IsEnabled = false;
+            }
+            else if (name == "Червячное колесо" & tag == 1)
+            {
+                PowerValue_Gear.IsEnabled = false;
+                VelocityValue_Gear.IsEnabled = true;
+                MomentValue_Gear.IsEnabled = true;
+            }
+            else if (name == "Червячное колесо" & tag == 2)
+            {
+                PowerValue_Gear.IsEnabled = true;
+                VelocityValue_Gear.IsEnabled = false;
+                MomentValue_Gear.IsEnabled = true;
+            }
+        }
+
+        private void RadioSelectType_Checked(object sender, RoutedEventArgs e)
+        {
+            RadioButton pressed = (RadioButton)sender;
+            var tag = pressed.Content.ToString();
+            string name = (panelGeneral.Children.OfType<RadioButton>().FirstOrDefault(r => (bool)r.IsChecked)).Content.ToString();
+           
+           
+            PowerValue_Gear.IsEnabled = false;
+            VelocityValue_Gear.IsEnabled = false;
+            MomentValue_Gear.IsEnabled = false;
+            PowerValue.IsEnabled = false;
+            VelocityValue.IsEnabled = false;
+            MomentValue.IsEnabled = false;
+
+            //Червяк
+            if (name == "Червяк" & tag == "Мощность, Скорость -> Момент")
+            {
+                PowerValue.IsEnabled = true;
+                VelocityValue.IsEnabled = true;
+                MomentValue.IsEnabled = false;
+            }
+            else if (name == "Червяк" & tag == "Момент, Скорость -> Мощность")
+            {
+                PowerValue.IsEnabled = false;
+                VelocityValue.IsEnabled = true;
+                MomentValue.IsEnabled = true;
+            }
+            else if (name == "Червяк" & tag == "Мощность, Момент -> Скорость")
+            {
+                PowerValue.IsEnabled = true;
+                VelocityValue.IsEnabled = false;
+                MomentValue.IsEnabled = true;
+            }
+
+            //Колесо
+            if (name == "Червячное колесо" & tag == "Мощность, Скорость -> Момент")
+            {
+                PowerValue_Gear.IsEnabled = true;
+                VelocityValue_Gear.IsEnabled = true;
+                MomentValue_Gear.IsEnabled = false;
+            }
+            else if (name == "Червячное колесо" & tag == "Момент, Скорость -> Мощность")
+            {
+                PowerValue_Gear.IsEnabled = false;
+                VelocityValue_Gear.IsEnabled = true;
+                MomentValue_Gear.IsEnabled = true;
+            }
+            else if (name == "Червячное колесо" & tag == "Мощность, Момент -> Скорость")
+            {
+                PowerValue_Gear.IsEnabled = true;
+                VelocityValue_Gear.IsEnabled = false;
+                MomentValue_Gear.IsEnabled = true;
+            }
+        }
+
 
         private void CheckBox_Hole_Changed(object sender, RoutedEventArgs e)
         {
