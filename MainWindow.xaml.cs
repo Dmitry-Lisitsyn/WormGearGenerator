@@ -5,17 +5,18 @@ using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
+using SolidWorks.Interop.sldworks;
+using SolidWorks.Interop.swconst;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Newtonsoft.Json;
 using Xceed.Words.NET;
 using Xceed.Document.NET;
 using System.Linq;
-using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
-using System.Data;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace WormGearGenerator
 {
@@ -29,6 +30,10 @@ namespace WormGearGenerator
         float Peredat;
         float aw, Alpha, da1, da2, d1, d2, df1, df2;
         float Fn, Fr, Ft1, Ft2, Fa1, Fa2, vk, bending_stress, contact_stress;
+        object[] vMatDBarr = null;
+        object[] vMatDB = null;
+        
+        //public ModelDoc2 swModel;
 
         public MainWindow()
         {
@@ -97,6 +102,30 @@ namespace WormGearGenerator
             //Значения для силового расчета
             PowerValue.Text = "0,1";
             VelocityValue.Text = "1000,0";
+
+
+            //ModelDoc2 swModel = (ModelDoc2)swApp.ActiveDoc;
+            ////Set swPart = swModel
+            ////sMatName = swPart.GetMaterialPropertyName2("Default", sMatDB)
+            ////Debug.Print "File = " & swModel.GetPathName
+            ////Debug.Print "  Material = " & sMatName & " (" & sMatDB & ")"
+
+            //vMatDBarr = (object[])swApp.GetMaterialDatabases();
+            //Debug.Print("Material schema pathname = " + swApp.GetMaterialSchemaPathName());
+
+            //foreach (string material in vMatDBarr)
+            //{
+            //    Debug.Print("Material: " + material);
+            //}
+
+            //Debug.Print("");
+
+            //Заполнение материалов
+            var swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
+            MaterialHelper MatObj = new MaterialHelper(swApp);
+            var lister = MatObj.GetMaterials();
+            MatGear_combo.ItemsSource = MatWorm_combo.ItemsSource = lister;
+            MatWorm_combo.DisplayMemberPath = MatGear_combo.DisplayMemberPath =  "DisplayName";
 
             //Значения силовых характеристик
             KPDValue.IsEnabled = false;
@@ -208,16 +237,19 @@ namespace WormGearGenerator
             float v2 = v1 * (float.Parse(Kol_vitkovValue.Text) / float.Parse(Koef_diamValue.Text));
 
             //Скорость скольжения
-            vk = (float)(v1 / Math.Cos(tgy * Math.PI / 180));
+            vk = (float)(v1 / Math.Cos(tgyW * Math.PI / 180));
 
             float phiz = (float)(Math.Atan(0.02 + (0.03) / (vk)) * 180 / Math.PI);
             float Kv = (1200 + v2) / (1200);
-            float KPD = (float)(((Math.Tan(tgyW * Math.PI / 180)) / (Math.Tan((tgyW + phiz) * Math.PI / 180))) * 0.96);
-            KPDValue.Text = KPD.ToString("0.000");
-
+            float KPD = 0;
+            if (boolKPD.IsChecked == true)
+                KPD = float.Parse(KPDValue.Text);
+            else
+                KPD = (float)(((Math.Tan(tgyW * Math.PI / 180)) / (Math.Tan((tgyW + phiz) * Math.PI / 180))) * 0.96); 
+                KPDValue.Text = KPD.ToString("0.000"); 
+            
             //Крутящий момент
-          //  MomentValue.Text = ((60000 * float.Parse(PowerValue.Text)) / (2 * Math.PI * float.Parse(VelocityValue.Text))).ToString("0.000");
-
+          //  MomentValue.Text = ((60000 * float.Parse(PowerValue.Text)) / (2 * Math.PI * float.Parse(VelocityValue.Text))).ToString("0.000");      
             //значения на червяке
             float Power = float.Parse(PowerValue.Text);
             float Velocity = float.Parse(VelocityValue.Text);
@@ -303,7 +335,8 @@ namespace WormGearGenerator
             Ft2 = Fa1;
 
             //Радиальная сила передачи
-            Fr = (float)(Ft2 * Math.Tan(PressureAngle * (Math.PI / 180))/Math.Cos(tgyW * Math.PI / 180));
+            Fr = (float)(Ft2 * Math.Tan(PressureAngle * (Math.PI / 180)));
+                //Math.Cos(tgyW * Math.PI / 180));
 
             //Контактное напряжение
             float Koef = 0;
@@ -315,7 +348,9 @@ namespace WormGearGenerator
                 Koef = 1;
 
             //contact_stress = (float)(340 * Math.Sqrt((Koef * Ft2) / (d2 * dw1)));
-            contact_stress = (float)((475 / d2) * Math.Sqrt((Moment_WG * Koef) /dw1));
+            float Module_upr = (float.Parse(E_wormValue.Text) + float.Parse(E_gearValue.Text)) / 2;
+            contact_stress = (float)((1.31 / d2) * Math.Sqrt(((Moment_WG * 1000) * Koef * Module_upr ) / dw1));
+            //(float)((475 / d2) * Math.Sqrt(((Moment_WG* 1000) * Koef) /dw1));
 
             //Напряжение изгиба
             float zv2 = (float)((float.Parse(Teeth_gearValue.Text)) / (Math.Pow(Math.Cos(tgyW * Math.PI / 180), 3)));
@@ -327,13 +362,18 @@ namespace WormGearGenerator
             else if (zv2 > 45)
                 Yf2 = (float)(1.72 - 0.0053 * zv2);
 
-            bending_stress = (float)(((0.7 * Ft2 * Koef) / (float.Parse(Width_gearValue.Text) * Module * Math.Cos(tgyW * Math.PI / 180))) * Yf2);
+            bending_stress = (float)(((0.7 * Ft2 * Koef) / (float.Parse(Width_gearValue.Text) * Module * Math.Cos(tgyW * Math.PI/180) )) * Yf2);
 
             //Нормальная сила
             Fn = (float)(Ft2 / (Math.Cos(PressureAngle * (Math.PI / 180)) * Math.Cos(tgy * (Math.PI / 180))));
 
+            //Число циклов нагружения
+            float Ne = 60 * float.Parse(MomentValue_Gear.Text) * float.Parse(timeValue.Text);
+            //Коэффициент долговечности
+            float Khl = (float)(Math.Pow(((Math.Pow(10,7))/(Ne)), 0.125));
+
             RefreshTable_Model(aw, Module, Alpha, da1, d1, df1, da2, d2, df2);
-            RefreshTable_Calc(Fr, vk, Ft1, Fa1, Ft2, Fa2, Fn, contact_stress, bending_stress);
+            RefreshTable_Calc(Fr, vk, Khl, Ft1, Fa1, Ft2, Fa2, Fn, contact_stress, bending_stress);
         }
 
         private void RefreshTable_Model(float aw_Table, float Module_Table, float Alpha_Table,
@@ -341,50 +381,51 @@ namespace WormGearGenerator
         {
 
             ObservableCollection<Parameter_values> general = new ObservableCollection<Parameter_values>();
-            general.Add(new Parameter_values { parameter = "Межосев. расст. (aw), мм:", value = aw_Table.ToString("0.00") });
-            general.Add(new Parameter_values { parameter = "Модуль (m), мм:", value = Module_Table.ToString("0.00") });
-            general.Add(new Parameter_values { parameter = "Угол профиля (α), град:", value = Alpha_Table.ToString("0.00") });
+            general.Add(new Parameter_values { parameter = "Межосев. расст. (aw):", value = aw_Table.ToString("0.00") + " мм" });
+            general.Add(new Parameter_values { parameter = "Модуль (m):", value = Module_Table.ToString("0.00") + " мм" });
+            general.Add(new Parameter_values { parameter = "Угол профиля (α):", value = Alpha_Table.ToString("0.00") + " град" });
             TableGeneral_Model.ItemsSource = general;
             TableGeneral_Model.RowHeight = TableGeneral_Model.Height / general.Count;
 
             ObservableCollection<Parameter_values> worm = new ObservableCollection<Parameter_values>();
-            worm.Add(new Parameter_values { parameter = "Наружный диаметр (da), мм:", value = DaWorm_Table.ToString("0.00") });
-            worm.Add(new Parameter_values { parameter = "Средний диаметр (d), мм:", value = DWorm_Table.ToString("0.00") });
-            worm.Add(new Parameter_values { parameter = "Диаметр впадин (df), мм:", value = DfWorm_Table.ToString("0.00") });
+            worm.Add(new Parameter_values { parameter = "Наружный диаметр (da):", value = DaWorm_Table.ToString("0.00") + " мм" });
+            worm.Add(new Parameter_values { parameter = "Средний диаметр (d):", value = DWorm_Table.ToString("0.00") + " мм" });
+            worm.Add(new Parameter_values { parameter = "Диаметр впадин (df):", value = DfWorm_Table.ToString("0.00") + " мм" });
             TableWorm_Model.ItemsSource = worm;
             TableWorm_Model.RowHeight = TableWorm_Model.Height / worm.Count;
 
             ObservableCollection<Parameter_values> gear = new ObservableCollection<Parameter_values>();
-            gear.Add(new Parameter_values { parameter = "Наружный диаметр (da), мм:", value = DaGear_Table.ToString("0.00") });
-            gear.Add(new Parameter_values { parameter = "Средний диаметр (d), мм:", value = DGear_Table.ToString("0.00") });
-            gear.Add(new Parameter_values { parameter = "Диаметр впадин (df), мм:", value = DfGear_Table.ToString("0.00") });
+            gear.Add(new Parameter_values { parameter = "Наружный диаметр (da):", value = DaGear_Table.ToString("0.00") + " мм" });
+            gear.Add(new Parameter_values { parameter = "Средний диаметр (d):", value = DGear_Table.ToString("0.00") + " мм" });
+            gear.Add(new Parameter_values { parameter = "Диаметр впадин (df):", value = DfGear_Table.ToString("0.00") + " мм" });
             TableGear_Model.ItemsSource = gear;
             TableGear_Model.RowHeight = TableGear_Model.Height / gear.Count;
 
         }
 
-        private void RefreshTable_Calc(float Fr_Table, float Vk_Table, float Ft1_Table,
+        private void RefreshTable_Calc(float Fr_Table, float Vk_Table, float Khl_Table, float Ft1_Table,
             float Fa1_Table, float Ft2_Table, float Fa2_Table, float Fn_Table, float contactPres_Table, float bending_Table)
         {
 
             ObservableCollection<Parameter_values> general = new ObservableCollection<Parameter_values>();
-            general.Add(new Parameter_values { parameter = "Радиальная сила (Fr), Н:", value = Fr_Table.ToString("0.00") });
-            general.Add(new Parameter_values { parameter = "Нормальная сила (Fn), Н:", value = Fn_Table.ToString("0.00") });
-            general.Add(new Parameter_values { parameter = "Скорость скольжения (Vk), м/с:", value = Vk_Table.ToString("0.00") });
+            general.Add(new Parameter_values { parameter = "Радиальная сила (Fr):", value = Fr_Table.ToString("0.00") + " Н" });
+            general.Add(new Parameter_values { parameter = "Нормальная сила (Fn):", value = Fn_Table.ToString("0.00") + " Н" });
+            general.Add(new Parameter_values { parameter = "Контактное напряжение:", value = contactPres_Table.ToString("0.00") + " МПа" });
+            general.Add(new Parameter_values { parameter = "Скорость скольжения (Vk):", value = Vk_Table.ToString("0.00") + " м/c" });
+            general.Add(new Parameter_values { parameter = "Коэф. долговечности:", value = Khl_Table.ToString("0.00") });
             TableGeneral_Calc.ItemsSource = general;
             TableGeneral_Calc.RowHeight = TableGeneral_Calc.Height / general.Count;
 
             ObservableCollection<Parameter_values> worm = new ObservableCollection<Parameter_values>();
-            worm.Add(new Parameter_values { parameter = "Окружная сила (Ft), H:", value = Ft1_Table.ToString("0.00") });
-            worm.Add(new Parameter_values { parameter = "Осевая сила (Fa), H:", value = Fa1_Table.ToString("0.00") });
+            worm.Add(new Parameter_values { parameter = "Окружная сила (Ft):", value = Ft1_Table.ToString("0.00") + " Н" });
+            worm.Add(new Parameter_values { parameter = "Осевая сила (Fa):", value = Fa1_Table.ToString("0.00") + " Н" });
             TableWorm_Calc.ItemsSource = worm;
             TableWorm_Calc.RowHeight = TableWorm_Calc.Height / worm.Count;
 
             ObservableCollection<Parameter_values> gear = new ObservableCollection<Parameter_values>();
-            gear.Add(new Parameter_values { parameter = "Окружная сила (Ft), H:", value = Ft2_Table.ToString("0.00") });
-            gear.Add(new Parameter_values { parameter = "Осевая сила (Fa), H:", value = Fa2_Table.ToString("0.00") });
-            gear.Add(new Parameter_values { parameter = "Контактное напряжение, МПа:", value = contactPres_Table.ToString("0.00") });
-            gear.Add(new Parameter_values { parameter = "Напряжение изгиба, МПа:", value = bending_Table.ToString("0.00") });
+            gear.Add(new Parameter_values { parameter = "Окружная сила (Ft):", value = Ft2_Table.ToString("0.00") + " Н" });
+            gear.Add(new Parameter_values { parameter = "Осевая сила (Fa):", value = Fa2_Table.ToString("0.00") + " Н" });
+            gear.Add(new Parameter_values { parameter = "Напряжение изгиба:", value = bending_Table.ToString("0.00") + " МПа" });
             TableGear_Calc.ItemsSource = gear;
             TableGear_Calc.RowHeight = TableGear_Calc.Height / gear.Count;
 
@@ -536,10 +577,7 @@ namespace WormGearGenerator
 
         private void buCancel_Click(object sender, RoutedEventArgs e) { this.Close(); }
 
-        private void buCalc_Click(object sender, RoutedEventArgs e)
-        {
-            InitializeCalculate();
-        }
+        private void buCalc_Click(object sender, RoutedEventArgs e) { InitializeCalculate(); }
 
         private void radioButtonParam_CheckedChanged(object sender, EventArgs e)
         {
@@ -866,7 +904,7 @@ namespace WormGearGenerator
                         pdfTable.DefaultCell.Padding = 5;
                         pdfTable.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
                         pdfTable.WidthPercentage = 100;
-                        string ttf = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "ARIAL.TTF");
+                        string ttf = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Fonts), "ARIAL.TTF");
                         var baseFont = BaseFont.CreateFont(ttf, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
                         var font = new iTextSharp.text.Font(baseFont, iTextSharp.text.Font.DEFAULTSIZE, iTextSharp.text.Font.NORMAL);
 
@@ -982,7 +1020,7 @@ namespace WormGearGenerator
                         using (var fs = new FileStream(sfd.FileName, FileMode.Create, FileAccess.Write))
                         {
                             IWorkbook workbook = new XSSFWorkbook();
-                            ISheet excelSheet = workbook.CreateSheet("Sheet1");
+                            NPOI.SS.UserModel.ISheet excelSheet = workbook.CreateSheet("Sheet1");
                             var i = 0;
                             foreach (KeyValuePair<string, string> entry in data)
                             {

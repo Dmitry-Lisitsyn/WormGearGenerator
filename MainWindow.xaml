@@ -200,17 +200,12 @@
                 <Button x:Name="buCancel" Content="Отмена" HorizontalAlignment="Left" Margin="603,433,0,-210.6" VerticalAlignment="Top" Width="75" Height="24" Click="buCancel_Click"/>
                 <StackPanel HorizontalAlignment="Left" Height="440" Margin="696,17,0,-210.6" VerticalAlignment="Top" Width="200">
                     <Label Content="Общие параметры" Height="22" FontWeight="Bold" FontSize="10" Padding="5,0" Background="#FFD0CFCF"/>
-                    <DataGrid x:Name="TableGeneral_Model" ColumnWidth="150"  ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                              ScrollViewer.HorizontalScrollBarVisibility="Disabled" HeadersVisibility="None" Height="119" Width="200" ColumnHeaderHeight="22" BorderBrush="Black" FontSize="12" CanUserResizeRows="False" IsReadOnly="True" GridLinesVisibility="Horizontal" FontFamily="Times New Roman" >
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Binding="{Binding parameter}" ClipboardContentBinding="{x:Null}" Width="100"/>
-                            <DataGridTextColumn Binding="{Binding value}" ClipboardContentBinding="{x:Null}" Width="100"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <DataGrid x:Name="TableGeneral_Model" ColumnWidth="135"  ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled" HeadersVisibility="None" Height="119" Width="200" ColumnHeaderHeight="22" BorderBrush="Black" FontSize="12" CanUserResizeRows="False" IsReadOnly="True" GridLinesVisibility="Horizontal" FontFamily="Times New Roman" />
                     <Label Content="Червяк" Height="22" FontWeight="Bold" Padding="5,0" FontSize="10" Background="#FFD0CFCF"/>
-                    <DataGrid x:Name="TableWorm_Model"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" Height="120" Width="200" ColumnWidth="150" ColumnHeaderHeight="22" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" BorderBrush="Black" FontSize="12" IsReadOnly="True" HeadersVisibility="None" GridLinesVisibility="Horizontal" FontFamily="Times New Roman"/>
+                    <DataGrid x:Name="TableWorm_Model"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" Height="120" Width="200" ColumnWidth="135" ColumnHeaderHeight="22" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" BorderBrush="Black" FontSize="12" IsReadOnly="True" HeadersVisibility="None" GridLinesVisibility="Horizontal" FontFamily="Times New Roman"/>
                     <Label Content="Червячное колесо" Height="22" FontWeight="Bold" Padding="5,0" FontSize="10" Background="#FFD0CFCF"/>
-                    <DataGrid x:Name="TableGear_Model" Height="133" ColumnWidth="150" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ColumnHeaderHeight="22" BorderBrush="Black" Margin="0" FontSize="12" IsReadOnly="True" HeadersVisibility="None" GridLinesVisibility="Horizontal" FontFamily="Times New Roman"/>
+                    <DataGrid x:Name="TableGear_Model" Height="133" ColumnWidth="135" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ColumnHeaderHeight="22" BorderBrush="Black" Margin="0" FontSize="12" IsReadOnly="True" HeadersVisibility="None" GridLinesVisibility="Horizontal" FontFamily="Times New Roman"/>
                     <Border BorderBrush="Black" BorderThickness="1" Height="100"/>
                 </StackPanel>
 
@@ -400,16 +395,15 @@
                     <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="443" Margin="-3,12,-2,0" VerticalAlignment="Top" Width="210" Grid.RowSpan="2"/>
                     <StackPanel HorizontalAlignment="Left" Height="439" Margin="1,15,-6,0" VerticalAlignment="Top" Width="210" Grid.RowSpan="2">
                         <Label Content="Общие параметры" Height="22" FontWeight="Bold" FontSize="10" Padding="5,0" Background="#FFD0CFCF" Margin="0,0,9.6,0" Width="200"/>
-                        <DataGrid x:Name="TableGeneral_Calc" ColumnWidth="150"  ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                              ScrollViewer.HorizontalScrollBarVisibility="Disabled" GridLinesVisibility="Horizontal" FontFamily="Times New Roman" ColumnHeaderHeight="25" BorderBrush="Black" Margin="0,0,9.6,0" Height="112" HeadersVisibility="None">
-                        </DataGrid>
+                        <DataGrid x:Name="TableGeneral_Calc" ColumnWidth="135"  ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled" GridLinesVisibility="Horizontal" FontFamily="Times New Roman" ColumnHeaderHeight="25" BorderBrush="Black" Margin="0,0,9.6,0" Height="165" HeadersVisibility="None" FontSize="11"/>
                         <Label Content="Червяк" Height="22" FontWeight="Bold" Padding="5,0" FontSize="10" Background="#FFD0CFCF" Width="200" Margin="0,0,9.6,0"/>
-                        <DataGrid x:Name="TableWorm_Calc"  ColumnWidth="150"  ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                        <DataGrid x:Name="TableWorm_Calc"  ColumnWidth="135"  ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled" GridLinesVisibility="Horizontal" FontFamily="Times New Roman" ColumnHeaderHeight="25" BorderBrush="Black" Margin="0,0,9.6,0" Height="81" Width="200" HeadersVisibility="None">
                         </DataGrid>
                         <Label Content="Червячное колесо" Height="22" FontWeight="Bold" Padding="5,0" FontSize="10" Background="#FFD0CFCF" Width="200" Margin="0,0,9.6,0"/>
-                        <DataGrid x:Name="TableGear_Calc"  ColumnWidth="150"  ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                              ScrollViewer.HorizontalScrollBarVisibility="Disabled" GridLinesVisibility="Horizontal" FontFamily="Times New Roman" ColumnHeaderHeight="25" BorderBrush="Black" Margin="0,0,9.6,0" Height="179" Width="200" HeadersVisibility="None" >
+                        <DataGrid x:Name="TableGear_Calc"  ColumnWidth="135"  ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled" GridLinesVisibility="Horizontal" FontFamily="Times New Roman" ColumnHeaderHeight="25" BorderBrush="Black" Margin="0,0,9.6,0" Height="127" Width="200" HeadersVisibility="None" >
                         </DataGrid>
                     </StackPanel>
                 </Grid>
