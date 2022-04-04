@@ -5,7 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WormGearGenerator"
         mc:Ignorable="d"
-        Title="Worm Gear Generator" Height="660" Width="932" FontFamily="Javanese Text" VerticalAlignment="Center" ResizeMode="NoResize" >
+        Title="Worm Gear Generator" Height="660" Width="932" FontFamily="Javanese Text" VerticalAlignment="Center" ResizeMode="NoResize" SizeChanged="Window_SizeChanged" >
+    <Window.Resources>
+        <Image x:Key="open" Source="img/openCalculation.png" Height="18" Width="17" />
+        <Image x:Key="close" Source="img/closeCalculation.png" Height="18" Width="17"/>
+    </Window.Resources>
+
     <TabControl HorizontalAlignment="Left" Height="630" VerticalAlignment="Top" Width="919" RenderTransformOrigin="0.399,0.434">
         <TabItem Margin="2,0,-1.8,-0.4" RenderTransformOrigin="0.5,0.506" Width="82">
             <TabItem.Header>
@@ -18,7 +23,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Expander Header="Дополнительно" HorizontalAlignment="Left" Height="153" Margin="1,427,-1.4,-333.6" VerticalAlignment="Top" Width="914" IsExpanded="False" Expanded="Expander_Expanded" Collapsed="Expander_Collapsed" >
+                <Expander x:Name="ExpanderModel" Header="Дополнительно" HorizontalAlignment="Left" Height="153" Margin="1,427,-1.4,-320.8" VerticalAlignment="Top" Width="914" IsExpanded="False" Expanded="Expander_Expanded" Collapsed="Expander_Collapsed" >
                     <Border BorderBrush="Black" BorderThickness="1" Height="107" Margin="0,0,8,0">
                         <Grid Margin="3.2,0.2,-6,0.4">
                             <Grid.ColumnDefinitions>
@@ -56,8 +61,8 @@
 
 
                 </Expander>
-                <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="443" Margin="691,14,0,-210.6" VerticalAlignment="Top" Width="210"/>
-                <Grid Margin="0,111,214.6,-200.6" Height="336" VerticalAlignment="Top">
+                <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="443" Margin="691,14,0,-197.8" VerticalAlignment="Top" Width="210"/>
+                <Grid Margin="0,111,214.6,-187.8" Height="336" VerticalAlignment="Top">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="175"/>
                         <ColumnDefinition Width="40*"/>
@@ -80,17 +85,113 @@
                                 <ColumnDefinition Width="141*"/>
                             </Grid.ColumnDefinitions>
                             <ComboBox x:Name="Chervyak_combo" Margin="5,7,5.2,5.4" Grid.Column="1" FontFamily="Times New Roman"/>
-                            <TextBox x:Name="Kol_vitkovValue" Grid.Column="1" Margin="5.4,15.2,4,5.8" TextWrapping="Wrap" Grid.Row="1" Height="23" FontFamily="Times New Roman" HorizontalContentAlignment="Center" FontSize="13" VerticalContentAlignment="Center"/>
-                            <TextBox x:Name="Kol_oborotovValue" Grid.Column="1" Margin="5.4,15.2,4,5.8" TextWrapping="Wrap" Grid.Row="2" RenderTransformOrigin="0.502,0.5" Height="23" FontFamily="Times New Roman" HorizontalContentAlignment="Center" FontSize="13" VerticalContentAlignment="Center"/>
-                            <TextBox x:Name="Length_narezValue" Grid.Column="1" Margin="5.4,14.2,4,6.8" TextWrapping="Wrap" Grid.Row="3" Height="23" FontFamily="Times New Roman" HorizontalContentAlignment="Center" FontSize="13" VerticalContentAlignment="Center" IsEnabled="False"/>
-                            <TextBox x:Name="Koef_diamValue" Grid.Column="1" Height="23" Margin="5.4,15.2,4,0" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="4" FontFamily="Times New Roman" HorizontalContentAlignment="Center" FontSize="13" VerticalContentAlignment="Center"/>
-                            <TextBox x:Name="Av_diamValue" Grid.Column="1" Height="23" Margin="5.4,14.2,5,0" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="5" FontFamily="Times New Roman" HorizontalContentAlignment="Center" FontSize="13" VerticalContentAlignment="Center"/>
+                            <TextBox x:Name="Kol_vitkovValue" Grid.Column="1" Margin="5.4,15.2,4,5.8" TextWrapping="Wrap" Grid.Row="1" Height="23" FontFamily="Times New Roman" HorizontalContentAlignment="Center" FontSize="13" VerticalContentAlignment="Center" TextChanged="data_TextChanged">
+                                <TextBox.ToolTip>
+                                    <ToolTip  Foreground="Black" >
+                                        <StackPanel>
+                                            <TextBlock Text="Параметр задает количество витков червяка."/>
+                                            <TextBlock Text="От данного параметра зависит передаточное отношение червячной передачи и угол наклона зубьев." />
+                                            <Image Source="img/ToWord.png" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </TextBox.ToolTip>
+                            </TextBox>
+                            <TextBox x:Name="Kol_oborotovValue" Grid.Column="1" Margin="5.4,13.6,4,6.6" TextWrapping="Wrap" Grid.Row="3" RenderTransformOrigin="0.502,0.5" Height="23" FontFamily="Times New Roman" HorizontalContentAlignment="Center" FontSize="13" VerticalContentAlignment="Center" TextChanged="data_TextChanged" IsEnabled="False">
+                                <TextBox.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel >
+                                            <TextBlock Text="Параметр показывает количество оборотов витков червяка." />
+                                            <TextBlock Text="Данный параметр зависит от задаваемой длины червяка и модуля." />
+                                            <Image Source="img/ToWord.png" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </TextBox.ToolTip>
+                            </TextBox>
+                            <TextBox x:Name="LengthValue" Grid.Column="1" Margin="5.4,13.8,4,6.4" TextWrapping="Wrap" Grid.Row="2" Height="23" FontFamily="Times New Roman" HorizontalContentAlignment="Center" FontSize="13" VerticalContentAlignment="Center" TextChanged="data_TextChanged">
+                                <TextBox.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Параметр задает длину червяка." />
+                                            <TextBlock Text="От данного параметра зависит количество оборотов витков." />
+                                            <Image Source="img/ToWord.png" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </TextBox.ToolTip>
+                            </TextBox>
+                            <TextBox x:Name="Koef_diamValue" Grid.Column="1" Height="23" Margin="5.4,15.2,4,0" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="4" FontFamily="Times New Roman" HorizontalContentAlignment="Center" FontSize="13" VerticalContentAlignment="Center" TextChanged="data_TextChanged">
+                                <TextBox.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Коэффициент диаметра червяка q является отношением делительного диаметра червяка к его расчетному модулю." />
+                                            <Image Source="img/ToWord.png" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </TextBox.ToolTip>
+                            </TextBox>
+                            <TextBox x:Name="Av_diamValue" Grid.Column="1" Height="23" Margin="5.4,14.2,5,0" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="5" FontFamily="Times New Roman" HorizontalContentAlignment="Center" FontSize="13" VerticalContentAlignment="Center" TextChanged="data_TextChanged">
+                                <TextBox.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Диаметр средней концентрической окружности червяка" />
+                                            <Image Source="img/ToWord.png" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </TextBox.ToolTip>
+                            </TextBox>
                             <Label Content="Компонент" Margin="0,2,1,45.8" HorizontalContentAlignment="Center" Grid.RowSpan="2"/>
-                            <Label Content="Количество витков" Margin="0,11.6,0,7.8" Grid.Row="1" HorizontalContentAlignment="Center" Padding="5,5,5,0"/>
-                            <Label Content="Количество оборотов витков" Margin="0,11.4,0,8" HorizontalAlignment="Center" Grid.Row="2" Width="170" Height="26" Padding="5,5,0,0" HorizontalContentAlignment="Center"/>
-                            <Label Content="Длина нарезной части червяка, [мм]" Margin="0,15.4,0,0" Height="22" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Top" Width="172" FontSize="10" Padding="0" HorizontalContentAlignment="Center"/>
-                            <Label Content="Коэффициент диаметра" Margin="0,12,0,6.8" HorizontalAlignment="Center" Grid.Row="4" Height="26" Width="172" HorizontalContentAlignment="Center" Padding="5,5,5,0"/>
-                            <Label Content="Средний диаметр, [мм]" Margin="0,11.4,0,8" HorizontalAlignment="Center" Grid.Row="5" Height="26" Width="173" HorizontalContentAlignment="Center" Padding="5,5,5,0"/>
+                            <Label Content="Количество витков" Margin="0,11.6,0,7.8" Grid.Row="1" HorizontalContentAlignment="Center" Padding="5,5,5,0">
+                                <Label.ToolTip>
+                                    <ToolTip  Foreground="Black" >
+                                        <StackPanel>
+                                            <TextBlock Text="Параметр задает количество витков червяка."/>
+                                            <TextBlock Text="От данного параметра зависит передаточное отношение червячной передачи и угол наклона зубьев." />
+                                            <Image Source="img/ToWord.png" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Label.ToolTip>
+                            </Label>
+                            <Label Content="Количество оборотов витков" Margin="4,11.6,3.6,7.8" HorizontalAlignment="Center" Grid.Row="3" Width="170" Height="26" Padding="5,5,0,0" HorizontalContentAlignment="Center">
+                                <Label.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel >
+                                            <TextBlock Text="Параметр показывает количество оборотов витков червяка." />
+                                            <TextBlock Text="Данный параметр зависит от задаваемой длины червяка и модуля." />
+                                            <Image Source="img/ToWord.png" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Label.ToolTip>
+                            </Label>
+                            <Label Content="Длина червяка" Margin="3,13.8,2,0" Height="22" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Top" Width="172" FontSize="12" Padding="0" HorizontalContentAlignment="Center">
+                                <Label.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Параметр задает длину червяка." />
+                                            <TextBlock Text="От данного параметра зависит количество оборотов витков." />
+                                            <Image Source="img/ToWord.png" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Label.ToolTip>
+                            </Label>
+                            <Label Content="Коэффициент диаметра" Margin="0,12,0,6.8" HorizontalAlignment="Center" Grid.Row="4" Height="26" Width="172" HorizontalContentAlignment="Center" Padding="5,5,5,0">
+                                <Label.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Коэффициент диаметра червяка q является отношением делительного диаметра червяка к его расчетному модулю." />
+                                            <Image Source="img/ToWord.png" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Label.ToolTip>
+                            </Label>
+                            <Label Content="Средний диаметр, [мм]" Margin="0,11.4,0,8" HorizontalAlignment="Center" Grid.Row="5" Height="26" Width="173" HorizontalContentAlignment="Center" Padding="5,5,5,0">
+                                <Label.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Коэффициент диаметра червяка q является отношением делительного диаметра червяка к его расчетному модулю." />
+                                            <Image Source="img/ToWord.png" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Label.ToolTip>
+                            </Label>
                         </Grid>
                     </GroupBox>
                     <GroupBox Header="Параметры червячного колеса" Margin="0,4,4,18" Grid.Column="2" BorderBrush="Black" HorizontalAlignment="Left">
@@ -102,7 +203,6 @@
                                 <RowDefinition Height="46*"/>
                                 <RowDefinition Height="46*"/>
                                 <RowDefinition Height="46*"/>
-
                                 <RowDefinition Height="24*"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
@@ -110,16 +210,90 @@
                                 <ColumnDefinition Width="138.4"/>
                             </Grid.ColumnDefinitions>
                             <ComboBox x:Name="Gear_combo" Margin="5,7,5.2,5.4" Grid.Column="1" FontFamily="Times New Roman"/>
-                            <TextBox x:Name="Teeth_gearValue" Grid.Column="1" Margin="5.2,15.2,4.2,5.8" TextWrapping="Wrap" Grid.Row="1" Height="23" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
-                            <TextBox x:Name="Width_gearValue" Grid.Column="1" Margin="5.2,15.2,4.2,5.8" TextWrapping="Wrap" Grid.Row="2" Height="23" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
-                            <TextBox x:Name="Koef_smeshValue" Grid.Column="1" Margin="5.2,14.2,4.2,6.8" TextWrapping="Wrap" Grid.Row="3" Height="23" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
+                            <TextBox x:Name="Teeth_gearValue" Grid.Column="1" Margin="5.2,15.2,4.2,5.8" TextWrapping="Wrap" Grid.Row="1" Height="23" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged">
+                                <TextBox.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Количество зубьев на червячном колесе. От данного параметра зависит передаточное число." />
+                                            <Image Source="img/ToWord.png" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </TextBox.ToolTip>
+                            </TextBox>
+                            <TextBox x:Name="Width_gearValue" Grid.Column="1" Margin="5.2,15.2,4.2,5.8" TextWrapping="Wrap" Grid.Row="2" Height="23" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged">
+                                <TextBox.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Параметр задает ширину проектируемого червячного колеса" />
+                                            <Image Source="img/ToWord.png" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </TextBox.ToolTip>
+                            </TextBox>
+                            <TextBox x:Name="Koef_smeshValue" Grid.Column="1" Margin="5.2,14.2,4.2,6.8" TextWrapping="Wrap" Grid.Row="3" Height="23" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged">
+                                <TextBox.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Коэффициент определяет геометрию колеса." />
+                                            <TextBlock Text="Положительное значение – перемещение червяка от колеса, отрицательное - перемещение червяка к колесу." />
+                                            <Image Source="img/ToWord.png" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </TextBox.ToolTip>
+                            </TextBox>
                             <Label Content="Компонент" Margin="0,2,1,45.8" HorizontalContentAlignment="Center" Grid.RowSpan="2"/>
-                            <Label Content="Количество зубьев" Margin="0,11.6,0,7.8" Grid.Row="1" HorizontalContentAlignment="Center" Padding="5,5,5,2"/>
-                            <Label Content="Ширина грани, [мм]" Margin="0,11.4,0,8" HorizontalAlignment="Center" Grid.Row="2" Width="170" Height="26" Padding="5,5,0,5" HorizontalContentAlignment="Center"/>
-                            <Label Content="Коэффициент смещения" Margin="0,15.4,0,0" Height="22" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Top" Width="172" Padding="0" HorizontalContentAlignment="Center"/>
+                            <Label Content="Количество зубьев" Margin="0,11.6,0,7.8" Grid.Row="1" HorizontalContentAlignment="Center" Padding="5,5,5,2">
+                                <Label.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Количество зубьев на червячном колесе. От данного параметра зависит передаточное число." />
+                                            <Image Source="img/ToWord.png" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Label.ToolTip>
+                            </Label>
+                            <Label Content="Ширина грани, [мм]" Margin="0,11.4,0,8" HorizontalAlignment="Center" Grid.Row="2" Width="170" Height="26" Padding="5,5,0,5" HorizontalContentAlignment="Center">
+                                <Label.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Параметр задает ширину проектируемого червячного колеса" />
+                                            <Image Source="img/ToWord.png" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Label.ToolTip>
+                            </Label>
+                            <Label Content="Коэффициент смещения" Margin="0,15.4,0,0" Height="22" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Top" Width="172" Padding="0" HorizontalContentAlignment="Center">
+                                <Label.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Коэффициент определяет геометрию колеса." />
+                                            <TextBlock Text="Положительное значение – перемещение червяка от колеса, отрицательное - перемещение червяка к колесу." />
+                                            <Image Source="img/ToWord.png" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Label.ToolTip>
+                            </Label>
                             <Label Content="Направление зубьев" Margin="0,12,0,6.8" HorizontalAlignment="Center" Grid.Row="4" Height="26" Width="172" HorizontalContentAlignment="Center" Padding="5,5,5,0"/>
-                            <Label Content="Добавить отверстие, [мм]" Margin="0,11.4,0,8" HorizontalAlignment="Center" Grid.Row="5" Height="26" Width="173" HorizontalContentAlignment="Center" Padding="5,5,5,0"/>
-                            <CheckBox x:Name="Hole_bool" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="5.2,19.2,0,0" Grid.Row="5" VerticalAlignment="Top" Grid.RowSpan="2" Checked="CheckBox_Hole_Changed" Unchecked="CheckBox_Hole_Changed" />
+                            <Label Content="Добавить отверстие, [мм]" Margin="0,11.4,0,8" HorizontalAlignment="Center" Grid.Row="5" Height="26" Width="173" HorizontalContentAlignment="Center" Padding="5,5,5,0">
+                                <Label.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Параметр задает диаметр отверстия червячного колеса" />
+                                            <Image Source="img/ToWord.png" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Label.ToolTip>
+                            </Label>
+                            <CheckBox x:Name="Hole_bool" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="5.2,19.2,0,0" Grid.Row="5" VerticalAlignment="Top" Grid.RowSpan="2" Checked="CheckBox_Hole_Changed" Unchecked="CheckBox_Hole_Changed" >
+                                <CheckBox.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Параметр задает диаметр отверстия червячного колеса" />
+                                            <Image Source="img/ToWord.png" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </CheckBox.ToolTip>
+                            </CheckBox>
                             <TextBox x:Name="Hole_widthValue" Grid.Column="1" Height="23" Margin="34,14.6,5,0" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" />
                             <Grid Margin="0" Grid.Row="4" Grid.Column="1">
                                 <Grid.ColumnDefinitions>
@@ -140,7 +314,7 @@
                         </Grid>
                     </GroupBox>
                 </Grid>
-                <GroupBox Header="Общее" Margin="0,0,0,136.4" BorderBrush="Black" HorizontalAlignment="Left" Width="678">
+                <GroupBox Header="Общее" Margin="0,0,0,136.2" BorderBrush="Black" HorizontalAlignment="Left" Width="678">
                     <Grid Margin="0,-2,-1.6,-1.2" HorizontalAlignment="Left" Height="80" Width="668">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="165"/>
@@ -148,57 +322,183 @@
                             <ColumnDefinition Width="165"/>
                             <ColumnDefinition Width="165"/>
                         </Grid.ColumnDefinitions>
-                        <Border BorderBrush="#7F000000" BorderThickness="1" HorizontalAlignment="Left" Height="24" Margin="14,3,0,0" VerticalAlignment="Top" Width="132"/>
-                        <Label Content="Передаточное отношение" Margin="0,30,164.4,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="20" Padding="5,0"/>
+                        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="27" Margin="10,3,0,0" VerticalAlignment="Top" Width="150"/>
+                        <Label Content="Передаточное отношение" Margin="0,30,164.4,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="20" Padding="5,0">
+                            <Label.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Передаточное число червячной передачи равно отношению числа зубьев червячного колеса к числу витков червяка."/>
+                                        <TextBlock Text="Передаточное число показывает, насколько данная пара зацепления в принципе может изменить крутящий момент" />
+                                        <TextBlock Text="в ту или иную сторону, линейное соотношение диаметров зубчатых колёс." />
+                                        <Image Source="img/ToWord.png" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </Label.ToolTip>
+                        </Label>
                         <Label Content="Модуль" Grid.Column="1" Margin="0.4,30,0.4,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Height="20" Padding="5,0"/>
                         <Label Content="Угол профиля" Grid.Column="1" Margin="164.4,30,0.2,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Height="20" Padding="5,0"/>
-                        <Label Content="Угол наклона зуба" Grid.Column="2" Margin="164.6,30,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Height="20" Padding="5,0"/>
-                        <ComboBox x:Name="Peredat_combo" HorizontalAlignment="Left" Margin="20,51,0,0" VerticalAlignment="Top" Width="120" Height="25" FontFamily="Times New Roman"/>
-                        <ComboBox x:Name="Module_combo" HorizontalAlignment="Left" Margin="20.4,51,0,0" VerticalAlignment="Top" Width="120" Height="25" Grid.Column="1" FontFamily="Times New Roman"/>
-                        <ComboBox x:Name="ProfileDeg_combo" HorizontalAlignment="Left" Margin="19.6,51,0,0" VerticalAlignment="Top" Width="120" Height="25" Grid.Column="2" FontFamily="Times New Roman"/>
-                        <TextBox x:Name="DegTeethValue" Grid.Column="3" HorizontalAlignment="Left" Height="25" Margin="19.8,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
-                        <Button x:Name="Expander_Calculations"  Grid.Column="3" HorizontalAlignment="Left" Margin="143.2,0,-2.6,53" VerticalAlignment="Bottom" Width="25" Height="26" BorderBrush="Black" Background="White" Click="Expander_Calculations_Click">
-                            <StackPanel>
+                        <Label Content="Угол наклона зуба" Grid.Column="2" Margin="164.6,30,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Height="20" Padding="5,0">
+                            <Label.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Угол наклона зуба" />
+                                        <Image Source="img/ToWord.png" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </Label.ToolTip>
+                        </Label>
+                        <ComboBox x:Name="Peredat_combo" HorizontalAlignment="Left" Margin="20,51,0,0" VerticalAlignment="Top" Width="120" Height="25" FontFamily="Times New Roman" SelectionChanged="combo_SelectionChanged"/>
+                        <ComboBox x:Name="Module_combo" HorizontalAlignment="Left" Margin="20.4,51,0,0" VerticalAlignment="Top" Width="120" Height="25" Grid.Column="1" FontFamily="Times New Roman" SelectionChanged="combo_SelectionChanged">
+                            <ComboBox.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Модуль – число миллиметров диаметра делительной окружности, приходящееся на один зуб." />
+                                        <TextBlock Text="Самый главный параметр, стандартизирован, определяется из прочностного расчёта зубчатых передач." />
+                                        <TextBlock Text="Чем больше нагружена передача, тем выше значение модуля. Через него выражаются все остальные параметры." />
+                                        <Image Source="img/ToWord.png" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </ComboBox.ToolTip>
+                        </ComboBox>
+                        <ComboBox x:Name="ProfileDeg_combo" HorizontalAlignment="Left" Margin="19.6,51,0,0" VerticalAlignment="Top" Width="120" Height="25" Grid.Column="2" FontFamily="Times New Roman" SelectionChanged="combo_SelectionChanged">
+                            <ComboBox.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Острый угол между касательной к профилю в данной точке и радиусом - вектором, проведенным в данную точку из центра" />
+                                        <Image Source="img/ToWord.png" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </ComboBox.ToolTip>
+                        </ComboBox>
+                        <TextBox x:Name="DegTeethValue" Grid.Column="3" HorizontalAlignment="Left" Height="25" Margin="19.8,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged">
+                            <TextBox.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Угол наклона зуба" />
+                                        <Image Source="img/ToWord.png" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </TextBox.ToolTip>
+                        </TextBox>
+                        <Button x:Name="Expander_showCalc"  Grid.Column="3" HorizontalAlignment="Left" Margin="133,-4,0,57" VerticalAlignment="Bottom" Width="25" Height="25" BorderBrush="Black" Background="White" Click="Expander_Calculations_Click">
+                            <StackPanel x:Name="stack_openCalc">
                                 <Image Source="img/openCalculation.png" Height="18" Width="17"/>
                             </StackPanel>
+                            <Button.ToolTip>
+                                <ToolTip Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Показать/Скрыть таблицы с расчетами" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </Button.ToolTip>
                         </Button>
-                        <Button x:Name="buOpen_json" HorizontalAlignment="Left" Margin="18,5,0,55" Width="20" Height="20" Background="White" BorderBrush="White" Click="buOpen_json_Click">
+                        <Button x:Name="buOpen_json" HorizontalAlignment="Left" Margin="15,7,0,53" Width="20" Height="20" Background="White" BorderBrush="White" Click="buOpen_json_Click">
                             <StackPanel>
                                 <Image Source="img/open.png" Height="18" Width="17"/>
                                 <Label Content="Settings" HorizontalAlignment="Center"/>
                             </StackPanel>
+                            <Button.ToolTip>
+                                <ToolTip Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Открыть сохраненные праметры" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </Button.ToolTip>
                         </Button>
-                        <Button x:Name="buSave_json"  HorizontalAlignment="Left" Margin="41,0,0,55" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_json_Click">
+                        <Button x:Name="buSave_json"  HorizontalAlignment="Left" Margin="41,0,0,53" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_json_Click">
                             <StackPanel>
                                 <Image Source="img/save.png" Height="18" Width="17"/>
                                 <Label Content="Settings" HorizontalAlignment="Center"/>
                             </StackPanel>
+                            <Button.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Сохранить параметры" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </Button.ToolTip>
                         </Button>
-                        <Button x:Name="buSave_PDF"  HorizontalAlignment="Left" Margin="75,0,0,55" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_PDF_Click">
+                        <Button x:Name="buSave_PDF"  HorizontalAlignment="Left" Margin="86,0,0,55" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_PDF_Click">
                             <StackPanel>
                                 <Image Source="img/ToPdf.png" Height="18" Width="17"/>
                                 <Label Content="Settings" HorizontalAlignment="Center"/>
                             </StackPanel>
+                            <Button.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Экспорт параметров в PDF" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </Button.ToolTip>
                         </Button>
-                        <Button x:Name="buSave_docx" HorizontalAlignment="Left" Margin="99,0,0,55" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_docx_Click">
+                        <Button x:Name="buSave_docx" HorizontalAlignment="Left" Margin="110,0,0,55" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_docx_Click">
                             <StackPanel>
                                 <Image Source="img/ToWord.png" Height="18" Width="17"/>
                                 <Label Content="Settings" HorizontalAlignment="Center"/>
                             </StackPanel>
+                            <Button.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Экспорт параметров в DOCX" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </Button.ToolTip>
                         </Button>
-                        <TextBox x:Name="Peredat_Changed" HorizontalAlignment="Left" Height="25" Margin="20,51,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
-                        <Button x:Name="buSave_excel" HorizontalAlignment="Left" Margin="123,0,0,55" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_excel_Click" >
+                        <TextBox x:Name="Peredat_Changed" HorizontalAlignment="Left" Height="25" Margin="20,51,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13">
+                            <TextBox.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Передаточное число червячной передачи равно отношению числа зубьев червячного колеса к числу витков червяка."/>
+                                        <TextBlock Text="Передаточное число показывает, насколько данная пара зацепления в принципе может изменить крутящий момент" />
+                                        <TextBlock Text="в ту или иную сторону, линейное соотношение диаметров зубчатых колёс." />
+                                        <Image Source="img/ToWord.png" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </TextBox.ToolTip>
+                        </TextBox>
+                        <Button x:Name="buSave_excel" HorizontalAlignment="Left" Margin="134,0,0,55" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_excel_Click" >
                             <StackPanel>
                                 <Image Source="img/ToExcel.png" Height="18" Width="17"/>
                                 <Label Content="Settings" HorizontalAlignment="Center"/>
                             </StackPanel>
+                            <Button.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Экспорт параметров в XLSX" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </Button.ToolTip>
                         </Button>
                     </Grid>
                 </GroupBox>
-                <Button x:Name="buCalc" Content="Рассчитать" HorizontalAlignment="Left" Margin="420,433,0,-210.6" VerticalAlignment="Top" Width="75" Height="24" Padding="1,1,1,0" Click="buCalc_Click"/>
-                <Button Content="ОК" HorizontalAlignment="Left" Margin="512,433,0,-210.6" VerticalAlignment="Top" Width="75" Height="24"/>
-                <Button x:Name="buCancel" Content="Отмена" HorizontalAlignment="Left" Margin="603,433,0,-210.6" VerticalAlignment="Top" Width="75" Height="24" Click="buCancel_Click"/>
-                <StackPanel HorizontalAlignment="Left" Height="440" Margin="696,17,0,-210.6" VerticalAlignment="Top" Width="200">
+                <Button x:Name="buCalc" Content="Рассчитать" HorizontalAlignment="Left" Margin="420,432,0,-198.4" VerticalAlignment="Top" Width="75" Height="24" Padding="1,1,1,0" Click="buCalc_Click">
+                    <Button.ToolTip>
+                        <ToolTip  Foreground="Black">
+                            <StackPanel>
+                                <TextBlock Text="Запуск вычислений" />
+                            </StackPanel>
+                        </ToolTip>
+                    </Button.ToolTip>
+                </Button>
+                <Button x:Name="buCreate_Components" Content="ОК" HorizontalAlignment="Left" Margin="512,432,0,-198.4" VerticalAlignment="Top" Width="75" Height="24" Click="create_ComponentsClick" >
+                    <Button.ToolTip>
+                        <ToolTip  Foreground="Black">
+                            <StackPanel>
+                                <TextBlock Text="Запуск моделирования" />
+                            </StackPanel>
+                        </ToolTip>
+                    </Button.ToolTip>
+                </Button>
+                <Button x:Name="buCancel" Content="Отмена" HorizontalAlignment="Left" Margin="603,432,0,-198.4" VerticalAlignment="Top" Width="75" Height="24" Click="buCancel_Click">
+                    <Button.ToolTip>
+                        <ToolTip  Foreground="Black">
+                            <StackPanel>
+                                <TextBlock Text="Отменить операцию" />
+                            </StackPanel>
+                        </ToolTip>
+                    </Button.ToolTip>
+                </Button>
+                <StackPanel x:Name="stackModel" HorizontalAlignment="Left" Height="440" Margin="696,17,0,-197.8" VerticalAlignment="Top" Width="200">
                     <Label Content="Общие параметры" Height="22" FontWeight="Bold" FontSize="10" Padding="5,0" Background="#FFD0CFCF"/>
                     <DataGrid x:Name="TableGeneral_Model" ColumnWidth="135"  ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled" HeadersVisibility="None" Height="119" Width="200" ColumnHeaderHeight="22" BorderBrush="Black" FontSize="12" CanUserResizeRows="False" IsReadOnly="True" GridLinesVisibility="Horizontal" FontFamily="Times New Roman" />
@@ -212,7 +512,7 @@
             </Grid>
         </TabItem>
 
-        <TabItem  Margin="-2.2,0,0,-0.4" Height="34" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="81.7">
+        <TabItem  Margin="-2.6,0,2.2,-0.4" Height="34" VerticalAlignment="Bottom">
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
                     <Image Source="img/tabCalc.png" Width="20"/>
@@ -231,7 +531,7 @@
                     <RowDefinition Height="160"/>
                 </Grid.RowDefinitions>
 
-                <Expander x:Name="ExpanderModel" Header="Дополнительно" HorizontalAlignment="Left" Height="158" Margin="0,0,0,0" VerticalAlignment="Top" Width="677" Grid.Row="3" Expanded="Expander_Expanded" Collapsed="Expander_Collapsed">
+                <Expander x:Name="ExpanderCalculations" Header="Дополнительно" HorizontalAlignment="Left" Height="158" Margin="1,1.6,0,0" VerticalAlignment="Top" Width="677" Grid.Row="3" Expanded="Expander_Expanded" Collapsed="Expander_Collapsed">
                     <Grid Margin="0,0,0,0" Height="122" VerticalAlignment="Top">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="338.5"/>
@@ -253,10 +553,42 @@
                                 <Label Content="Коэффициент скорости Kv" Margin="0" RenderTransformOrigin="0.188,0.097" Padding="0" HorizontalContentAlignment="Center" Grid.Row="1"/>
                                 <Label Content="Коэффициент льюиса (y)" Margin="0" RenderTransformOrigin="0.188,0.097" Padding="0" HorizontalContentAlignment="Center" Grid.Row="2"/>
                                 <Label Content="Срок службы, (ч)" Margin="0" RenderTransformOrigin="0.188,0.097" Padding="0" HorizontalContentAlignment="Center" Grid.Row="3"/>
-                                <TextBox x:Name="KoValue" Grid.Column="1" Height="17" Margin="0" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11"/>
-                                <TextBox x:Name="KvValue" Grid.Column="1" Height="17" Margin="0" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" Grid.Row="1" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11"/>
-                                <TextBox x:Name="yValue" Grid.Column="1" Height="17" Margin="0" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" Grid.Row="2" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11"/>
-                                <TextBox x:Name="timeValue" Grid.Column="1" Margin="22,2,21,4" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" Grid.Row="3" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11"/>
+                                <TextBox x:Name="KoValue" Grid.Column="1" Height="17" Margin="0" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11">
+                                    <TextBox.ToolTip>
+                                        <ToolTip  Foreground="Black">
+                                            <StackPanel>
+                                                <TextBlock Text="Коэффициент перегрузки Ko" />
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </TextBox.ToolTip>
+                                </TextBox>
+                                <TextBox x:Name="KvValue" Grid.Column="1" Height="17" Margin="0" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" Grid.Row="1" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11">
+                                    <TextBox.ToolTip>
+                                        <ToolTip  Foreground="Black">
+                                            <StackPanel>
+                                                <TextBlock Text="Коэффициент скорости Kv" />
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </TextBox.ToolTip>
+                                </TextBox>
+                                <TextBox x:Name="yValue" Grid.Column="1" Height="17" Margin="0" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" Grid.Row="2" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11">
+                                    <TextBox.ToolTip>
+                                        <ToolTip  Foreground="Black">
+                                            <StackPanel>
+                                                <TextBlock Text="Коэффициент льюиса (y)" />
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </TextBox.ToolTip>
+                                </TextBox>
+                                <TextBox x:Name="timeValue" Grid.Column="1" Margin="22,2,21,4" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" Grid.Row="3" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11">
+                                    <TextBox.ToolTip>
+                                        <ToolTip  Foreground="Black">
+                                            <StackPanel>
+                                                <TextBlock Text="Срок службы, (ч)" />
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </TextBox.ToolTip>
+                                </TextBox>
                             </Grid>
                         </GroupBox>
                         <GroupBox x:Name="groupType" Header="Тип расчета" Margin="338,0,2,5" Grid.ColumnSpan="2" BorderBrush="Black" Height="117">
@@ -290,48 +622,164 @@
                         </Grid.ColumnDefinitions>
                         <Border BorderBrush="Black" BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="99" Margin="224.6,6,0,0" Grid.RowSpan="5" VerticalAlignment="Top" Width="152" Grid.ColumnSpan="2"/>
                         <Border BorderBrush="Black" BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="99" Margin="73.6,6,0,0" Grid.RowSpan="5" VerticalAlignment="Top" Width="152"/>
-                        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="27" Margin="12,6,0,0" VerticalAlignment="Top" Width="161"/>
+                        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="27" Margin="10,6,0,0" VerticalAlignment="Top" Width="150"/>
                         <Label Content="Мощность (кВт)" Margin="0" Height="18" Padding="5,0" Width="104" Grid.Row="1"/>
                         <Label Content="Скорость (об/мин)" Margin="0" HorizontalContentAlignment="Center" Height="20" Padding="5,0" Grid.Row="2"/>
                         <Label Content="Крутящий момент (Нм)" Margin="0" HorizontalContentAlignment="Center" Padding="5,0" Grid.Row="3"/>
-                        <Button x:Name="Expander_Calculations1" HorizontalAlignment="Left" Margin="233,0,0,8.6" VerticalAlignment="Bottom" Width="25" Height="26" BorderBrush="Black" Background="White" Click="Expander_Calculations_Click" Grid.Column="2" >
+                        <Button x:Name="Expander_showCalc1" HorizontalAlignment="Left" Margin="221,0,0,11" VerticalAlignment="Bottom" Width="25.5" Height="25" BorderBrush="Black" Click="Expander_Calculations_Click" Grid.Column="2" Background="White" >
+                            <Button.Foreground>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="Black" Offset="0"/>
+                                    <GradientStop Color="White" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Button.Foreground>
                             <StackPanel>
                                 <Image Source="img/openCalculation.png" Height="18" Width="17"/>
                             </StackPanel>
+                            <Button.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Показать/Скрыть таблицы с расчетами" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </Button.ToolTip>
                         </Button>
-                        <TextBox x:Name="PowerValue" HorizontalAlignment="Center" Height="16" Margin="88.6,2.4,17,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="1"/>
-                        <TextBox x:Name="VelocityValue" Height="16" Margin="88.6,2.4,17,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="2"/>
-                        <TextBox x:Name="MomentValue" Height="16" Margin="88.6,2.4,17,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="3"/>
-                        <TextBox x:Name="KPDValue" Height="16" Margin="88.6,22.4,17,23.2" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="4"/>
-                        <CheckBox x:Name="boolKPD" Content="КПД" Margin="69,18.4,70.4,25.2 " Checked="CheckBox_KPD_Changed" Unchecked="CheckBox_KPD_Changed" Padding="0,0,0,0" VerticalContentAlignment="Bottom" Width="43" Grid.Row="4" />
+                        <TextBox x:Name="PowerValue" HorizontalAlignment="Center" Height="16" Margin="88.6,2.4,17,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="1" TextChanged="data_TextChanged">
+                            <TextBox.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Величина, характеризующая мгновенную скорость передачи энергии от одной физической системы к другой в " />
+                                        <TextBlock Text="в процессе её использования и в общем случае определяемая через соотношение переданной энергии к времени передачи" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </TextBox.ToolTip>
+                        </TextBox>
+                        <TextBox x:Name="VelocityValue" Height="16" Margin="88.6,2.4,17,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="2" TextChanged="data_TextChanged">
+                            <TextBox.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Количество оборотов, выполняемых компонентом" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </TextBox.ToolTip>
+                        </TextBox>
+                        <TextBox x:Name="MomentValue" Height="16" Margin="88.6,2.4,17,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="3" TextChanged="data_TextChanged">
+                            <TextBox.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Крутящий момент компонента" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </TextBox.ToolTip>
+                        </TextBox>
+                        <TextBox x:Name="KPDValue" Height="16" Margin="88.6,22.4,17,23.2" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="4" TextChanged="data_TextChanged">
+                            <TextBox.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Коэффициент полезного действия червячной передачи" />
+                                        <Image Source="img/ToWord.png" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </TextBox.ToolTip>
+                        </TextBox>
+                        <CheckBox x:Name="boolKPD" Content="КПД" Margin="69,18.4,70.4,25.2 " Checked="CheckBox_KPD_Changed" Unchecked="CheckBox_KPD_Changed" Padding="0,0,0,0" VerticalContentAlignment="Bottom" Width="43" Grid.Row="4">
+                            <CheckBox.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Если поле активно - значение КПД задается пользователем." />
+                                        <TextBlock Text="В ином случае значение вычисляется." />
+                                    </StackPanel>
+                                </ToolTip>
+                            </CheckBox.ToolTip>
+                        </CheckBox>
                         <Button x:Name="buOpen_json_Calc" HorizontalAlignment="Left" Margin="15,10,0,7.6" Width="20" Background="White" BorderBrush="White" Click="buOpen_json_Click" Height="20">
                             <StackPanel>
                                 <Image Source="img/open.png" Height="18" Width="17"/>
                             </StackPanel>
+                            <Button.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Открыть сохраненные праметры" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </Button.ToolTip>
                         </Button>
-                        <Button x:Name="buSave_json_Calc"  HorizontalAlignment="Left" Margin="42,0,0,7.6" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_json_Click">
+                        <Button x:Name="buSave_json_Calc"  HorizontalAlignment="Left" Margin="41,0,0,7.6" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_json_Click">
                             <StackPanel>
                                 <Image Source="img/save.png" Height="18" Width="17"/>
                             </StackPanel>
+                            <Button.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Сохранить параметры" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </Button.ToolTip>
                         </Button>
-                        <Button x:Name="buSave_PDF_Calc"  HorizontalAlignment="Left" Margin="98,0,0,8.6" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_PDF_Click">
+                        <Button x:Name="buSave_PDF_Calc"  HorizontalAlignment="Left" Margin="86,0,0,9.6" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_PDF_Click">
                             <StackPanel>
                                 <Image Source="img/ToPdf.png" Height="18" Width="17"/>
                             </StackPanel>
+                            <Button.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Экспорт параметров в PDF" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </Button.ToolTip>
                         </Button>
-                        <Button x:Name="buSave_docx_Calc" HorizontalAlignment="Left" Margin="123,0,0,7.6" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_docx_Click">
+                        <Button x:Name="buSave_docx_Calc" HorizontalAlignment="Left" Margin="110,0,0,9.6" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_docx_Click">
                             <StackPanel>
                                 <Image Source="img/ToWord.png" Height="18" Width="17"/>
                             </StackPanel>
+                            <Button.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Экспорт параметров в DOCX" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </Button.ToolTip>
                         </Button>
-                        <Button x:Name="buSave_excel_Calc" HorizontalAlignment="Left" Margin="150,0,0,7.6" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_excel_Click">
+                        <Button x:Name="buSave_excel_Calc" HorizontalAlignment="Left" Margin="134,0,0,9.6" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_excel_Click">
                             <StackPanel>
                                 <Image Source="img/ToExcel.png" Height="18" Width="17"/>
                             </StackPanel>
+                            <Button.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Экспорт параметров в XLSX" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </Button.ToolTip>
                         </Button>
-                        <TextBox x:Name="PowerValue_Gear" Height="16" Margin="16,2.4,123,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="2" Grid.Row="1"/>
-                        <TextBox x:Name="VelocityValue_Gear" Height="16" Margin="16,2.4,123,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="2" Grid.Row="2"/>
-                        <TextBox x:Name="MomentValue_Gear" Height="16" Margin="16,2.4,123,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="2" Grid.Row="3" />
+                        <TextBox x:Name="PowerValue_Gear" Height="16" Margin="16,2.4,123,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="2" Grid.Row="1" TextChanged="data_TextChanged">
+                            <TextBox.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Величина, характеризующая мгновенную скорость передачи энергии от одной физической системы к другой в " />
+                                        <TextBlock Text="в процессе её использования и в общем случае определяемая через соотношение переданной энергии к времени передачи" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </TextBox.ToolTip>
+                        </TextBox>
+                        <TextBox x:Name="VelocityValue_Gear" Height="16" Margin="16,2.4,123,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="2" Grid.Row="2" TextChanged="data_TextChanged">
+                            <TextBox.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Количество оборотов, выполняемых компонентом" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </TextBox.ToolTip>
+                        </TextBox>
+                        <TextBox x:Name="MomentValue_Gear" Height="16" Margin="16,2.4,123,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="2" Grid.Row="3" TextChanged="data_TextChanged">
+                            <TextBox.ToolTip>
+                                <ToolTip  Foreground="Black">
+                                    <StackPanel>
+                                        <TextBlock Text="Крутящий момент компонента" />
+                                    </StackPanel>
+                                </ToolTip>
+                            </TextBox.ToolTip>
+                        </TextBox>
                         <RadioButton x:Name="radioWormSel" Content="Червяк" Grid.Column="1" Margin="115.6,9,45,6.6" Height="22"  Tag="_0" RenderTransformOrigin="0.502,0.5"/>
                         <RadioButton x:Name="radioGearSel" Content="Червячное колесо" Grid.Column="2" Margin="16,9,119,6.6" Height="22"  Tag="_1"/>
                     </Grid>
@@ -354,8 +802,24 @@
                                 </Grid.RowDefinitions>
                                 <Label Content="Материал червяка" Margin="0" Height="28" HorizontalContentAlignment="Center" Padding="5,5,5,0"/>
                                 <Label Content="Материал червячного колеса" Margin="0,30,333.4,5.4" HorizontalContentAlignment="Center" Padding="5,5,5,0" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
-                                <ComboBox x:Name="MatWorm_combo" Grid.Column="1" HorizontalAlignment="Center" Margin="26,6,24.8,5.4" VerticalAlignment="Center" Width="285" Height="19" FontFamily="Times New Roman"/>
-                                <ComboBox x:Name="MatGear_combo" Grid.Column="1" HorizontalAlignment="Center" Margin="25.2,3.6,23.4,7.8" VerticalAlignment="Center" Width="285" Height="19" Grid.Row="1" FontFamily="Times New Roman"/>
+                                <ComboBox x:Name="MatWorm_combo" Grid.Column="1" HorizontalAlignment="Center" Margin="26,6,24.8,5.4" VerticalAlignment="Center" Width="285" Height="19" FontFamily="Times New Roman" SelectionChanged="combo_SelectionChanged">
+                                    <ComboBox.ToolTip>
+                                        <ToolTip  Foreground="Black">
+                                            <StackPanel>
+                                                <TextBlock Text="Параметр задает материал для червяка." />
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </ComboBox.ToolTip>
+                                </ComboBox>
+                                <ComboBox x:Name="MatGear_combo" Grid.Column="1" HorizontalAlignment="Center" Margin="25.2,3.6,23.4,7.8" VerticalAlignment="Center" Width="285" Height="19" Grid.Row="1" FontFamily="Times New Roman" SelectionChanged="combo_SelectionChanged">
+                                    <ComboBox.ToolTip>
+                                        <ToolTip  Foreground="Black">
+                                            <StackPanel>
+                                                <TextBlock Text="Параметр задает материал для червячного колеса." />
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </ComboBox.ToolTip>
+                                </ComboBox>
                             </Grid>
                             <Grid Margin="0,0,-0.2,22.8" Grid.Row="1">
                                 <Grid.RowDefinitions>
@@ -370,18 +834,74 @@
                                     <ColumnDefinition Width="83*"/>
                                     <ColumnDefinition Width="83*"/>
                                 </Grid.ColumnDefinitions>
-                                <Label Content="Предел устал. прочност изгиба (Sn), [МПа]" Margin="0" HorizontalContentAlignment="Center" Padding="5,5,5,0"/>
+                                <Label Content="Предел устал. прочность изгиба (Sn), [МПа]" Margin="0" HorizontalContentAlignment="Center" Padding="5,5,5,0"/>
                                 <Label Content="Контактная усталостная прочность (Kw), [МПа]" Margin="0,0.8,0.4,26.6" HorizontalContentAlignment="Center" Grid.RowSpan="2" Grid.Row="1" Padding="5,5,5,0"/>
                                 <Label Content="Модуль упругости (Е), [МПа]" Margin="0,26.8,0.4,0.6" HorizontalContentAlignment="Center" Grid.RowSpan="2" Grid.Row="1" Padding="5,5,5,0"/>
                                 <Label Content="Коэффициент Пуассона (μ)" Margin="0,0.4,0.4,27" HorizontalContentAlignment="Center" Grid.RowSpan="2" Grid.Row="3" Padding="5,5,5,0"/>
                                 <Label Content="Коэффициент материала червяка (Kmat)" Margin="0,0.2,0.6,-6" HorizontalContentAlignment="Center" Grid.Row="4" Padding="5,5,5,0"/>
-                                <TextBox x:Name="SnValue" Grid.Column="2" Height="23" Margin="5,0" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
-                                <TextBox x:Name="KwValue" Grid.Column="2" Height="23" Margin="23.2,1.8,22.4,2.4" TextWrapping="Wrap" Width="120" Grid.Row="1" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
-                                <TextBox x:Name="E_gearValue" Grid.Column="2" Height="23" Margin="23.2,2.6,22.4,1.6" TextWrapping="Wrap" Width="120" Grid.Row="2" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
-                                <TextBox x:Name="Puasson_gearValue" Grid.Column="2" Height="23" Margin="23.2,2.4,22.4,1.8" TextWrapping="Wrap" Width="120" Grid.Row="3" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
-                                <TextBox x:Name="Puasson_wormValue" Grid.Column="1" Margin="22.6,1.4,23.8,2.8" TextWrapping="Wrap" Grid.Row="3" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
-                                <TextBox x:Name="E_wormValue" Grid.Column="1" Margin="22.6,1.6,23.8,2.6" TextWrapping="Wrap" Grid.Row="2" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
-                                <TextBox x:Name="Kmat_wormValue" Grid.Column="1" Margin="22.4,1.2,24.2,3" TextWrapping="Wrap" Grid.Row="4" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13"/>
+                                <TextBox x:Name="SnValue" Grid.Column="2" Height="23" Margin="22.8,2,22.8,0" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" VerticalAlignment="Top" TextChanged="data_TextChanged">
+                                    <TextBox.ToolTip>
+                                        <ToolTip  Foreground="Black">
+                                            <StackPanel>
+                                                <TextBlock Text="Предел усталостной прочности изгиба" />
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </TextBox.ToolTip>
+                                </TextBox>
+                                <TextBox x:Name="KwValue" Grid.Column="2" Height="23" Margin="23.2,1.8,22.4,2.4" TextWrapping="Wrap" Width="120" Grid.Row="1" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged">
+                                    <TextBox.ToolTip>
+                                        <ToolTip  Foreground="Black">
+                                            <StackPanel>
+                                                <TextBlock Text="Контактная усталостная прочность" />
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </TextBox.ToolTip>
+                                </TextBox>
+                                <TextBox x:Name="E_gearValue" Grid.Column="2" Height="23" Margin="23.2,2.6,22.4,1.6" TextWrapping="Wrap" Width="120" Grid.Row="2" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged">
+                                    <TextBox.ToolTip>
+                                        <ToolTip  Foreground="Black">
+                                            <StackPanel>
+                                                <TextBlock Text="Модуль упругости червячного колеса" />
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </TextBox.ToolTip>
+                                </TextBox>
+                                <TextBox x:Name="Puasson_gearValue" Grid.Column="2" Height="23" Margin="23.2,2.4,22.4,1.8" TextWrapping="Wrap" Width="120" Grid.Row="3" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged">
+                                    <TextBox.ToolTip>
+                                        <ToolTip  Foreground="Black">
+                                            <StackPanel>
+                                                <TextBlock Text="Коэффициент Пуассона червячного колеса" />
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </TextBox.ToolTip>
+                                </TextBox>
+                                <TextBox x:Name="Puasson_wormValue" Grid.Column="1" Margin="22.6,1.4,23.8,2.8" TextWrapping="Wrap" Grid.Row="3" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged">
+                                    <TextBox.ToolTip>
+                                        <ToolTip  Foreground="Black">
+                                            <StackPanel>
+                                                <TextBlock Text="Коэффициент Пуассона червяка" />
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </TextBox.ToolTip>
+                                </TextBox>
+                                <TextBox x:Name="E_wormValue" Grid.Column="1" Margin="22.6,1.6,23.8,2.6" TextWrapping="Wrap" Grid.Row="2" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged">
+                                    <TextBox.ToolTip>
+                                        <ToolTip  Foreground="Black">
+                                            <StackPanel>
+                                                <TextBlock Text="Модуль упругости червяка" />
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </TextBox.ToolTip>
+                                </TextBox>
+                                <TextBox x:Name="Kmat_wormValue" Grid.Column="1" Margin="22.4,1.2,24.2,3" TextWrapping="Wrap" Grid.Row="4" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged">
+                                    <TextBox.ToolTip>
+                                        <ToolTip  Foreground="Black">
+                                            <StackPanel>
+                                                <TextBlock Text="Коэффициент материала червяка" />
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </TextBox.ToolTip>
+                                </TextBox>
                             </Grid>
                         </Grid>
                     </GroupBox>
@@ -407,9 +927,33 @@
                         </DataGrid>
                     </StackPanel>
                 </Grid>
-                <Button Content="Рассчитать" HorizontalAlignment="Left" Margin="420,7.4,0,0" VerticalAlignment="Top" Width="75" Height="24" Padding="1,1,1,0" Grid.Row="3" Click="buCalc_Click"/>
-                <Button Content="ОК" HorizontalAlignment="Left" Margin="512,7.4,0,0" VerticalAlignment="Top" Width="75" Height="24" Grid.Row="3"/>
-                <Button Content="Отмена" HorizontalAlignment="Left" Margin="603,7.4,0,0" VerticalAlignment="Top" Width="75" Height="24" Grid.Row="3" Click="buCancel_Click"/>
+                <Button Content="Рассчитать" HorizontalAlignment="Left" Margin="420,6,0,0" VerticalAlignment="Top" Width="75" Height="24" Padding="1,1,1,0" Grid.Row="3" Click="buCalc_Click">
+                    <Button.ToolTip>
+                        <ToolTip  Foreground="Black">
+                            <StackPanel>
+                                <TextBlock Text="Запуск вычислений" />
+                            </StackPanel>
+                        </ToolTip>
+                    </Button.ToolTip>
+                </Button>
+                <Button Content="ОК" HorizontalAlignment="Left" Margin="512,6,0,0" VerticalAlignment="Top" Width="75" Height="24" Grid.Row="3">
+                    <Button.ToolTip>
+                        <ToolTip  Foreground="Black">
+                            <StackPanel>
+                                <TextBlock Text="Запуск моделирования" />
+                            </StackPanel>
+                        </ToolTip>
+                    </Button.ToolTip>
+                </Button>
+                <Button Content="Отмена" HorizontalAlignment="Left" Margin="603,6,0,0" VerticalAlignment="Top" Width="75" Height="24" Grid.Row="3" Click="buCancel_Click">
+                    <Button.ToolTip>
+                        <ToolTip  Foreground="Black">
+                            <StackPanel>
+                                <TextBlock Text="Отменить операцию" />
+                            </StackPanel>
+                        </ToolTip>
+                    </Button.ToolTip>
+                </Button>
             </Grid>
 
 

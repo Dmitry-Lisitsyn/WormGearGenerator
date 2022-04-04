@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using AngelSix.SolidDna;
-
+using System.Windows;
 
 namespace WormGearGenerator
 {
@@ -16,7 +15,6 @@ namespace WormGearGenerator
         public MaterialHelper(SldWorks solidWorks)
         {
             swApp = solidWorks;
-
         }
 
         public List<Material> GetMaterials(string database = null)
@@ -25,56 +23,51 @@ namespace WormGearGenerator
             // Пустой лист
             var list = new List<Material>();
 
-            // If we are using a specified database, use that
+            // если выбираем конкретную базу, то читаем ее
             if (database != null)
                 ReadMaterials(database, ref list);
             else
             {
-                // Otherwise, get all known ones
-                // Get the list of material databases (full paths to SLDMAT files)
+                //если нет, то считываем базы из корневой папки
                 var databases = (string[])swApp.GetMaterialDatabases();
 
-                // Get materials from each
+                // берем оттуда материалы
                 if (databases != null)
                     foreach (var d in databases)
                         ReadMaterials(d, ref list);
             }
 
-            // Order the list
+            // сортируем по имени и возвращаем
             return list.OrderBy(f => f.DisplayName).ToList();
 
         }
 
         private static void ReadMaterials(string database, ref List<Material> list)
         {
-            // First make sure the file exists
+            // Проверяем, существует ли файл с базой 
             if (!File.Exists(database))
-                throw new SolidDnaException(
-                    SolidDnaErrors.CreateError(
-                        SolidDnaErrorTypeCode.SolidWorksApplication,
-                        SolidDnaErrorCode.SolidWorksApplicationGetMaterialsFileNotFoundError,
-                        Localization.GetString("SolidWorksApplicationGetMaterialsFileNotFoundError")));
+                Console.WriteLine("Указанной базы материалов не существует");
 
             try
             {
-                // File should be an XML document, so attempt to read that
+                // если найден, то открываем его
                 using (var stream = File.Open(database, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    // Try and parse the Xml
+                    // парсим как хмл
                     var xmlDoc = XDocument.Load(stream);
 
                     var materials = new List<Material>();
 
-                    // Iterate all classification nodes and inside are the materials
+                    // проходим по структуре документа 
                     xmlDoc.Root.Elements("classification")?.ToList()?.ForEach(f =>
                     {
-                        // Get classification name
+                        // берем классификацию
                         var classification = f.Attribute("name")?.Value;
 
-                        // Iterate all materials
+                        // проходим по всем материалам
                         f.Elements("material").ToList().ForEach(material =>
                         {
-                            // Add them to the list
+                            // добавляем их в лист 
                             materials.Add(new Material
                             {
                                 Database = database,
@@ -86,22 +79,33 @@ namespace WormGearGenerator
                         });
                     });
 
-                    // If we found any materials, add them
+                    // Все что нашли добавляем в лист
                     if (materials.Count > 0)
                         list.AddRange(materials);
                 }
             }
             catch (Exception ex)
             {
-                // If we crashed for any reason during parsing, wrap in SolidDna exception
-                if (!File.Exists(database))
-                    throw new SolidDnaException(
-                        SolidDnaErrors.CreateError(
-                            SolidDnaErrorTypeCode.SolidWorksApplication,
-                            SolidDnaErrorCode.SolidWorksApplicationGetMaterialsFileFormatError,
-                            Localization.GetString("SolidWorksApplicationGetMaterialsFileFormatError"),
-                            ex));
+                // если у нас ошиибка, выводим ее
+                MessageBox.Show(ex.Message);
             }
         }
+    }
+    public class Material
+        {
+
+        public string Classification { get; set; }
+
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+
+        public string Database { get; set; }
+
+        public string DisplayName => $"{Name} ({Classification})";
+
+        public bool DatabaseFileFound { get; set; }
+
+
     }
 }

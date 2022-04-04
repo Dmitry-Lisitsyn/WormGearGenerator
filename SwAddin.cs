@@ -41,7 +41,7 @@ namespace WormGearGenerator
            [Title("Worm Gear Generator")]
            [Description("Description of addin")]
            [Icon(typeof(Resources), nameof(Resources.Icon))]
-           [CommandItemInfo(true, true, WorkspaceTypes_e.Part, true)]
+           [CommandItemInfo(true, true, WorkspaceTypes_e.Assembly, true)]
             CreateWpfForm
         }
 
@@ -52,7 +52,7 @@ namespace WormGearGenerator
 
         private void OnCommandClick(WormGear cmd)
         {
-            var activeDoc = Application.Documents.Active;
+            //var activeDoc = Application.Documents.Active;
 
             switch (cmd)
             {

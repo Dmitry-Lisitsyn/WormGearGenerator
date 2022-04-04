@@ -17,6 +17,7 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Windows.Media;
 
 namespace WormGearGenerator
 {
@@ -28,18 +29,27 @@ namespace WormGearGenerator
         float Module;
         float PressureAngle;
         float Peredat;
-        float aw, Alpha, da1, da2, d1, d2, df1, df2;
+        float aw, Alpha, da1, da2, d1, d2, df1, df2, dw1, dw2;
         float Fn, Fr, Ft1, Ft2, Fa1, Fa2, vk, bending_stress, contact_stress;
-        object[] vMatDBarr = null;
-        object[] vMatDB = null;
-        
-        //public ModelDoc2 swModel;
+        public SldWorks swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
+        string AssemblyPath;
+        private string baseDirectory  = System.Environment.CurrentDirectory;
 
         public MainWindow()
         {
+            
+            InitializeFolder();
             InitializeComponent();
             InitializeStartData();
             InitializeCalculate();
+        }
+
+        private void InitializeFolder()
+        {
+            System.Windows.Forms.FolderBrowserDialog target = new System.Windows.Forms.FolderBrowserDialog();
+            target.Description = "Выберите папку для сохранения сборки";
+            target.ShowDialog();
+            AssemblyPath = target.SelectedPath;
         }
 
         private void InitializeStartData()
@@ -88,7 +98,7 @@ namespace WormGearGenerator
 
             //Значения червяка
             Kol_vitkovValue.Text = "4";
-            Kol_oborotovValue.Text = "10";
+            LengthValue.Text = "140";
             Koef_diamValue.Text = "10";
 
             //Значения колеса
@@ -121,11 +131,11 @@ namespace WormGearGenerator
             //Debug.Print("");
 
             //Заполнение материалов
-            var swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
+
             MaterialHelper MatObj = new MaterialHelper(swApp);
             var lister = MatObj.GetMaterials();
             MatGear_combo.ItemsSource = MatWorm_combo.ItemsSource = lister;
-            MatWorm_combo.DisplayMemberPath = MatGear_combo.DisplayMemberPath =  "DisplayName";
+            MatWorm_combo.DisplayMemberPath = MatGear_combo.DisplayMemberPath = "DisplayName";
 
             //Значения силовых характеристик
             KPDValue.IsEnabled = false;
@@ -155,15 +165,15 @@ namespace WormGearGenerator
 
         private void InitializeCalculate()
         {
-
             //Значения внутри полей
             Module = float.Parse(((Module_combo.Text).Split(' ')[0]), CultureInfo.InvariantCulture.NumberFormat);
 
             //Угол профиля
             PressureAngle = float.Parse(((ProfileDeg_combo.Text).Split(' ')[0]), CultureInfo.InvariantCulture.NumberFormat);
 
-            //Длина нарезной части
-            Length_narezValue.Text = (Convert.ToDouble(Kol_oborotovValue.Text) * Module * Math.PI).ToString("0.00");
+            //Количество оборотов витков
+            Kol_oborotovValue.Text = (Math.Floor(float.Parse(LengthValue.Text) / (Module * Math.PI)) + 3).ToString();
+           
 
             //Расчет значений передаточного числа и зубьев колеса
             if (radioParam.IsChecked == true)
@@ -203,14 +213,13 @@ namespace WormGearGenerator
             }
 
             
-
             //Делительные диаметры
             d1 = float.Parse(Koef_diamValue.Text) * Module;
             d2 = float.Parse(Teeth_gearValue.Text) * Module;
 
             //Начальные диаметры (dw)
-            float dw1 = Module * (float.Parse(Koef_diamValue.Text) + 2 * float.Parse(Koef_smeshValue.Text));
-            float dw2 = d2;
+            dw1 = Module * (float.Parse(Koef_diamValue.Text) + 2 * float.Parse(Koef_smeshValue.Text));
+            dw2 = d2;
 
             //Диаметры вершин (da)
             da1 = d1 + (2 * Module);
@@ -374,6 +383,16 @@ namespace WormGearGenerator
 
             RefreshTable_Model(aw, Module, Alpha, da1, d1, df1, da2, d2, df2);
             RefreshTable_Calc(Fr, vk, Khl, Ft1, Fa1, Ft2, Fa2, Fn, contact_stress, bending_stress);
+
+            var bc = new BrushConverter();
+            var color = Brushes.White;
+
+            TableGeneral_Model.RowBackground = color;
+            TableWorm_Model.RowBackground = color;
+            TableGear_Model.RowBackground = color;
+            TableGeneral_Calc.RowBackground = color;
+            TableWorm_Calc.RowBackground = color;
+            TableGear_Calc.RowBackground = color;
         }
 
         private void RefreshTable_Model(float aw_Table, float Module_Table, float Alpha_Table,
@@ -540,6 +559,116 @@ namespace WormGearGenerator
             }
         }
 
+        private void data_TextChanged(object sender, TextChangedEventArgs e) { changeBack_Touched(); }
+        private void combo_SelectionChanged(object sender, SelectionChangedEventArgs e) { changeBack_Touched(); }
+
+        private void changeBack_Touched()
+        {
+            var bc = new BrushConverter();
+            var color = Brushes.LightGray;
+
+            TableGeneral_Model.RowBackground = color;
+            TableWorm_Model.RowBackground = color;
+            TableGear_Model.RowBackground = color;
+            TableGeneral_Calc.RowBackground = color;
+            TableWorm_Calc.RowBackground = color;
+            TableGear_Calc.RowBackground = color;
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var bc = new BrushConverter();
+            var color = bc.ConvertFromString("#FFCBE4FF");
+
+            if (this.Height == 660)
+            {
+                ExpanderModel.IsExpanded = true;
+                ExpanderCalculations.IsExpanded = true;
+            }
+            else if (this.Height == 550.4)
+            {
+                ExpanderModel.IsExpanded = false;
+                ExpanderCalculations.IsExpanded = false;
+            }
+
+            if (this.Width == 932)
+            {
+                Expander_showCalc.Background = (Brush)color;
+                Expander_showCalc1.Background = (Brush)color;
+            }
+            else if (this.Width == 704)
+            {
+                Expander_showCalc.Background = Brushes.White;
+                Expander_showCalc1.Background = Brushes.White;
+            }
+
+        }
+
+        private void create_ComponentsClick(object sender, RoutedEventArgs e)
+        {
+            //!проверка путей и подтверждение построения
+
+            try
+            {
+                this.Hide();
+
+                string path = AssemblyPath;
+
+                //передача параметров червяка
+                Worm worm = new Worm(baseDirectory);
+                worm._da = da1;
+                worm._d = d1;
+                worm._df = df1;
+                worm._pressureAngle = PressureAngle;
+                worm._length = 140;
+                worm._module = Module;
+                worm._z = float.Parse(Kol_vitkovValue.Text);
+                if (radioLeft.IsChecked == true)
+                    worm._rightOrLeft = 0;
+                else
+                    worm._rightOrLeft = 1;
+                worm._aw = aw;
+                worm._path = path;
+                worm.create();
+
+                //передача параметров колеса
+                Gear gear = new Gear(baseDirectory);
+                gear._aw = aw;
+                gear._b = float.Parse(Width_gearValue.Text);
+                gear._z = float.Parse(Teeth_gearValue.Text);
+                gear._df = df2;
+                gear._da = da2;
+                gear._beta = float.Parse(DegTeethValue.Text);
+                gear._pressureAngle = PressureAngle;
+                gear._df1 = df1;
+                gear._da1 = da1;
+                gear._d1 = d1;
+                gear._px = (float)(Module * Math.PI);
+                gear._z1 = float.Parse(Kol_vitkovValue.Text);
+                gear._dw = dw2;
+                gear._dae = 260;
+                if (radioLeft.IsChecked == true)
+                    gear._rightOrLeft = 0;
+                else
+                    gear._rightOrLeft = 1;
+                gear._path = path;
+                gear.create();
+
+                SolidWorker sldobj = new SolidWorker();
+
+                //создаем сборку
+                sldobj.CreateAssembly(path);
+
+                //добавляем компоненты
+                sldobj.AddComponent(worm, gear);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка во время построения:" + ex.Message);
+                this.Show();
+            }
+        }
 
         private void CheckBox_Hole_Changed(object sender, RoutedEventArgs e)
         {
@@ -557,27 +686,26 @@ namespace WormGearGenerator
                 KPDValue.IsEnabled = false;
         }
 
-        private void Expander_Expanded(object sender, RoutedEventArgs e)
-        {
-            this.Height = 650;
-        }
+        private void Expander_Expanded(object sender, RoutedEventArgs e) { this.Height = 660; }
 
-        private void Expander_Collapsed(object sender, RoutedEventArgs e)
-        {
-            this.Height = 550;
-        }
+        private void Expander_Collapsed(object sender, RoutedEventArgs e) { this.Height = 550; }
 
         private void Expander_Calculations_Click(object sender, RoutedEventArgs e)
         {
             if (this.Width == 932)
+            {
                 this.Width = 705;
+                this.Width = (int)this.Width;
+            }
             else
+            {
                 this.Width = 932;
+            }
         }
 
         private void buCancel_Click(object sender, RoutedEventArgs e) { this.Close(); }
 
-        private void buCalc_Click(object sender, RoutedEventArgs e) { InitializeCalculate(); }
+        private void buCalc_Click(object sender, RoutedEventArgs e) {  InitializeCalculate();  }
 
         private void radioButtonParam_CheckedChanged(object sender, EventArgs e)
         {
@@ -718,6 +846,7 @@ namespace WormGearGenerator
                     Hole_widthValue.Text = data["hole_diameter"];
                 }
 
+                LengthValue.Text = data["worm_length"];
                 Kol_vitkovValue.Text = data["number_of_turns"];
                 Kol_oborotovValue.Text = data["number_of_turnsVit"];
                 Koef_diamValue.Text = data["diameter_factor"];
@@ -794,6 +923,7 @@ namespace WormGearGenerator
                 {"tooth_angle", DegTeethValue.Text},
                 {"number_of_turns", Kol_vitkovValue.Text},
                 {"number_of_turnsVit", Kol_oborotovValue.Text},
+                {"worm_length", LengthValue.Text},
                 {"diameter_factor", Koef_diamValue.Text},
                 {"average_diameter", Av_diamValue.Text},
                 {"number_of_teeth", Teeth_gearValue.Text},
@@ -829,7 +959,7 @@ namespace WormGearGenerator
                 {"Угол профиля, °", Alpha.ToString()},
                 {"Количество витков", Kol_vitkovValue.Text},
                 {"Количество оборотов витков", Kol_oborotovValue.Text},
-                {"Длина нарезной части червяка, мм", Length_narezValue.Text},
+                {"Длина червяка, мм", LengthValue.Text},
                 {"Коэффициент диаметра", Koef_diamValue.Text},
                 {"Наружный диаметр червяка", da1.ToString()},
                 {"Средний диаметр червяка", Av_diamValue.Text},
