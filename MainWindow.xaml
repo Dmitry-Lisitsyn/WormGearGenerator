@@ -6,10 +6,6 @@
         xmlns:local="clr-namespace:WormGearGenerator"
         mc:Ignorable="d"
         Title="Worm Gear Generator" Height="660" Width="932" FontFamily="Javanese Text" VerticalAlignment="Center" ResizeMode="NoResize" SizeChanged="Window_SizeChanged" >
-    <Window.Resources>
-        <Image x:Key="open" Source="img/openCalculation.png" Height="18" Width="17" />
-        <Image x:Key="close" Source="img/closeCalculation.png" Height="18" Width="17"/>
-    </Window.Resources>
 
     <TabControl HorizontalAlignment="Left" Height="630" VerticalAlignment="Top" Width="919" RenderTransformOrigin="0.399,0.434">
         <TabItem Margin="2,0,-1.8,-0.4" RenderTransformOrigin="0.5,0.506" Width="82">
@@ -91,7 +87,7 @@
                                         <StackPanel>
                                             <TextBlock Text="Параметр задает количество витков червяка."/>
                                             <TextBlock Text="От данного параметра зависит передаточное отношение червячной передачи и угол наклона зубьев." />
-                                            <Image Source="img/ToWord.png" />
+                                            <Image Source="img/Num_vitkov.png" Width="200" Height="150" />
                                         </StackPanel>
                                     </ToolTip>
                                 </TextBox.ToolTip>
@@ -102,7 +98,7 @@
                                         <StackPanel >
                                             <TextBlock Text="Параметр показывает количество оборотов витков червяка." />
                                             <TextBlock Text="Данный параметр зависит от задаваемой длины червяка и модуля." />
-                                            <Image Source="img/ToWord.png" />
+                                            <Image Source="img/Kol_vitkov.png" />
                                         </StackPanel>
                                     </ToolTip>
                                 </TextBox.ToolTip>
@@ -113,7 +109,7 @@
                                         <StackPanel>
                                             <TextBlock Text="Параметр задает длину червяка." />
                                             <TextBlock Text="От данного параметра зависит количество оборотов витков." />
-                                            <Image Source="img/ToWord.png" />
+                                            <Image Source="img/Length_worm.png"  Width="200"/>
                                         </StackPanel>
                                     </ToolTip>
                                 </TextBox.ToolTip>
@@ -123,7 +119,6 @@
                                     <ToolTip  Foreground="Black">
                                         <StackPanel>
                                             <TextBlock Text="Коэффициент диаметра червяка q является отношением делительного диаметра червяка к его расчетному модулю." />
-                                            <Image Source="img/ToWord.png" />
                                         </StackPanel>
                                     </ToolTip>
                                 </TextBox.ToolTip>
@@ -133,7 +128,7 @@
                                     <ToolTip  Foreground="Black">
                                         <StackPanel>
                                             <TextBlock Text="Диаметр средней концентрической окружности червяка" />
-                                            <Image Source="img/ToWord.png" />
+                                            <Image Source="img/Av_diam.png"  Width="170"/>
                                         </StackPanel>
                                     </ToolTip>
                                 </TextBox.ToolTip>
@@ -145,7 +140,7 @@
                                         <StackPanel>
                                             <TextBlock Text="Параметр задает количество витков червяка."/>
                                             <TextBlock Text="От данного параметра зависит передаточное отношение червячной передачи и угол наклона зубьев." />
-                                            <Image Source="img/ToWord.png" />
+                                            <Image Source="img/Num_vitkov.png" Width="200" Height="150" />
                                         </StackPanel>
                                     </ToolTip>
                                 </Label.ToolTip>
@@ -156,7 +151,7 @@
                                         <StackPanel >
                                             <TextBlock Text="Параметр показывает количество оборотов витков червяка." />
                                             <TextBlock Text="Данный параметр зависит от задаваемой длины червяка и модуля." />
-                                            <Image Source="img/ToWord.png" />
+                                            <Image Source="img/Kol_vitkov.png" />
                                         </StackPanel>
                                     </ToolTip>
                                 </Label.ToolTip>
@@ -167,7 +162,7 @@
                                         <StackPanel>
                                             <TextBlock Text="Параметр задает длину червяка." />
                                             <TextBlock Text="От данного параметра зависит количество оборотов витков." />
-                                            <Image Source="img/ToWord.png" />
+                                            <Image Source="img/Length_worm.png"  Width="200"/>
                                         </StackPanel>
                                     </ToolTip>
                                 </Label.ToolTip>
@@ -177,7 +172,6 @@
                                     <ToolTip  Foreground="Black">
                                         <StackPanel>
                                             <TextBlock Text="Коэффициент диаметра червяка q является отношением делительного диаметра червяка к его расчетному модулю." />
-                                            <Image Source="img/ToWord.png" />
                                         </StackPanel>
                                     </ToolTip>
                                 </Label.ToolTip>
@@ -186,8 +180,8 @@
                                 <Label.ToolTip>
                                     <ToolTip  Foreground="Black">
                                         <StackPanel>
-                                            <TextBlock Text="Коэффициент диаметра червяка q является отношением делительного диаметра червяка к его расчетному модулю." />
-                                            <Image Source="img/ToWord.png" />
+                                            <TextBlock Text="Диаметр средней концентрической окружности червяка" />
+                                            <Image Source="img/Av_diam.png"  Width="170"/>
                                         </StackPanel>
                                     </ToolTip>
                                 </Label.ToolTip>
@@ -215,7 +209,7 @@
                                     <ToolTip  Foreground="Black">
                                         <StackPanel>
                                             <TextBlock Text="Количество зубьев на червячном колесе. От данного параметра зависит передаточное число." />
-                                            <Image Source="img/ToWord.png" />
+                                            <Image Source="img/Teeth_gear.png" Width="220" />
                                         </StackPanel>
                                     </ToolTip>
                                 </TextBox.ToolTip>
@@ -225,7 +219,7 @@
                                     <ToolTip  Foreground="Black">
                                         <StackPanel>
                                             <TextBlock Text="Параметр задает ширину проектируемого червячного колеса" />
-                                            <Image Source="img/ToWord.png" />
+                                            <Image Source="img/Width_gear.png" Height="200" Width="150" />
                                         </StackPanel>
                                     </ToolTip>
                                 </TextBox.ToolTip>
@@ -236,7 +230,6 @@
                                         <StackPanel>
                                             <TextBlock Text="Коэффициент определяет геометрию колеса." />
                                             <TextBlock Text="Положительное значение – перемещение червяка от колеса, отрицательное - перемещение червяка к колесу." />
-                                            <Image Source="img/ToWord.png" />
                                         </StackPanel>
                                     </ToolTip>
                                 </TextBox.ToolTip>
@@ -247,7 +240,7 @@
                                     <ToolTip  Foreground="Black">
                                         <StackPanel>
                                             <TextBlock Text="Количество зубьев на червячном колесе. От данного параметра зависит передаточное число." />
-                                            <Image Source="img/ToWord.png" />
+                                            <Image Source="img/Teeth_gear.png" Width="220" />
                                         </StackPanel>
                                     </ToolTip>
                                 </Label.ToolTip>
@@ -257,7 +250,7 @@
                                     <ToolTip  Foreground="Black">
                                         <StackPanel>
                                             <TextBlock Text="Параметр задает ширину проектируемого червячного колеса" />
-                                            <Image Source="img/ToWord.png" />
+                                            <Image Source="img/Width_gear.png" Height="200" Width="150" />
                                         </StackPanel>
                                     </ToolTip>
                                 </Label.ToolTip>
@@ -268,7 +261,6 @@
                                         <StackPanel>
                                             <TextBlock Text="Коэффициент определяет геометрию колеса." />
                                             <TextBlock Text="Положительное значение – перемещение червяка от колеса, отрицательное - перемещение червяка к колесу." />
-                                            <Image Source="img/ToWord.png" />
                                         </StackPanel>
                                     </ToolTip>
                                 </Label.ToolTip>
@@ -279,7 +271,7 @@
                                     <ToolTip  Foreground="Black">
                                         <StackPanel>
                                             <TextBlock Text="Параметр задает диаметр отверстия червячного колеса" />
-                                            <Image Source="img/ToWord.png" />
+                                            <Image Source="img/Hole_gear.png" Width="200" />
                                         </StackPanel>
                                     </ToolTip>
                                 </Label.ToolTip>
@@ -289,7 +281,7 @@
                                     <ToolTip  Foreground="Black">
                                         <StackPanel>
                                             <TextBlock Text="Параметр задает диаметр отверстия червячного колеса" />
-                                            <Image Source="img/ToWord.png" />
+                                            <Image Source="img/Hole_gear.png" Width="200" />
                                         </StackPanel>
                                     </ToolTip>
                                 </CheckBox.ToolTip>
@@ -330,7 +322,6 @@
                                         <TextBlock Text="Передаточное число червячной передачи равно отношению числа зубьев червячного колеса к числу витков червяка."/>
                                         <TextBlock Text="Передаточное число показывает, насколько данная пара зацепления в принципе может изменить крутящий момент" />
                                         <TextBlock Text="в ту или иную сторону, линейное соотношение диаметров зубчатых колёс." />
-                                        <Image Source="img/ToWord.png" />
                                     </StackPanel>
                                 </ToolTip>
                             </Label.ToolTip>
@@ -342,7 +333,6 @@
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
                                         <TextBlock Text="Угол наклона зуба" />
-                                        <Image Source="img/ToWord.png" />
                                     </StackPanel>
                                 </ToolTip>
                             </Label.ToolTip>
@@ -355,7 +345,6 @@
                                         <TextBlock Text="Модуль – число миллиметров диаметра делительной окружности, приходящееся на один зуб." />
                                         <TextBlock Text="Самый главный параметр, стандартизирован, определяется из прочностного расчёта зубчатых передач." />
                                         <TextBlock Text="Чем больше нагружена передача, тем выше значение модуля. Через него выражаются все остальные параметры." />
-                                        <Image Source="img/ToWord.png" />
                                     </StackPanel>
                                 </ToolTip>
                             </ComboBox.ToolTip>
@@ -365,7 +354,7 @@
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
                                         <TextBlock Text="Острый угол между касательной к профилю в данной точке и радиусом - вектором, проведенным в данную точку из центра" />
-                                        <Image Source="img/ToWord.png" />
+                                        <Image Source="img/Pres_angle.png"  Width="200"/>
                                     </StackPanel>
                                 </ToolTip>
                             </ComboBox.ToolTip>
@@ -375,7 +364,6 @@
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
                                         <TextBlock Text="Угол наклона зуба" />
-                                        <Image Source="img/ToWord.png" />
                                     </StackPanel>
                                 </ToolTip>
                             </TextBox.ToolTip>
@@ -480,7 +468,7 @@
                         </ToolTip>
                     </Button.ToolTip>
                 </Button>
-                <Button x:Name="buCreate_Components" Content="ОК" HorizontalAlignment="Left" Margin="512,432,0,-198.4" VerticalAlignment="Top" Width="75" Height="24" Click="create_ComponentsClick" >
+                <Button x:Name="buCreate_Components" Content="ОК" HorizontalAlignment="Left" Margin="512,432,0,-198.4" VerticalAlignment="Top" Width="75" Height="24" Click="confirm_BuildClick" >
                     <Button.ToolTip>
                         <ToolTip  Foreground="Black">
                             <StackPanel>
@@ -677,7 +665,6 @@
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
                                         <TextBlock Text="Коэффициент полезного действия червячной передачи" />
-                                        <Image Source="img/ToWord.png" />
                                     </StackPanel>
                                 </ToolTip>
                             </TextBox.ToolTip>

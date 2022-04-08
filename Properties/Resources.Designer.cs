@@ -63,9 +63,19 @@ namespace WormGearGenerator.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap closeCalculation {
+        internal static System.Drawing.Bitmap Av_diam {
             get {
-                object obj = ResourceManager.GetObject("closeCalculation", resourceCulture);
+                object obj = ResourceManager.GetObject("Av_diam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Hole_gear {
+            get {
+                object obj = ResourceManager.GetObject("Hole_gear", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +93,39 @@ namespace WormGearGenerator.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Kol_vitkov {
+            get {
+                object obj = ResourceManager.GetObject("Kol_vitkov", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Left {
             get {
                 object obj = ResourceManager.GetObject("Left", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Length_worm {
+            get {
+                object obj = ResourceManager.GetObject("Length_worm", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Num_vitkov {
+            get {
+                object obj = ResourceManager.GetObject("Num_vitkov", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -106,6 +146,16 @@ namespace WormGearGenerator.Properties {
         internal static System.Drawing.Bitmap openCalculation {
             get {
                 object obj = ResourceManager.GetObject("openCalculation", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Pres_angle {
+            get {
+                object obj = ResourceManager.GetObject("Pres_angle", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -153,6 +203,16 @@ namespace WormGearGenerator.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Teeth_gear {
+            get {
+                object obj = ResourceManager.GetObject("Teeth_gear", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ToExcel {
             get {
                 object obj = ResourceManager.GetObject("ToExcel", resourceCulture);
@@ -176,6 +236,16 @@ namespace WormGearGenerator.Properties {
         internal static System.Drawing.Bitmap ToWord {
             get {
                 object obj = ResourceManager.GetObject("ToWord", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Width_gear {
+            get {
+                object obj = ResourceManager.GetObject("Width_gear", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

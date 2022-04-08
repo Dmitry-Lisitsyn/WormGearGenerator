@@ -238,6 +238,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfirmFolders.xaml.cs">
+      <DependentUpon>ConfirmFolders.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gear.cs" />
     <Compile Include="MaterialHelper.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -248,6 +251,10 @@
     <Compile Include="SolidWorker.cs" />
     <Compile Include="SwAddin.cs" />
     <Compile Include="Worm.cs" />
+    <Page Include="ConfirmFolders.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -275,6 +282,8 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="res\GearTemp.SLDPRT" />
+    <None Include="res\WormTemp.SLDPRT" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -342,7 +351,28 @@
     <None Include="img\Icon.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="img\closeCalculation.png" />
+    <Resource Include="img\Av_diam.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\Hole_gear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\Kol_vitkov.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\Length_worm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\Num_vitkov.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\Pres_angle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\Teeth_gear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\Width_gear.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Xarial.XCad.SolidWorks.0.7.12\build\Xarial.XCad.SolidWorks.targets" Condition="Exists('packages\Xarial.XCad.SolidWorks.0.7.12\build\Xarial.XCad.SolidWorks.targets')" />
