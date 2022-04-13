@@ -56,9 +56,9 @@ namespace WormGearGenerator
             string[] xcompnames = new string[2];
 
             xcompnames[0] = worm._path;
-            //worm._path + "\\" + "WormGenerate.sldprt";
+
             xcompnames[1] = gear._path;
-            //gear._path + "\\" + "Gear.sldprt";
+
 
             string[] xcoorsysnames = new string[2];
 
@@ -116,7 +116,7 @@ namespace WormGearGenerator
         }
 
        
-        public void AddMates(string assemblyPath, string assemblyName, string wormName, string gearName, float aw, float teethGear, float teethWorm)
+        public void AddMates(string assemblyPath, string assemblyName, string wormName, string gearName, float aw, float teethGear, float teethWorm, int rightOrLeft)
         {
             ModelDoc2 swModel;
             AssemblyDoc swAssy;
@@ -126,6 +126,11 @@ namespace WormGearGenerator
             DistanceMateFeatureData swDistMateData;
             int errorCode1 = 0;
             int mateSelMark;
+            bool flip;
+            if (rightOrLeft == 0)
+                flip = true;
+            else
+                flip = false;
 
             swAssy = (AssemblyDoc)swApp.ActivateDoc3(assemblyPath, true, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, ref errorCode1);
             swModel = (ModelDoc2)swAssy;
@@ -168,7 +173,7 @@ namespace WormGearGenerator
             swModel.ClearSelection2(true);
             swModelDocExt.SelectByID2("Line2@Sketch5@" + wormName + "-1@" + assemblyName, "EXTSKETCHSEGMENT", 0, 0, 0, true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
             swModelDocExt.SelectByID2("Line9@Sketch2@" + gearName + "-1@" + assemblyName, "EXTSKETCHSEGMENT", 0, 0, 0, true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
-            swAssy.AddMate5((int)swMateType_e.swMateGEAR, (int)swMateAlign_e.swMateAlignALIGNED, true, 0, 0, 0, teethWorm/1000, teethGear/1000, 0, 0, 0, false, false, 0, out errorCode1);
+            swAssy.AddMate5((int)swMateType_e.swMateGEAR, (int)swMateAlign_e.swMateAlignALIGNED, flip, 0, 0, 0, teethWorm/1000, teethGear/1000, 0, 0, 0, false, false, 0, out errorCode1);
 
             swModel.ClearSelection2(true);
             swModel.ForceRebuild3(false);
@@ -177,64 +182,3 @@ namespace WormGearGenerator
 
     }
 }
-//public void ImportToAssembly(bool worm, bool gear)
-//{
-
-//    //Сохраняю новую сборку и сую туда компоненты
-//    ModelDoc2 model = default(ModelDoc2);
-//    model = (ModelDoc2)swApp.ActiveDoc;
-//    AssemblyDoc swAss = default(AssemblyDoc);
-//    PartDoc swWorm = default(PartDoc);
-
-//    ModelDocExtension swModelDocExt = default(ModelDocExtension);
-
-//    int errors = 0;
-//    int warnings = 0;
-//    string fileNameAss = null;
-//    string fileNameWorm = null;
-
-//    // Сохраняю путь для новой сборки
-//    string path = null;
-//    System.Windows.Forms.SaveFileDialog SFD = new System.Windows.Forms.SaveFileDialog();
-//    SFD.Filter = "Assembly (*.sldasm)|*.sldasm";
-//    SFD.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
-//    if (SFD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-//        path = SFD.FileName;
-//    else
-//        return;
-
-//    //активное окно 
-//    model = (ModelDoc2)swApp.ActiveDoc;
-
-//    //Сохраняю сборку 
-//    model.SaveAs3(path, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_CopyAndOpen);
-
-//    //имя новой сборки = че сохранял
-//    string workingDirectory = System.Environment.CurrentDirectory;
-//    //fileNameAss = Directory.GetParent(workingDirectory).Parent.FullName + "\\res\\Ass.SLDASM";
-//    fileNameAss = path;
-
-//    //открываю эту сборку 
-//    swAss = (AssemblyDoc)swApp.OpenDoc6(fileNameAss, (int)swDocumentTypes_e.swDocASSEMBLY, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
-//    model = (ModelDoc2)swAss;
-
-//    //путь до червяка
-//    model = null;
-//    fileNameWorm = Directory.GetParent(workingDirectory).Parent.FullName + "\\res\\HandWorm.SLDPRT";
-
-//    //открываю червяка
-//    swWorm = (PartDoc)swApp.OpenDoc6(fileNameWorm, (int)swDocumentTypes_e.swDocPART, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
-//    model = (ModelDoc2)swWorm;
-
-//    //возвращаюсь к сборке
-//    model = (ModelDoc2)swApp.ActivateDoc3(fileNameAss, true, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, ref errors);
-
-//    //вставляю червяка в сборку
-//    swAss = (AssemblyDoc)model;
-//    swAss.AddComponent4(fileNameWorm, "Default", 0, 0, 0);
-
-//    //закрываю док с червяком
-//    swApp.CloseDoc(fileNameWorm);
-//    model.ViewZoomtofit2();
-
-//}

@@ -73,6 +73,16 @@ namespace WormGearGenerator.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap calc {
+            get {
+                object obj = ResourceManager.GetObject("calc", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Hole_gear {
             get {
                 object obj = ResourceManager.GetObject("Hole_gear", resourceCulture);
@@ -226,6 +236,16 @@ namespace WormGearGenerator.Properties {
         internal static System.Drawing.Bitmap ToPdf {
             get {
                 object obj = ResourceManager.GetObject("ToPdf", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ToTxt {
+            get {
+                object obj = ResourceManager.GetObject("ToTxt", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

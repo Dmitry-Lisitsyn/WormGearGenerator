@@ -20,6 +20,8 @@ namespace WormGearGenerator
     public partial class ConfirmFolders : Window
     {
         public string _path { get; set; }
+        public bool _isWorm { get; set; }
+        public bool _isGear { get; set; }
 
         public string pathAssembly { get; set; }
         public string pathWorm { get; set; }
@@ -31,10 +33,12 @@ namespace WormGearGenerator
         
         private Window mainWindow;
 
-        public ConfirmFolders(Window mainWindow , string path)
+        public ConfirmFolders(Window mainWindow , string path, bool isWorm, bool isGear)
         {
             this.mainWindow = mainWindow;
             _path = path;
+            _isWorm = isWorm;
+            _isGear = isGear;
 
             InitializeComponent();
             InitializeFolders();
@@ -42,17 +46,58 @@ namespace WormGearGenerator
 
         public void InitializeFolders()
         {
-            nameAssembly.Text = "WormGearAssembly";
-            nameWorm.Text = "GeneratedWorm";
-            nameGear.Text = "GeneratedGear";
+
             pathAssembly = _path;
             pathWorm = _path;
             pathGear = _path;
 
             folderAssembly.Text = pathAssembly + "\\" + nameAssembly.Text + ".sldasm";
-            folderWorm.Text = pathWorm + "\\" + nameWorm.Text + ".sldprt";
-            folderGear.Text = pathGear + "\\" + nameGear.Text + ".sldprt";
+            nameAssembly.Text = "WormGearAssembly";
+            if (_isWorm == true)
+            {
+                nameWorm.Text = "GeneratedWorm";
+                folderWorm.Text = pathWorm + "\\" + nameWorm.Text + ".sldprt";
+            }
+            else
+            {
+                folderAssembly.Text = null;
 
+                nameAssembly.TextChanged -= nameAssembly_TextChanged;
+                nameWorm.TextChanged -= nameWorm_TextChanged;
+                nameAssembly.Text = null;
+                nameAssembly.IsEnabled = false;
+
+                nameWorm.IsEnabled = false;
+
+                folderWorm.Text = null;
+
+                browseFolderWorm.IsEnabled = false;
+                browseFolderAssembly.IsEnabled = false;
+            }
+
+            if (_isGear == true)
+            {
+                nameGear.Text = "GeneratedGear";
+                folderGear.Text = pathGear + "\\" + nameGear.Text + ".sldprt";
+            }
+            else
+            {
+                folderAssembly.Text = null;
+
+                nameAssembly.TextChanged -= nameAssembly_TextChanged;
+                nameGear.TextChanged -= nameGear_TextChanged;
+
+                nameAssembly.Text = null;
+                nameAssembly.IsEnabled = false;
+
+                nameGear.IsEnabled = false;
+
+                folderGear.Text = null;
+
+                browseFolderGear.IsEnabled = false;
+                browseFolderAssembly.IsEnabled = false;
+            }        
+            
         }
 
         private void nameAssembly_TextChanged(object sender, TextChangedEventArgs e)

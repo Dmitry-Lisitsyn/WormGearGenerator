@@ -64,9 +64,40 @@ namespace WormGearGenerator
                         // берем классификацию
                         var classification = f.Attribute("name")?.Value;
 
+                        string ex = null;
+                        string nuxy = null;
+                        string sigxt = null;
+                        string sigyld = null;
+
                         // проходим по всем материалам
                         f.Elements("material").ToList().ForEach(material =>
                         {
+
+                            material.Elements("physicalproperties").ToList().ForEach(physic =>
+                            {
+                                physic.Elements("EX").ToList().ForEach(prop1 =>
+                                {
+                                    ex = prop1.Attribute("value")?.Value;
+                                });
+
+                                physic.Elements("NUXY").ToList().ForEach(prop2 =>
+                                {
+                                    nuxy = prop2.Attribute("value")?.Value;
+                                });
+
+                                physic.Elements("SIGXT").ToList().ForEach(prop3 =>
+                                {
+                                    sigxt = prop3.Attribute("value")?.Value;
+                                });
+
+                                physic.Elements("SIGYLD").ToList().ForEach(prop4 =>
+                                {
+                                    sigyld = prop4.Attribute("value")?.Value;
+                                });
+
+
+                            });
+
                             // добавляем их в лист 
                             materials.Add(new Material
                             {
@@ -75,7 +106,13 @@ namespace WormGearGenerator
                                 Classification = classification,
                                 Name = material.Attribute("name")?.Value,
                                 Description = material.Attribute("description")?.Value,
+                                Elastic_modulus = ex,
+                                Poisson_ratio = nuxy,
+                                Tensile_strength = sigxt,
+                                Yield_strength = sigyld,
+
                             });
+
                         });
                     });
 
@@ -105,6 +142,16 @@ namespace WormGearGenerator
         public string DisplayName => $"{Name} ({Classification})";
 
         public bool DatabaseFileFound { get; set; }
+
+        public string Elastic_modulus { get; set; }
+
+        public string Poisson_ratio { get; set; }
+
+        public string Tensile_strength { get; set; }
+
+        public string Yield_strength { get; set; }
+
+
 
 
     }

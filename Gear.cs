@@ -28,13 +28,13 @@ namespace WormGearGenerator
         public float _dw { get; set; }
         public float _dae { get; set; }
         public int _rightOrLeft { get; set; }
+        public float _hole_diameter { get; set; }
+        public Material _material { get; set; }
 
         public string _path { get; set; }
         private string baseDirectory;
 
         SldWorks swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
-        ModelDoc2 swModel;
-        PartDoc swComp;
 
         public Gear(string directory)
         {
@@ -43,26 +43,24 @@ namespace WormGearGenerator
 
         public void create()
         {
-            //!Изменение имени компонентов, обработка существующих файлов
-
             string fileNameWorm = Directory.GetParent(baseDirectory).Parent.FullName + "\\res\\GearTemp.SLDPRT";
             string destPath = _path;
-                //+ "\\" + "Gear.sldprt";
 
             if (!File.Exists(destPath))
                 File.Copy(fileNameWorm, destPath);
-            else
-                Console.WriteLine("Файл с червяком существует, поэтому пока игнорируем");
 
-            changeDimensions();
+            changeModel();
+            if (_hole_diameter != 0)
+                createHole();
         }
 
-        private void changeDimensions()
+        private void changeModel()
         {
+            ModelDoc2 swModel;
+            PartDoc swComp;
             int errors = 0;
             int warnings = 0;
             EquationMgr swEqnMgr = default(EquationMgr);
-            int nCount = 0;
             string equation = null;
 
            
@@ -82,9 +80,6 @@ namespace WormGearGenerator
             {
                 equation = $"\"g_aw\" = {_aw}mm";
                 swEqnMgr.Equation[0] = equation;
-
-                //equation = $"\"D1@Sketch2\" = {_da}mm";
-                //swEqnMgr.Equation[1] = equation;
 
                 equation = $"\"g_b\"={_b}mm";
                 swEqnMgr.Equation[2] = equation;
@@ -130,12 +125,39 @@ namespace WormGearGenerator
                
                 swEqnMgr.EvaluateAll();
 
-                swModel.Rebuild((int)swRebuildOptions_e.swRebuildAll);
+                if (_material != null)
+                    setMaterial(swComp, _material.Name, _material.Database);
+
+                swModel.ForceRebuild3(false);
+                swModel.Rebuild((int)swRebuildOptions_e.swForceRebuildAll);
+                swModel.SaveAs3(_path, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_CopyAndOpen);
             }
             catch (Exception e)
             {
-                ErrorMsg(swApp, "Ошибка в процессе редактирования модели!");
+                ErrorMsg(swApp, "Ошибка в процессе редактирования модели! " + e.Message);
             }
+        }
+
+        private void createHole()
+        {
+            ModelDoc2 swModel;
+
+            swModel = (ModelDoc2)swApp.ActiveDoc;
+
+            swModel.Extension.SelectByID2("Front Plane", "PLANE", 0, 0, 0, false, 0, null, 0);
+            swModel.SketchManager.CreateCircle(0, 0, 0, _hole_diameter/1000, 0, 0);
+            swModel.ClearSelection2(true);
+
+            swModel.FeatureManager.FeatureCut3(false, false, false, (int)swEndConditions_e.swEndCondThroughAllBoth,
+            (int)swEndConditions_e.swEndCondThroughAllBoth, _b/1000, _b/1000, false, false, false,
+               false, 0, 0, false, false, false, false, false, true, true,
+               false, false, false, (int)swStartConditions_e.swStartSketchPlane, 0, false);
+        
+        }
+
+        private void setMaterial(PartDoc myPart, string materialName, string database)
+        {
+            myPart.SetMaterialPropertyName2("default", database, materialName);
         }
 
         private void ErrorMsg(SldWorks swApp, string Message)

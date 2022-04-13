@@ -21,13 +21,13 @@ namespace WormGearGenerator
         public float _z { get; set; }
         public int _rightOrLeft { get; set; }
         public float _aw { get; set; }
-        
+        public Material _material { get; set; }
+
         public string _path { get; set; }
         private string baseDirectory;
 
         SldWorks swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
-        ModelDoc2 swModel;
-        PartDoc swComp;
+        
 
         public Worm(string directory)
         {
@@ -37,26 +37,22 @@ namespace WormGearGenerator
 
         public void create()
         {
-            //!Изменение имени компонентов, обработка существующих файлов
-
             string fileNameWorm = Directory.GetParent(baseDirectory).Parent.FullName + "\\res\\WormTemp.SLDPRT";
             string destPath = _path;
-                //+ "\\" + "WormGenerate.sldprt";
 
             if (!File.Exists(destPath))
                 File.Copy(fileNameWorm, destPath);
-            else
-                Console.WriteLine("Файл с червяком существует, поэтому пока игнорируем");
 
-            changeDimensions();
+            changeModel();
         }
 
-        private void changeDimensions()
+        private void changeModel()
         {
+            ModelDoc2 swModel;
+            PartDoc swComp;
             int errors = 0;
             int warnings = 0;
             EquationMgr swEqnMgr = default(EquationMgr);
-            int nCount = 0;
             string equation = null;
 
             swComp = (PartDoc)swApp.OpenDoc6(_path, (int)swDocumentTypes_e.swDocPART, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
@@ -69,15 +65,6 @@ namespace WormGearGenerator
                 ErrorMsg(swApp, "Ошибка подключения к модели");
             swEqnMgr.AutomaticSolveOrder = true;
             swEqnMgr.AutomaticRebuild = true;
-
-            //nCount = swEqnMgr.GetCount();
-            //for (int i = 0; i < nCount; i++)
-            //{
-            //    Debug.Print("  Equation(" + i + ")  = " + swEqnMgr.get_Equation(i));
-            //    Debug.Print("    Value = " + swEqnMgr.get_Value(i));
-            //    Debug.Print("    Index = " + swEqnMgr.Status);
-            //    Debug.Print("    Global variable? " + swEqnMgr.get_GlobalVariable(i));
-            //}
 
             try
             {
@@ -177,15 +164,23 @@ namespace WormGearGenerator
 
                 swEqnMgr.EvaluateAll();
 
-                swModel.Rebuild((int)swRebuildOptions_e.swRebuildAll);
+                if (_material != null)
+                    setMaterial(swComp, _material.Name, _material.Database);
+
+                swModel.ForceRebuild3(false);
+                swModel.SaveAs3(_path, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_CopyAndOpen);
             }
             catch (Exception e)
             {
-                ErrorMsg(swApp, "Ошибка в процессе редактирования модели!");
+                ErrorMsg(swApp, "Ошибка в процессе редактирования модели! " + e.Message);
             }
            
         }
 
+        private void setMaterial(PartDoc myPart, string materialName, string database)
+        {
+            myPart.SetMaterialPropertyName2("default", database, materialName);
+        }
 
         private void ErrorMsg(SldWorks swApp, string Message)
         {

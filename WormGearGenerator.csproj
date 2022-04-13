@@ -374,6 +374,12 @@
   <ItemGroup>
     <Resource Include="img\Width_gear.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\calc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="img\ToTxt.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Xarial.XCad.SolidWorks.0.7.12\build\Xarial.XCad.SolidWorks.targets" Condition="Exists('packages\Xarial.XCad.SolidWorks.0.7.12\build\Xarial.XCad.SolidWorks.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
