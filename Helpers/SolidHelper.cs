@@ -12,11 +12,11 @@ using SolidWorks.Interop.swconst;
 
 namespace WormGearGenerator
 {
-    class SolidWorker
+    class SolidHelper
     {
         private SldWorks swApp;
 
-        public SolidWorker()
+        public SolidHelper()
         {
            swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
         }
@@ -128,9 +128,9 @@ namespace WormGearGenerator
             int mateSelMark;
             bool flip;
             if (rightOrLeft == 0)
-                flip = true;
-            else
                 flip = false;
+            else
+                flip = true;
 
             swAssy = (AssemblyDoc)swApp.ActivateDoc3(assemblyPath, true, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, ref errorCode1);
             swModel = (ModelDoc2)swAssy;

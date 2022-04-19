@@ -37,11 +37,12 @@ namespace WormGearGenerator
 
         public void create()
         {
-            string fileNameWorm = Directory.GetParent(baseDirectory).Parent.FullName + "\\res\\WormTemp.SLDPRT";
+           // string fileNameWorm = Directory.GetParent(baseDirectory).Parent.FullName + "\\res\\WormTemp.SLDPRT";
             string destPath = _path;
 
             if (!File.Exists(destPath))
-                File.Copy(fileNameWorm, destPath);
+                File.WriteAllBytes(destPath, Properties.Resources.WormTemp);
+            //(fileNameWorm, destPath);
 
             changeModel();
         }
@@ -62,7 +63,7 @@ namespace WormGearGenerator
 
             swEqnMgr = (EquationMgr)swModel.GetEquationMgr();
             if (swEqnMgr == null)
-                ErrorMsg(swApp, "Ошибка подключения к модели");
+                errorMsg(swApp, "Ошибка подключения к модели");
             swEqnMgr.AutomaticSolveOrder = true;
             swEqnMgr.AutomaticRebuild = true;
 
@@ -172,7 +173,7 @@ namespace WormGearGenerator
             }
             catch (Exception e)
             {
-                ErrorMsg(swApp, "Ошибка в процессе редактирования модели! " + e.Message);
+                errorMsg(swApp, "Ошибка в процессе редактирования модели! " + e.Message);
             }
            
         }
@@ -182,7 +183,7 @@ namespace WormGearGenerator
             myPart.SetMaterialPropertyName2("default", database, materialName);
         }
 
-        private void ErrorMsg(SldWorks swApp, string Message)
+        private void errorMsg(SldWorks swApp, string Message)
         {
             swApp.SendMsgToUser2(Message, 0, 0);
             swApp.RecordLine("'*** WARNING - General");

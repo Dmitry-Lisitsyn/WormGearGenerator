@@ -43,11 +43,12 @@ namespace WormGearGenerator
 
         public void create()
         {
-            string fileNameWorm = Directory.GetParent(baseDirectory).Parent.FullName + "\\res\\GearTemp.SLDPRT";
+            //string fileNameWorm = Directory.GetParent(baseDirectory).Parent.FullName + "\\res\\Part1.SLDPRT";
             string destPath = _path;
 
             if (!File.Exists(destPath))
-                File.Copy(fileNameWorm, destPath);
+                File.WriteAllBytes(destPath, Properties.Resources.GearTemp);
+                //File.Copy(fileNameWorm, destPath);
 
             changeModel();
             if (_hole_diameter != 0)
@@ -71,9 +72,18 @@ namespace WormGearGenerator
 
             swEqnMgr = (EquationMgr)swModel.GetEquationMgr();
             if (swEqnMgr == null)
-                ErrorMsg(swApp, "Ошибка подключения к модели");
+                errorMsg(swApp, "Ошибка подключения к модели");
 
-            swEqnMgr.AutomaticSolveOrder = true;
+            var nCount = swEqnMgr.GetCount();
+            for (int i = 0; i < nCount; i++)
+            {
+                Debug.Print("  Equation(" + i + ")  = " + swEqnMgr.get_Equation(i));
+                Debug.Print("    Value = " + swEqnMgr.get_Value(i));
+                Debug.Print("    Index = " + swEqnMgr.Status);
+                Debug.Print("    Global variable? " + swEqnMgr.get_GlobalVariable(i));
+            }
+
+            //swEqnMgr.AutomaticSolveOrder = true;
             swEqnMgr.AutomaticRebuild = true;
 
             try
@@ -81,60 +91,60 @@ namespace WormGearGenerator
                 equation = $"\"g_aw\" = {_aw}mm";
                 swEqnMgr.Equation[0] = equation;
 
-                equation = $"\"g_b\"={_b}mm";
+                equation = $"\"g_z\"={_z}mm";
                 swEqnMgr.Equation[2] = equation;
 
-                equation = $"\"g_z\"={_z}mm";
+                equation = $"\"g_df\"={_df}";
                 swEqnMgr.Equation[3] = equation;
 
-                equation = $"\"g_df\"={_df}";
+                equation = $"\"g_da\" = {_da}mm";
                 swEqnMgr.Equation[4] = equation;
 
-                equation = $"\"g_da\" = {_da}mm";
+                equation = $"\"g_beta\" = {_beta}mm";
                 swEqnMgr.Equation[5] = equation;
 
-                equation = $"\"g_beta\" = {_beta}mm";
+                equation = $"\"g_degpres\" = {_pressureAngle}";
                 swEqnMgr.Equation[6] = equation;
 
-                equation = $"\"g_degpres\" = {_pressureAngle}";
+                equation = $"\"w_df1\" = {_df1}mm";
                 swEqnMgr.Equation[7] = equation;
 
-                equation = $"\"w_df1\" = {_df1}mm";
+                equation = $"\"w_da1\" = {_da1}";
                 swEqnMgr.Equation[8] = equation;
 
-                equation = $"\"w_da1\" = {_da1}";
+                equation = $"\"w_d1\" = {_d1}";
                 swEqnMgr.Equation[9] = equation;
 
-                equation = $"\"w_d1\" = {_d1}";
+                equation = $"\"px\" = {_px}";
                 swEqnMgr.Equation[10] = equation;
 
-                equation = $"\"px\" = {_px}";
+                equation = $"\"w_z\" = {_z1}";
                 swEqnMgr.Equation[11] = equation;
 
-                equation = $"\"w_z\" = {_z1}";
+                equation = $"\"g_dw\" = {_dw}";
                 swEqnMgr.Equation[12] = equation;
 
-                equation = $"\"g_dw\" = {_dw}";
+                equation = $"\"rightorLeft\" = {_rightOrLeft}";
                 swEqnMgr.Equation[13] = equation;
 
-                equation = $"\"rightorLeft\" = {_rightOrLeft}";
+                equation = $"\"g_dae\" = {_dae}mm";
                 swEqnMgr.Equation[14] = equation;
 
-                equation = $"\"g_dae\" = {_dae}mm";
-                swEqnMgr.Equation[15] = equation;
-               
+                equation = $"\"g_width\"= {_b}mm";
+                swEqnMgr.Equation[1] = equation;
+
                 swEqnMgr.EvaluateAll();
 
                 if (_material != null)
                     setMaterial(swComp, _material.Name, _material.Database);
 
                 swModel.ForceRebuild3(false);
-                swModel.Rebuild((int)swRebuildOptions_e.swForceRebuildAll);
+                
                 swModel.SaveAs3(_path, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_CopyAndOpen);
             }
             catch (Exception e)
             {
-                ErrorMsg(swApp, "Ошибка в процессе редактирования модели! " + e.Message);
+                errorMsg(swApp, "Ошибка в процессе редактирования модели! " + e.Message);
             }
         }
 
@@ -160,7 +170,7 @@ namespace WormGearGenerator
             myPart.SetMaterialPropertyName2("default", database, materialName);
         }
 
-        private void ErrorMsg(SldWorks swApp, string Message)
+        private void errorMsg(SldWorks swApp, string Message)
         {
             swApp.SendMsgToUser2(Message, 0, 0);
             swApp.RecordLine("'*** WARNING - General");

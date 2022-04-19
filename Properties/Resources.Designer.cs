@@ -81,6 +81,16 @@ namespace WormGearGenerator.Properties {
         }
         
         /// <summary>
+        ///   Поиск локализованного ресурса типа System.Byte[].
+        /// </summary>
+        internal static byte[] GearTemp {
+            get {
+                object obj = ResourceManager.GetObject("GearTemp", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Hole_gear {
@@ -267,6 +277,16 @@ namespace WormGearGenerator.Properties {
             get {
                 object obj = ResourceManager.GetObject("Width_gear", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Byte[].
+        /// </summary>
+        internal static byte[] WormTemp {
+            get {
+                object obj = ResourceManager.GetObject("WormTemp", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

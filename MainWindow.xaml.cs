@@ -6,7 +6,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using SolidWorks.Interop.sldworks;
-using SolidWorks.Interop.swconst;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Newtonsoft.Json;
@@ -15,10 +14,9 @@ using Xceed.Document.NET;
 using System.Linq;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Media;
-
+using WormGearGenerator.Helpers;
 
 namespace WormGearGenerator
 {
@@ -33,6 +31,7 @@ namespace WormGearGenerator
         float aw, Alpha, dae2, da1, da2, d1, d2, df1, df2, dw1, dw2;
         float Fn, Fr, Ft1, Ft2, Fa1, Fa2, vk, bending_stress, contact_stress, Khl, temperature;
         public SldWorks swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
+
         string AssemblyPath;
         private string baseDirectory = System.Environment.CurrentDirectory;
 
@@ -46,12 +45,18 @@ namespace WormGearGenerator
 
         public static bool buildAccepted { get; set; }
 
+        DataValidation validation;
+
         public MainWindow()
         {
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
 
             InitializeFolder();
             InitializeComponent();
+
+            validation = new DataValidation(this);
+            this.DataContext = validation;
+
             InitializeStartData();
             InitializeCalculate();
         }
@@ -111,41 +116,49 @@ namespace WormGearGenerator
             Gear_combo.SelectedIndex = 0;
 
             //Значения червяка
-            Kol_vitkovValue.Text = "4";
-            LengthValue.Text = "140";
-            Koef_diamValue.Text = "10";
+            Kol_vitkovValue.Text = validation.kol_vitkov.ToString();
+            LengthValue.Text = validation.length_Worm.ToString();
+            Koef_diamValue.Text = validation.koef_diamWorm.ToString();
 
             //Значения колеса
-            Teeth_gearValue.Text = "60";
-            Width_gearValue.Text = "20";
-            Koef_smeshValue.Text = "1";
-            Hole_widthValue.Text = "0";
+            Teeth_gearValue.Text = validation.teeth_Gear.ToString();
+            Width_gearValue.Text = validation.width_Gear.ToString();
+            Koef_smeshValue.Text = validation.koef_Smesh.ToString();
+            Hole_widthValue.Text = validation.hole_Gear.ToString();
 
             Hole_widthValue.Visibility = Visibility.Hidden;
 
             //Значения для силового расчета
-            PowerValue.Text = "0.1";
-            VelocityValue.Text = "1000.0";
+            PowerValue.Text = validation.PowerWorm.ToString(); ;
+            VelocityValue.Text = validation.VelocityWorm.ToString(); ;
 
             //Заполнение материалов
             MaterialHelper MatObj = new MaterialHelper(swApp);
             var lister = MatObj.GetMaterials();
+            lister.Insert(0, new Material
+            {
+                Name = "Нет материала",
+                Classification = "Не задано",
+                DatabaseFileFound = false,
+                Elastic_modulus = "206000000000",
+                Poisson_ratio = "0.3",
+                Tensile_strength = "250000000",
+                Yield_strength = "160000000"
+            });
+
             MatGear_combo.ItemsSource = MatWorm_combo.ItemsSource = lister;
             MatWorm_combo.DisplayMemberPath = MatGear_combo.DisplayMemberPath = "DisplayName";
+            MatGear_combo.SelectedIndex = 0;
+            MatWorm_combo.SelectedIndex = 0;
+
 
             //Значения силовых характеристик
             KPDValue.IsEnabled = false;
-            sigmaV.Text = "250";
-            sigmaT.Text = "160";
-            E_wormValue.Text = "206000";
-            E_gearValue.Text = "101000";
-            Puasson_wormValue.Text = "0.300";
-            Puasson_gearValue.Text = "0.310";
-            
-            KoValue.Text = "1.200";
-            KvValue.Text = "1.042";
-            yValue.Text = "0.125";
-            timeValue.Text = "10000";
+
+            KoValue.Text = validation.Ko;
+            KvValue.Text = validation.Kv;
+            yValue.Text = validation.y;
+            timeValue.Text = validation.time;
 
             radioParam1.IsChecked = true;
             radioWorm.IsChecked = true;
@@ -153,10 +166,12 @@ namespace WormGearGenerator
             radioWormSel.IsChecked = true;
             radioWormSel.Checked += RadioSelectComp_Checked;
             radioGearSel.Checked += RadioSelectComp_Checked;
+
             RadioType_Calc.Checked += RadioSelectType_Checked;
             RadioType_Calc1.Checked += RadioSelectType_Checked;
             RadioType_Calc2.Checked += RadioSelectType_Checked;
             RadioType_Calc.IsChecked = true;
+
         }
 
         private void InitializeCalculate()
@@ -169,7 +184,6 @@ namespace WormGearGenerator
 
             //Количество оборотов витков
             Kol_oborotovValue.Text = (Math.Floor(float.Parse(LengthValue.Text) / (Module * Math.PI)) + 3).ToString();
-           
 
             //Расчет значений передаточного числа и зубьев колеса
             if (radioParam.IsChecked == true)
@@ -193,6 +207,7 @@ namespace WormGearGenerator
                 Av_diamValue.Text = (float.Parse(Koef_diamValue.Text) * Module).ToString(".00");
                 DegTeethValue.Text = (Math.Atan(float.Parse(Kol_vitkovValue.Text)
                     / float.Parse(Koef_diamValue.Text)) * 180 / Math.PI).ToString(".00");
+                validation.deg_TeethValue = float.Parse(DegTeethValue.Text);
 
             }
             else if (radioWorm1.IsChecked == true)
@@ -206,8 +221,8 @@ namespace WormGearGenerator
                 Koef_diamValue.Text = (float.Parse(Av_diamValue.Text) / Module).ToString(".00");
                 DegTeethValue.Text = (Math.Atan(float.Parse(Kol_vitkovValue.Text)
                     / float.Parse(Koef_diamValue.Text)) * 180 / Math.PI).ToString(".00");
+                validation.deg_TeethValue = float.Parse(DegTeethValue.Text);
             }
-
             
             //Делительные диаметры
             d1 = float.Parse(Koef_diamValue.Text) * Module;
@@ -249,15 +264,13 @@ namespace WormGearGenerator
 
             float phiz = (float)(Math.Atan(0.02 + (0.03) / (vk)) * 180 / Math.PI);
             float Kv = (1200 + v2) / (1200);
-            float KPD = 0;
+            float KPD;
             if (boolKPD.IsChecked == true)
                 KPD = float.Parse(KPDValue.Text);
             else
                 KPD = (float)(((Math.Tan(tgyW * Math.PI / 180)) / (Math.Tan((tgyW + phiz) * Math.PI / 180))) * 0.96); 
-                KPDValue.Text = KPD.ToString("0.000"); 
-            
-            //Крутящий момент
-          //  MomentValue.Text = ((60000 * float.Parse(PowerValue.Text)) / (2 * Math.PI * float.Parse(VelocityValue.Text))).ToString("0.000");      
+                KPDValue.Text = KPD.ToString("0.000");
+            validation.KPD = KPDValue.Text;
             //значения на червяке
             float Power = float.Parse(PowerValue.Text);
             float Velocity = float.Parse(VelocityValue.Text);
@@ -326,12 +339,24 @@ namespace WormGearGenerator
                 Velocity = Velocity_WG * Peredat;
                 Moment = (Moment_WG / Peredat) * KPD;
             }
+
             VelocityValue.Text = Velocity.ToString("0.00");
+            validation.VelocityWorm = VelocityValue.Text;
+
             PowerValue.Text = Power.ToString("0.000");
+            validation.PowerWorm = PowerValue.Text;
+
             MomentValue.Text = Moment.ToString("0.000");
+            validation.MomentWorm = MomentValue.Text;
+
             VelocityValue_Gear.Text = Velocity_WG.ToString("0.00");
+            validation.VelocityGear = VelocityValue_Gear.Text;
+
             PowerValue_Gear.Text = Power_WG.ToString("0.000");
+            validation.PowerGear = PowerValue_Gear.Text;
+
             MomentValue_Gear.Text = Moment_WG.ToString("0.000");
+            validation.MomentGear = MomentValue_Gear.Text;
 
             //окружная сила на червяке, Осевая на колесе
             Ft1 = (2000 * float.Parse(MomentValue.Text)) / (dw1);
@@ -353,12 +378,8 @@ namespace WormGearGenerator
             else if (vk <= 5)
                 Koef = 1;
 
-
-            //float Module_upr = (float.Parse(E_wormValue.Text) + float.Parse(E_gearValue.Text)) / 2;
-            //contact_stress = (float)((1.31 / d2) * Math.Sqrt(((Moment_WG * 1000) * Koef * Module_upr ) / dw1));
-
             contact_stress = (float)((170 / (float.Parse(Teeth_gearValue.Text) / float.Parse(Koef_diamValue.Text))) * 
-                Math.Sqrt((float.Parse(MomentValue_Gear.Text)*1000*float.Parse(KvValue.Text))* Math.Pow(((1 + float.Parse(Teeth_gearValue.Text) / float.Parse(Koef_diamValue.Text)) /(aw)), 3)));
+                Math.Sqrt((float.Parse(MomentValue_Gear.Text) *1000*float.Parse(KvValue.Text))* Math.Pow(((1 + float.Parse(Teeth_gearValue.Text) / float.Parse(Koef_diamValue.Text)) /(aw)), 3)));
 
             //Напряжение изгиба
             float zv2 = (float)((float.Parse(Teeth_gearValue.Text)) / (Math.Pow(Math.Cos(tgyW * Math.PI / 180), 3)));
@@ -377,6 +398,7 @@ namespace WormGearGenerator
 
             //Число циклов нагружения
             float Nk = 60 * float.Parse(VelocityValue_Gear.Text) * float.Parse(timeValue.Text);
+
             //Коэффициент долговечности
             Khl = (float)(Math.Pow(((Math.Pow(10,7))/(Nk)), 0.125));
 
@@ -394,23 +416,19 @@ namespace WormGearGenerator
             float Yhl = (float)(Math.Pow(((Math.Pow(10, 6)) / (Nk)), 1.0/9));
             limit_bending.Text = (limit_bending_Koef * Yhl).ToString("0.00");
 
-
-
             //Температура масла при работе
-            temperature = (float)((float.Parse(PowerValue.Text)*1000 * (1 - float.Parse(KPDValue.Text))) / (17 * 12.2 * Math.Pow(aw / 1000, 1.17))) + 20; 
+            temperature = (float)((float.Parse(PowerValue.Text) *1000 * (1 - KPD)) / (17 * 12.2 * Math.Pow(aw / 1000, 1.17))) + 20; 
 
             RefreshTable_Model(aw, Module, Alpha, da1, d1, df1, da2, d2, df2, dae2);
             RefreshTable_Calc(Fr, vk, Khl, temperature, Ft1, Fa1, Ft2, Fa2, Fn, contact_stress, bending_stress);
 
-            var bc = new BrushConverter();
-            var color = Brushes.White;
-
-            TableGeneral_Model.RowBackground = color;
-            TableWorm_Model.RowBackground = color;
-            TableGear_Model.RowBackground = color;
-            TableGeneral_Calc.RowBackground = color;
-            TableWorm_Calc.RowBackground = color;
-            TableGear_Calc.RowBackground = color;
+            TableGeneral_Model.RowBackground = Brushes.White;
+            TableWorm_Model.RowBackground = Brushes.White;
+            TableGear_Model.RowBackground = Brushes.White;
+            TableGeneral_Calc.RowBackground = Brushes.White;
+            TableWorm_Calc.RowBackground = Brushes.White;
+            TableGear_Calc.RowBackground = Brushes.White;
+           
         }
 
         private void RefreshTable_Model(float aw_Table, float Module_Table, float Alpha_Table,
@@ -579,14 +597,17 @@ namespace WormGearGenerator
             }
         }
 
-        private void data_TextChanged(object sender, TextChangedEventArgs e) { changeBack_Touched(); }
-        private void combo_SelectionChanged(object sender, SelectionChangedEventArgs e) { changeBack_Touched(); }
-
-        private void changeBack_Touched()
+        private void data_TextChanged(object sender, TextChangedEventArgs e)
         {
-            var bc = new BrushConverter();
-            var color = Brushes.LightGray;
+            if (((TextBox)sender).IsFocused)
+                data_Touched();
 
+        }
+        private void combo_SelectionChanged(object sender, SelectionChangedEventArgs e) { data_Touched(); }
+
+        private void data_Touched()
+        {
+            var color = Brushes.LightGray;
             TableGeneral_Model.RowBackground = color;
             TableWorm_Model.RowBackground = color;
             TableGear_Model.RowBackground = color;
@@ -607,7 +628,7 @@ namespace WormGearGenerator
             else
                 E_wormValue.Text = (float.Parse(item.Elastic_modulus) / 1000000).ToString("0.00");
 
-            if (item.Elastic_modulus == null)
+            if (item.Poisson_ratio == null)
             {
                 Puasson_wormValue.Text = "0";
 
@@ -615,6 +636,7 @@ namespace WormGearGenerator
             else
                 Puasson_wormValue.Text = item.Poisson_ratio;
 
+            data_Touched();
         }
 
         private void MatGear_combo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -627,7 +649,7 @@ namespace WormGearGenerator
             }
             else
                 sigmaV.Text = (float.Parse(item.Tensile_strength) / 1000000).ToString("0.00");
-
+ 
             if (item.Yield_strength == null)
             {
                 sigmaT.Text = "0";
@@ -644,13 +666,15 @@ namespace WormGearGenerator
             else
                 E_gearValue.Text = (float.Parse(item.Elastic_modulus) / 1000000).ToString("0.00");
 
-            if (item.Elastic_modulus == null)
+            if (item.Poisson_ratio == null)
             {
                 Puasson_gearValue.Text = "0";
 
             }
             else
                 Puasson_gearValue.Text = item.Poisson_ratio;
+
+            data_Touched();
         }
 
         private void calc_WidthGear_Click(object sender, RoutedEventArgs e)
@@ -660,18 +684,19 @@ namespace WormGearGenerator
                 Width_gearValue.Text = (0.75 * da1).ToString("0.00");
             else if (teeth == 4)
                 Width_gearValue.Text = (0.67 * da1).ToString("0.00");
+
+            data_Touched();
         }
 
         private void calc_LengthWorm_Click(object sender, RoutedEventArgs e)
         {
             LengthValue.Text = (2 * Math.Sqrt(Math.Pow(dae2/2,2)- Math.Pow((aw - da1/2),2) + (Math.PI*Module/2))).ToString("0.00");
+            data_Touched();
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var bc = new BrushConverter();
-            var color = bc.ConvertFromString("#FFCBE4FF");
-
+           
             if (this.Height == 660)
             {
                 ExpanderModel.IsExpanded = true;
@@ -685,6 +710,8 @@ namespace WormGearGenerator
 
             if (this.Width == 932)
             {
+                var bc = new BrushConverter();
+                var color = bc.ConvertFromString("#FFCBE4FF");
                 Expander_showCalc.Background = (Brush)color;
                 Expander_showCalc1.Background = (Brush)color;
             }
@@ -740,13 +767,13 @@ namespace WormGearGenerator
 
                 float hole_diameter = 0;
                 if (Hole_bool.IsChecked == true)
-                    hole_diameter = float.Parse(Hole_widthValue.Text);
+                    hole_diameter = float.Parse(Hole_widthValue.Text)/2;
                 
 
-                if(MatWorm_combo.SelectedItem != null)
+                if(MatWorm_combo.SelectedIndex != 0)
                     materialWorm = (Material)MatWorm_combo.SelectedItem;
 
-                if(MatGear_combo.SelectedItem != null)
+                if(MatGear_combo.SelectedIndex != 0)
                     materialGear = (Material)MatGear_combo.SelectedItem;
 
                 if (isWorm)
@@ -790,7 +817,7 @@ namespace WormGearGenerator
                 }
                 if (isWorm & isGear)
                 {
-                    SolidWorker sldobj = new SolidWorker();
+                    SolidHelper sldobj = new SolidHelper();
 
                     //создаем сборку
                     sldobj.CreateAssembly(_pathAssembly);
@@ -897,6 +924,8 @@ namespace WormGearGenerator
                 Koef_diamValue.Text = (float.Parse(Kol_vitkovValue.Text)
                     / (Math.Tan(float.Parse(DegTeethValue.Text) * Math.PI / 180))).ToString(".00");
                 Av_diamValue.Text = (float.Parse(Koef_diamValue.Text) * Module).ToString(".00");
+                DegTeethValue.TextChanged += data_TextChanged;
+                Av_diamValue.TextChanged -= data_TextChanged;
             }
             else if (name == "Средний диаметр")
             {
@@ -979,6 +1008,18 @@ namespace WormGearGenerator
 
                 MaterialHelper MatObj = new MaterialHelper(swApp);
                 var lister = MatObj.GetMaterials();
+                lister.Insert(0, new Material
+                {
+                    Name = "Нет материала",
+                    Classification = "Не задано",
+                    DatabaseFileFound = false,
+                    Elastic_modulus = "206000000000",
+                    Poisson_ratio = "0.3",
+                    Tensile_strength = "250000000",
+                    Yield_strength = "160000000"
+                });
+
+
                 for (int i = 0; i < lister.Count; i++)
                 {
                     if(lister[i].DisplayName == data["material_worm"])
