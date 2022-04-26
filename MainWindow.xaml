@@ -33,6 +33,13 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <!--<Style TargetType="DataGridRow">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Active}" Value="False">
+                    <Setter Property="Foreground" Value="Red" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>-->
     </Window.Resources>
 
     <TabControl HorizontalAlignment="Left" Height="630" VerticalAlignment="Top" Width="919" RenderTransformOrigin="0.399,0.434">
@@ -85,7 +92,6 @@
 
 
                 </Expander>
-                <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="443" Margin="691,14,0,-197.8" VerticalAlignment="Top" Width="210"/>
                 <Grid Margin="0,111,214.6,-187.8" Height="336" VerticalAlignment="Top">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="175"/>
@@ -109,7 +115,7 @@
                                 <ColumnDefinition Width="141*"/>
                             </Grid.ColumnDefinitions>
                             <ComboBox x:Name="Chervyak_combo" Margin="5,7,5.2,5.4" Grid.Column="1" FontFamily="Times New Roman"/>
-                            <TextBox x:Name="Kol_vitkovValue"  Text="{Binding kol_vitkov, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}"  Grid.Column="1" Margin="5.4,15.2,4,5.8" TextWrapping="Wrap" Grid.Row="1" Height="23" FontFamily="Times New Roman" HorizontalContentAlignment="Center" FontSize="13" VerticalContentAlignment="Center" TextChanged="data_TextChanged">
+                            <TextBox x:Name="Kol_vitkovValue"  Text="{Binding kol_vitkov, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}"  Grid.Column="1" Margin="5.4,14,4,6.2" TextWrapping="Wrap" Grid.Row="1" Height="23" FontFamily="Times New Roman" HorizontalContentAlignment="Center" FontSize="13" VerticalContentAlignment="Center" TextChanged="data_TextChanged">
                                 <TextBox.ToolTip>
                                     <ToolTip  Foreground="Black" >
                                         <StackPanel>
@@ -469,13 +475,13 @@
                 </Grid.RowDefinitions>
 
                 <Expander x:Name="ExpanderCalculations" Header="Дополнительно" HorizontalAlignment="Left" Height="158" Margin="1,1.6,0,0" VerticalAlignment="Top" Width="677" Grid.Row="3" Expanded="Expander_Expanded" Collapsed="Expander_Collapsed">
-                    <Grid Margin="0,0,0,0" Height="122" VerticalAlignment="Top">
+                    <Grid Margin="0,0,0.2,0" Height="127" VerticalAlignment="Top">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="338.5"/>
                             <ColumnDefinition Width="338.5"/>
                         </Grid.ColumnDefinitions>
-                        <GroupBox Header="Коэффициенты" Margin="0,0,0,0" BorderBrush="Black" Height="117" VerticalAlignment="Top">
-                            <Grid Margin="0" Height="88">
+                        <GroupBox Header="Коэффициенты" Margin="0,0,0.4,0" BorderBrush="Black" Height="125" VerticalAlignment="Top">
+                            <Grid Margin="0,-3,0.4,-3.6">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="163.2"/>
                                     <ColumnDefinition Width="163.2"/>
@@ -486,11 +492,11 @@
                                     <RowDefinition Height="22"/>
                                     <RowDefinition Height="22"/>
                                 </Grid.RowDefinitions>
-                                <Label Content="Коэффициент перегрузки Ko" Margin="0" RenderTransformOrigin="0.188,0.097" Padding="0" HorizontalContentAlignment="Center"/>
+                                <Label Content="Коэффициент перегрузки Ko" Margin="0,0,0.2,0.4" RenderTransformOrigin="0.188,0.097" Padding="0" HorizontalContentAlignment="Center"/>
                                 <Label Content="Коэффициент скорости Kv" Margin="0" RenderTransformOrigin="0.188,0.097" Padding="0" HorizontalContentAlignment="Center" Grid.Row="1"/>
                                 <Label Content="Коэффициент льюиса (y)" Margin="0" RenderTransformOrigin="0.188,0.097" Padding="0" HorizontalContentAlignment="Center" Grid.Row="2"/>
                                 <Label Content="Срок службы, (ч)" Margin="0" RenderTransformOrigin="0.188,0.097" Padding="0" HorizontalContentAlignment="Center" Grid.Row="3"/>
-                                <TextBox x:Name="KoValue" Text="{Binding Ko, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Height="17" Margin="0" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11">
+                                <TextBox x:Name="KoValue" Text="{Binding Ko, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Height="22" Margin="21.8,2,21.4,22.4" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11" Grid.RowSpan="2">
                                     <TextBox.ToolTip>
                                         <ToolTip  Foreground="Black">
                                             <StackPanel>
@@ -499,7 +505,7 @@
                                         </ToolTip>
                                     </TextBox.ToolTip>
                                 </TextBox>
-                                <TextBox x:Name="KvValue" Text="{Binding Kv, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Height="17" Margin="0" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" Grid.Row="1" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11">
+                                <TextBox x:Name="KvValue" Text="{Binding Kv, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Height="22" Margin="21.8,1.8,21.4,22.6" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" Grid.Row="1" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11" Grid.RowSpan="2">
                                     <TextBox.ToolTip>
                                         <ToolTip  Foreground="Black">
                                             <StackPanel>
@@ -508,7 +514,7 @@
                                         </ToolTip>
                                     </TextBox.ToolTip>
                                 </TextBox>
-                                <TextBox x:Name="yValue" Text="{Binding y, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Height="17" Margin="0" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" Grid.Row="2" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11">
+                                <TextBox x:Name="yValue" Text="{Binding y, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Height="22" Margin="21.8,1.6,21.4,22.8" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" Grid.Row="2" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11" Grid.RowSpan="2">
                                     <TextBox.ToolTip>
                                         <ToolTip  Foreground="Black">
                                             <StackPanel>
@@ -517,7 +523,7 @@
                                         </ToolTip>
                                     </TextBox.ToolTip>
                                 </TextBox>
-                                <TextBox x:Name="timeValue" Text="{Binding time, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Margin="22,2,21,4" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" Grid.Row="3" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11">
+                                <TextBox x:Name="timeValue" Text="{Binding time, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Margin="21.8,1.4,21.4,-0.2" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" Grid.Row="3" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11" Height="22">
                                     <TextBox.ToolTip>
                                         <ToolTip  Foreground="Black">
                                             <StackPanel>
@@ -528,8 +534,8 @@
                                 </TextBox>
                             </Grid>
                         </GroupBox>
-                        <GroupBox x:Name="groupType" Header="Тип расчета" Margin="338,0,2,5" Grid.ColumnSpan="2" BorderBrush="Black" Height="117">
-                            <Grid x:Name="panelType" Margin="0">
+                        <GroupBox x:Name="groupType" Header="Тип расчета" Margin="338,0,1,2" Grid.ColumnSpan="2" BorderBrush="Black">
+                            <Grid x:Name="panelType" Margin="0,-3,-0.2,-1.4">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="29.0666666666667"/>
                                     <RowDefinition Height="29.0666666666667"/>
@@ -537,7 +543,7 @@
                                 </Grid.RowDefinitions>
                                 <RadioButton x:Name="RadioType_Calc" Content="Мощность, Скорость -&gt; Момент" HorizontalAlignment="Left" Margin="0" Height="23"  Tag="0"  />
                                 <RadioButton x:Name="RadioType_Calc1" Content="Момент, Скорость -&gt; Мощность" HorizontalAlignment="Left" Margin="0" Height="23" Grid.Row="1"  Tag="1" />
-                                <RadioButton x:Name="RadioType_Calc2" Content="Мощность, Момент -&gt; Скорость" HorizontalAlignment="Left" Margin="0" Height="23" Grid.Row="2"  Tag="2" />
+                                <RadioButton x:Name="RadioType_Calc2" Content="Мощность, Момент -&gt; Скорость" HorizontalAlignment="Left" Margin="0,6.8,0,-0.2" Height="23" Grid.Row="2"  Tag="2" />
                             </Grid>
                         </GroupBox>
                     </Grid>
@@ -547,9 +553,9 @@
                     <Grid x:Name="panelGeneral" Margin="0" HorizontalAlignment="Left" Width="671">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="37.4"/>
-                            <RowDefinition Height="20"/>
-                            <RowDefinition Height="20"/>
-                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
                             <RowDefinition Height="61.8"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
@@ -557,8 +563,8 @@
                             <ColumnDefinition Width="225"/>
                             <ColumnDefinition Width="259"/>
                         </Grid.ColumnDefinitions>
-                        <Border BorderBrush="Black" BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="99" Margin="224.6,6,0,0" Grid.RowSpan="5" VerticalAlignment="Top" Width="152" Grid.ColumnSpan="2"/>
-                        <Border BorderBrush="Black" BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="99" Margin="73.6,6,0,0" Grid.RowSpan="5" VerticalAlignment="Top" Width="152"/>
+                        <Border BorderBrush="Black" BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="109" Margin="224.6,6,0,0" Grid.RowSpan="5" VerticalAlignment="Top" Width="152" Grid.ColumnSpan="2"/>
+                        <Border BorderBrush="Black" BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="109" Margin="73.6,6,0,0" Grid.RowSpan="5" VerticalAlignment="Top" Width="152"/>
                         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="27" Margin="10,6,0,0" VerticalAlignment="Top" Width="150"/>
                         <Label Content="Мощность (кВт)" Margin="0" Height="18" Padding="5,0" Width="104" Grid.Row="1"/>
                         <Label Content="Скорость (об/мин)" Margin="0" HorizontalContentAlignment="Center" Height="20" Padding="5,0" Grid.Row="2"/>
@@ -581,7 +587,7 @@
                                 </ToolTip>
                             </Button.ToolTip>
                         </Button>
-                        <TextBox x:Name="PowerValue" ToolTipService.ShowOnDisabled="True" Text="{Binding PowerWorm, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" HorizontalAlignment="Center" Height="16" Margin="88.6,2.4,17,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="1" TextChanged="data_TextChanged">
+                        <TextBox x:Name="PowerValue" ToolTipService.ShowOnDisabled="True" Text="{Binding PowerWorm, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Height="22" Margin="89.6,1.4,16,2.2" TextWrapping="Wrap" Width="115" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="1" TextChanged="data_TextChanged">
                             <TextBox.ToolTip>
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
@@ -591,7 +597,7 @@
                                 </ToolTip>
                             </TextBox.ToolTip>
                         </TextBox>
-                        <TextBox x:Name="VelocityValue" ToolTipService.ShowOnDisabled="True" Text="{Binding VelocityWorm, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Height="16" Margin="88.6,2.4,17,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="2" TextChanged="data_TextChanged">
+                        <TextBox x:Name="VelocityValue" ToolTipService.ShowOnDisabled="True" Text="{Binding VelocityWorm, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Height="22" Margin="89.6,0.8,16,2" TextWrapping="Wrap" Width="115" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="2" TextChanged="data_TextChanged">
                             <TextBox.ToolTip>
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
@@ -600,7 +606,7 @@
                                 </ToolTip>
                             </TextBox.ToolTip>
                         </TextBox>
-                        <TextBox x:Name="MomentValue" ToolTipService.ShowOnDisabled="True" Text="{Binding MomentWorm, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Height="16" Margin="88.6,2.4,17,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="3" TextChanged="data_TextChanged">
+                        <TextBox x:Name="MomentValue" ToolTipService.ShowOnDisabled="True" Text="{Binding MomentWorm, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Height="22" Margin="89.6,1,16,1.8" TextWrapping="Wrap" Width="115" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="3" TextChanged="data_TextChanged">
                             <TextBox.ToolTip>
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
@@ -609,7 +615,7 @@
                                 </ToolTip>
                             </TextBox.ToolTip>
                         </TextBox>
-                        <TextBox x:Name="KPDValue" Text="{Binding KPD, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Height="16" Margin="88.6,22.4,17,23.2" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="4" TextChanged="data_TextChanged">
+                        <TextBox x:Name="KPDValue" Text="{Binding KPD, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Height="22" Margin="91.6,10.2,18,29.4" TextWrapping="Wrap" Width="115" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="1" Grid.Row="4" TextChanged="data_TextChanged">
                             <TextBox.ToolTip>
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
@@ -618,7 +624,7 @@
                                 </ToolTip>
                             </TextBox.ToolTip>
                         </TextBox>
-                        <CheckBox x:Name="boolKPD" Content="КПД" Margin="69,18.4,70.4,25.2 " Checked="CheckBox_KPD_Changed" Unchecked="CheckBox_KPD_Changed" Padding="0,0,0,0" VerticalContentAlignment="Bottom" Width="43" Grid.Row="4">
+                        <CheckBox x:Name="boolKPD" Content="КПД" Margin="69,12.2,70.4,31.4" Checked="CheckBox_KPD_Changed" Unchecked="CheckBox_KPD_Changed" Padding="0,0,0,0" VerticalContentAlignment="Bottom" Width="43" Grid.Row="4">
                             <CheckBox.ToolTip>
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
@@ -688,7 +694,7 @@
                                 </ToolTip>
                             </Button.ToolTip>
                         </Button>
-                        <TextBox x:Name="PowerValue_Gear" ToolTipService.ShowOnDisabled="True" Text="{Binding PowerGear, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Height="16" Margin="16,2.4,123,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="2" Grid.Row="1" TextChanged="data_TextChanged">
+                        <TextBox x:Name="PowerValue_Gear" ToolTipService.ShowOnDisabled="True" Text="{Binding PowerGear, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Height="22" Margin="16,1.4,124,2" TextWrapping="Wrap" Width="115" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="2" Grid.Row="1" TextChanged="data_TextChanged">
                             <TextBox.ToolTip>
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
@@ -698,7 +704,7 @@
                                 </ToolTip>
                             </TextBox.ToolTip>
                         </TextBox>
-                        <TextBox x:Name="VelocityValue_Gear" ToolTipService.ShowOnDisabled="True" Text="{Binding VelocityGear, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Height="16" Margin="16,2.4,123,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="2" Grid.Row="2" TextChanged="data_TextChanged">
+                        <TextBox x:Name="VelocityValue_Gear" ToolTipService.ShowOnDisabled="True" Text="{Binding VelocityGear, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Height="22" Margin="16,0.8,124,2" TextWrapping="Wrap" Width="115" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="2" Grid.Row="2" TextChanged="data_TextChanged">
                             <TextBox.ToolTip>
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
@@ -707,7 +713,7 @@
                                 </ToolTip>
                             </TextBox.ToolTip>
                         </TextBox>
-                        <TextBox x:Name="MomentValue_Gear" ToolTipService.ShowOnDisabled="True" Text="{Binding MomentGear, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Height="16" Margin="16,2.4,123,1.6" TextWrapping="Wrap" Width="120" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="2" Grid.Row="3" TextChanged="data_TextChanged">
+                        <TextBox x:Name="MomentValue_Gear" ToolTipService.ShowOnDisabled="True" Text="{Binding MomentGear, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Height="22" Margin="16,2,124,0.8" TextWrapping="Wrap" Width="115" FontFamily="Times New Roman" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="13" Grid.Column="2" Grid.Row="3" TextChanged="data_TextChanged">
                             <TextBox.ToolTip>
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
@@ -769,7 +775,7 @@
                                     </ComboBox.ToolTip>
                                 </ComboBox>
                             </Grid>
-                            <Grid Margin="0,53,-0.2,18.2" Grid.RowSpan="2">
+                            <Grid Margin="0,53,-0.2,13.2" Grid.RowSpan="2">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="27.2"/>
                                     <RowDefinition Height="27.2"/>
@@ -782,8 +788,8 @@
                                     <ColumnDefinition Width="83*"/>
                                     <ColumnDefinition Width="83*"/>
                                 </Grid.ColumnDefinitions>
-                                <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Margin="333,9,0,-14" Grid.Row="4" Width="331" Grid.ColumnSpan="3" Height="32"/>
-                                <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Margin="0,9,0,-14" Grid.Row="4" Width="333" Height="32"/>
+                                <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Margin="232,8,0,-12" Grid.Row="4" Width="221" Grid.ColumnSpan="2"/>
+                                <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Margin="0,8,0,-12" Grid.Row="4" Width="233"/>
                                 <Label Content="Предел прочности (σв), [МПа]" Margin="0,0,165.2,0" HorizontalContentAlignment="Center" Padding="5,5,5,0" Grid.ColumnSpan="2"/>
                                 <Label Content="Предел текучести (σт), [МПа]" Margin="0,1,0.6,26" HorizontalContentAlignment="Center" Grid.RowSpan="2" Grid.Row="1" Padding="5,5,5,0"/>
                                 <Label Content="Модуль упругости (Е), [МПа]" Margin="0,27,0.6,0" HorizontalContentAlignment="Center" Grid.RowSpan="2" Grid.Row="1" Padding="5,5,5,0"/>
@@ -797,7 +803,7 @@
                                         </ToolTip>
                                     </TextBox.ToolTip>
                                 </TextBox>
-                                <TextBox x:Name="sigmaT" ToolTipService.ShowOnDisabled="True" Text="{Binding sigmaT, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="2" Height="23" Margin="22,2,22,3" TextWrapping="Wrap" Width="120" Grid.Row="1" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged" >
+                                <TextBox x:Name="sigmaT" ToolTipService.ShowOnDisabled="True" Text="{Binding sigmaT, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="2" Height="23" Margin="22,2" TextWrapping="Wrap" Width="120" Grid.Row="1" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged" >
                                     <TextBox.ToolTip>
                                         <ToolTip  Foreground="Black">
                                             <StackPanel>
@@ -806,7 +812,7 @@
                                         </ToolTip>
                                     </TextBox.ToolTip>
                                 </TextBox>
-                                <TextBox x:Name="E_gearValue" ToolTipService.ShowOnDisabled="True" Text="{Binding E_gear, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="2" Margin="22,2" TextWrapping="Wrap" Width="120" Grid.Row="2" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged" >
+                                <TextBox x:Name="E_gearValue" ToolTipService.ShowOnDisabled="True" Text="{Binding E_gear, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="2" Margin="22,2" TextWrapping="Wrap" Width="120" Grid.Row="2" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged" Height="23" >
                                     <TextBox.ToolTip>
                                         <ToolTip  Foreground="Black">
                                             <StackPanel>
@@ -815,7 +821,7 @@
                                         </ToolTip>
                                     </TextBox.ToolTip>
                                 </TextBox>
-                                <TextBox x:Name="Puasson_gearValue" ToolTipService.ShowOnDisabled="True" Text="{Binding Puasson_gear, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="2" Height="24" Margin="22.8,2" TextWrapping="Wrap" Width="120" Grid.Row="3" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged" >
+                                <TextBox x:Name="Puasson_gearValue" ToolTipService.ShowOnDisabled="True" Text="{Binding Puasson_gear, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="2" Height="23" Margin="22.8,2" TextWrapping="Wrap" Width="120" Grid.Row="3" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged" >
                                     <TextBox.ToolTip>
                                         <ToolTip  Foreground="Black">
                                             <StackPanel>
@@ -824,7 +830,7 @@
                                         </ToolTip>
                                     </TextBox.ToolTip>
                                 </TextBox>
-                                <TextBox x:Name="Puasson_wormValue" ToolTipService.ShowOnDisabled="True" Text="{Binding Puasson_worm, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Margin="22,2" TextWrapping="Wrap" Grid.Row="3" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged" >
+                                <TextBox x:Name="Puasson_wormValue" ToolTipService.ShowOnDisabled="True" Text="{Binding Puasson_worm, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Margin="22,2" TextWrapping="Wrap" Grid.Row="3" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged" Height="23" >
                                     <TextBox.ToolTip>
                                         <ToolTip  Foreground="Black">
                                             <StackPanel>
@@ -833,7 +839,7 @@
                                         </ToolTip>
                                     </TextBox.ToolTip>
                                 </TextBox>
-                                <TextBox x:Name="E_wormValue" ToolTipService.ShowOnDisabled="True" Text="{Binding E_worm, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Margin="22,2" TextWrapping="Wrap" Grid.Row="2" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged" >
+                                <TextBox x:Name="E_wormValue" ToolTipService.ShowOnDisabled="True" Text="{Binding E_worm, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Margin="22,2" TextWrapping="Wrap" Grid.Row="2" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged" Height="23" >
                                     <TextBox.ToolTip>
                                         <ToolTip  Foreground="Black">
                                             <StackPanel>
@@ -842,10 +848,13 @@
                                         </ToolTip>
                                     </TextBox.ToolTip>
                                 </TextBox>
-                                <TextBox x:Name="limit_contact" HorizontalAlignment="Left" Height="21" Margin="241,14,0,-7" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Top" Width="82" IsEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Times New Roman"/>
-                                <TextBox x:Name="limit_bending" Grid.Column="2" HorizontalAlignment="Left" Height="21" Margin="72.8,14,0,-7" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Top" Width="82"  IsEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Times New Roman"/>
-                                <Label Content="Допускаемые контактные напряжения" Margin="0,14,0,-13" HorizontalContentAlignment="Center" Grid.Row="4" Padding="0" Height="27" VerticalAlignment="Top" HorizontalAlignment="Left" Width="231"/>
-                                <Label Content="Допускаемые напряжения изгиба" Margin="1.4,14,0,-11" HorizontalContentAlignment="Center" Grid.Row="4" Padding="0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Width="231" Grid.ColumnSpan="2" Grid.Column="1"/>
+                                <TextBox x:Name="limit_contact" Text="{Binding contact, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="146,13,0,-8" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Top" Width="82" IsEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Times New Roman"/>
+                                <TextBox x:Name="limit_bending" Text="{Binding bending, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="23.4,13,0,-8" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Top" Width="88"  IsEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Times New Roman"/>
+                                <Label Content="Контактные напряжения" Margin="4,13,0,-8" HorizontalContentAlignment="Center" Grid.Row="4" Padding="0" Height="23" VerticalAlignment="Top" HorizontalAlignment="Left" Width="136"/>
+                                <Label Content="Напряжения изгиба" Margin="236,13,150.2,-8" HorizontalContentAlignment="Center" Grid.Row="4" Padding="0" Height="23" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+                                <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Margin="118.4,8,0,-12" Grid.Row="4" Width="211" Grid.ColumnSpan="2" Grid.Column="1"/>
+                                <TextBox x:Name="temperature" Text="{Binding temperature, ValidatesOnDataErrors = True, UpdateSourceTrigger =PropertyChanged}" Grid.Column="2" HorizontalAlignment="Left" Margin="75.8,13,0,-8" Grid.Row="4" TextWrapping="Wrap" Width="82"  IsEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Times New Roman"/>
+                                <Label Content="Температура масла" Margin="122.4,13,0,-8" HorizontalContentAlignment="Center" Grid.Row="4" Padding="0" Height="23" VerticalAlignment="Top" HorizontalAlignment="Left" Width="113" Grid.Column="1" Grid.ColumnSpan="2"/>
                             </Grid>
                         </Grid>
                     </GroupBox>
@@ -856,7 +865,6 @@
                         <RowDefinition/>
                         <RowDefinition Height="31*"/>
                     </Grid.RowDefinitions>
-                    <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="443" Margin="-3,12,-2,0" VerticalAlignment="Top" Width="210" Grid.RowSpan="2"/>
                     <StackPanel HorizontalAlignment="Left" Height="439" Margin="1,15,-6,0" VerticalAlignment="Top" Width="210" Grid.RowSpan="2">
                         <Label Content="Общие параметры" Height="22" FontWeight="Bold" FontSize="10" Padding="5,0" Background="#FFD0CFCF" Margin="0,0,9.6,0" Width="200"/>
                         <DataGrid x:Name="TableGeneral_Calc" ColumnWidth="135"  ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"

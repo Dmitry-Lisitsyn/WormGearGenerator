@@ -73,17 +73,7 @@ namespace WormGearGenerator
             swEqnMgr = (EquationMgr)swModel.GetEquationMgr();
             if (swEqnMgr == null)
                 errorMsg(swApp, "Ошибка подключения к модели");
-
-            var nCount = swEqnMgr.GetCount();
-            for (int i = 0; i < nCount; i++)
-            {
-                Debug.Print("  Equation(" + i + ")  = " + swEqnMgr.get_Equation(i));
-                Debug.Print("    Value = " + swEqnMgr.get_Value(i));
-                Debug.Print("    Index = " + swEqnMgr.Status);
-                Debug.Print("    Global variable? " + swEqnMgr.get_GlobalVariable(i));
-            }
-
-            //swEqnMgr.AutomaticSolveOrder = true;
+         
             swEqnMgr.AutomaticRebuild = true;
 
             try
