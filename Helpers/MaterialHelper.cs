@@ -8,6 +8,9 @@ using System.Windows;
 
 namespace WormGearGenerator
 {
+    /// <summary>
+    /// Предоставляет возможность чтения баз данных материалов SolidWorks 
+    /// </summary>
     class MaterialHelper
     {
         public SldWorks swApp;
@@ -17,6 +20,9 @@ namespace WormGearGenerator
             swApp = solidWorks;
         }
 
+        /// <summary>
+        /// Возвращает все доступные материалы из SolidWorks
+        /// </summary>
         public List<Material> GetMaterials(string database = null)
         {
 
@@ -42,12 +48,14 @@ namespace WormGearGenerator
 
         }
 
+        /// <summary>
+        ///Заполняет передаваемый список названиями материалов и их физическими характеристиками
+        /// </summary>
         private static void ReadMaterials(string database, ref List<Material> list)
         {
             // Проверяем, существует ли файл с базой 
             if (!File.Exists(database))
                 Console.WriteLine("Указанной базы материалов не существует");
-
             try
             {
                 // если найден, то открываем его
@@ -55,9 +63,7 @@ namespace WormGearGenerator
                 {
                     // парсим как хмл
                     var xmlDoc = XDocument.Load(stream);
-
                     var materials = new List<Material>();
-
                     // проходим по структуре документа 
                     xmlDoc.Root.Elements("classification")?.ToList()?.ForEach(f =>
                     {
@@ -72,30 +78,16 @@ namespace WormGearGenerator
                         // проходим по всем материалам
                         f.Elements("material").ToList().ForEach(material =>
                         {
-
                             material.Elements("physicalproperties").ToList().ForEach(physic =>
                             {
-                                physic.Elements("EX").ToList().ForEach(prop1 =>
-                                {
-                                    ex = prop1.Attribute("value")?.Value;
-                                });
-
-                                physic.Elements("NUXY").ToList().ForEach(prop2 =>
-                                {
-                                    nuxy = prop2.Attribute("value")?.Value;
-                                });
-
-                                physic.Elements("SIGXT").ToList().ForEach(prop3 =>
-                                {
-                                    sigxt = prop3.Attribute("value")?.Value;
-                                });
-
-                                physic.Elements("SIGYLD").ToList().ForEach(prop4 =>
-                                {
-                                    sigyld = prop4.Attribute("value")?.Value;
-                                });
-
-
+                                //Модуль упругости
+                                physic.Elements("EX").ToList().ForEach(prop1 => { ex = prop1.Attribute("value")?.Value; });
+                                //Коэффициент Пуассона
+                                physic.Elements("NUXY").ToList().ForEach(prop2 =>{ nuxy = prop2.Attribute("value")?.Value; });
+                                //Предел прочности
+                                physic.Elements("SIGXT").ToList().ForEach(prop3 => { sigxt = prop3.Attribute("value")?.Value; });
+                                //Предел текучести
+                                physic.Elements("SIGYLD").ToList().ForEach(prop4 =>{ sigyld = prop4.Attribute("value")?.Value; });
                             });
 
                             // добавляем их в лист 
@@ -110,7 +102,6 @@ namespace WormGearGenerator
                                 Poisson_ratio = nuxy,
                                 Tensile_strength = sigxt,
                                 Yield_strength = sigyld,
-
                             });
 
                         });
@@ -128,31 +119,40 @@ namespace WormGearGenerator
             }
         }
     }
+    /// <summary>
+    /// Предоставляет свойства материала
+    /// </summary>
     public class Material
         {
-
+        //Классификация матриала
         public string Classification { get; set; }
 
+        //Название материала
         public string Name { get; set; }
 
+        //Описание материала
         public string Description { get; set; }
 
+        //База данных материала
         public string Database { get; set; }
 
+        //Отображаемое имя материала
         public string DisplayName => $"{Name} ({Classification})";
 
+        //Статус поиска базы данных материала
         public bool DatabaseFileFound { get; set; }
 
+        //Модуль упругости
         public string Elastic_modulus { get; set; }
 
+        //Коэффициент пуассона
         public string Poisson_ratio { get; set; }
 
+        //Предел прочности
         public string Tensile_strength { get; set; }
 
+        //Предел текучести
         public string Yield_strength { get; set; }
-
-
-
 
     }
 }

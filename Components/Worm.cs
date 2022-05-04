@@ -6,7 +6,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
-
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Threading;
+using System.Windows.Controls;
+using System.Threading;
 
 namespace WormGearGenerator
 {
@@ -27,28 +31,33 @@ namespace WormGearGenerator
         private string baseDirectory;
 
         SldWorks swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
-        
+
+        UserProgressBar pb;
+        bool retVal;
+        int lRet;
 
         public Worm(string directory)
         {
             baseDirectory = directory;
         }
 
-
         public void create()
         {
-           // string fileNameWorm = Directory.GetParent(baseDirectory).Parent.FullName + "\\res\\WormTemp.SLDPRT";
             string destPath = _path;
 
             if (!File.Exists(destPath))
                 File.WriteAllBytes(destPath, Properties.Resources.WormTemp);
-            //(fileNameWorm, destPath);
 
             changeModel();
         }
 
         private void changeModel()
         {
+            //Прогресс бар
+            retVal = swApp.GetUserProgressBar(out pb);
+            pb.Start(0, 100, "Создание компонента...");
+            lRet = pb.UpdateProgress(20);
+
             ModelDoc2 swModel;
             PartDoc swComp;
             int errors = 0;
@@ -58,8 +67,10 @@ namespace WormGearGenerator
 
             swComp = (PartDoc)swApp.OpenDoc6(_path, (int)swDocumentTypes_e.swDocPART, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
             swModel = (ModelDoc2)swComp;
-
             swModel = (ModelDoc2)swApp.ActiveDoc;
+
+            pb.UpdateTitle("Изменение компонента...");
+            lRet = pb.UpdateProgress(25);
 
             swEqnMgr = (EquationMgr)swModel.GetEquationMgr();
             if (swEqnMgr == null)
@@ -84,6 +95,8 @@ namespace WormGearGenerator
                 equation = $"\"pressure_angle\"={_pressureAngle}";
                 swEqnMgr.Equation[4] = equation;
 
+                lRet = pb.UpdateProgress(30);
+
                 equation = $"\"length\" = {_length}mm";
                 swEqnMgr.Equation[5] = equation;
 
@@ -97,6 +110,8 @@ namespace WormGearGenerator
                 float distance = (float)((int)((_length * 0.5 / px) + 1) * px + 0.5 * px);
                 equation = $"\"distance\" = {distance}mm";
                 swEqnMgr.Equation[8] = equation;
+
+                lRet = pb.UpdateProgress(50);
 
                 equation = $"\"z\" = {_z}";
                 swEqnMgr.Equation[9] = equation;
@@ -117,6 +132,8 @@ namespace WormGearGenerator
                 float cham1 = (float)(cham2 * 0.5 * Math.Tan(_pressureAngle * (Math.PI / 180)));
                 equation = $"\"cham1\" = {cham1}";
                 swEqnMgr.Equation[14] = equation;
+
+                lRet = pb.UpdateProgress(70);
 
                 equation = $"\"D1@Boss-Extrude1\" = {_length}mm";
                 swEqnMgr.Equation[15] = equation;
@@ -157,6 +174,8 @@ namespace WormGearGenerator
                 equation = $"\"D5@LeftHelix\" = {(int)(_length / px) + 3}";
                 swEqnMgr.Equation[27] = equation;
 
+                lRet = pb.UpdateProgress(80);
+
                 equation = $"\"D7@LeftHelix\" = {90}deg";
                 swEqnMgr.Equation[28] = equation;
 
@@ -165,15 +184,24 @@ namespace WormGearGenerator
 
                 swEqnMgr.EvaluateAll();
 
+                pb.UpdateTitle("Применение материала...");
+                lRet = pb.UpdateProgress(90);
+
                 if (_material != null)
                     setMaterial(swComp, _material.Name, _material.Database);
 
                 swModel.ForceRebuild3(false);
                 swModel.SaveAs3(_path, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_CopyAndOpen);
+
+                pb.UpdateTitle("Сохранение компонента...");
+                lRet = pb.UpdateProgress(100);
+                pb.End();
+
             }
             catch (Exception e)
             {
                 errorMsg(swApp, "Ошибка в процессе редактирования модели! " + e.Message);
+                pb.End();
             }
            
         }

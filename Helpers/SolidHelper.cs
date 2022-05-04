@@ -15,6 +15,9 @@ namespace WormGearGenerator
     class SolidHelper
     {
         private SldWorks swApp;
+        UserProgressBar pb;
+        bool retVal;
+        int lRet;
 
         public SolidHelper()
         {
@@ -38,7 +41,6 @@ namespace WormGearGenerator
 
         public void AddComponent(Worm worm, Gear gear, string assemblyPath)
         {
-            
             ModelDoc2 swModel;
             AssemblyDoc swAssy;
 
@@ -137,30 +139,45 @@ namespace WormGearGenerator
             swModelDocExt = swModel.Extension;
             mateSelMark = 1;
 
+            //Прогресс бар
+            retVal = swApp.GetUserProgressBar(out pb);
+            pb.Start(0, 100, "Создание зависимостей...");
+            lRet = pb.UpdateProgress(30);
+
             swModel.ClearSelection2(true);
             swModelDocExt.SelectByID2("Front Plane@" + gearName +"-1@"+ assemblyName, "PLANE", 0, 0, 0, true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
             swModelDocExt.SelectByID2("Front Plane", "PLANE", 0, 0, 0, true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
             swAssy.AddMate3((int)swMateType_e.swMateCOINCIDENT, (int)swMateAlign_e.swMateAlignALIGNED, false, 0, 0, 0, 0, 0, 0, 0, 0, false, out errorCode1);
 
+            lRet = pb.UpdateProgress(40);
+
             swModel.ClearSelection2(true);
             swModelDocExt.SelectByID2("Line9@Sketch2@" + gearName + "-1@" + assemblyName, "EXTSKETCHSEGMENT", 0, 0, 0, true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
             swModelDocExt.SelectByID2("Point1@Origin", "EXTSKETCHPOINT", 0, 0, 0, true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
             swAssy.AddMate3((int)swMateType_e.swMateCOINCIDENT, (int)swMateAlign_e.swMateAlignALIGNED, false, 0, 0, 0, 0, 0, 0, 0, 0, false, out errorCode1);
-           
+
+            lRet = pb.UpdateProgress(50);
+
             swModel.ClearSelection2(true);
             swModelDocExt.SelectByID2("Right Plane@" + wormName + "-1@" + assemblyName, "PLANE", 0, 0, 0, true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
             swModelDocExt.SelectByID2("Right Plane", "PLANE", 0, 0, 0, true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
             swAssy.AddMate3((int)swMateType_e.swMateCOINCIDENT, (int)swMateAlign_e.swMateAlignALIGNED, false, 0, 0, 0, 0, 0, 0, 0, 0, false, out errorCode1);
+
+            lRet = pb.UpdateProgress(60);
 
             swModel.ClearSelection2(true);
             swModelDocExt.SelectByID2("Line2@Sketch5@" + wormName + "-1@" + assemblyName, "EXTSKETCHSEGMENT", 0, 0, 0, true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
             swModelDocExt.SelectByID2("Front Plane", "PLANE", 0, 0, 0, true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
             swAssy.AddMate3((int)swMateType_e.swMateCOINCIDENT, (int)swMateAlign_e.swMateAlignALIGNED, false, 0, 0, 0, 0, 0, 0, 0, 0, false, out errorCode1);
 
+            lRet = pb.UpdateProgress(70);
+
             swModel.ClearSelection2(true);
             swModelDocExt.SelectByID2("Point1@Origin@" + gearName + "-1@" + assemblyName, "EXTSKETCHPOINT", 0, 0, 0, true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
             swModelDocExt.SelectByID2("Point1@Origin@" + wormName + "-1@" + assemblyName, "EXTSKETCHPOINT", 0, 0, 0, true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
             swAssy.AddMate3((int)swMateType_e.swMateDISTANCE, (int)swMateAlign_e.swMateAlignALIGNED, false, 0, 0, 0, 0, 0, 0, 0, 0, false, out errorCode1);
+
+            lRet = pb.UpdateProgress(80);
 
             feat = swModel.Extension.GetLastFeatureAdded();
             swMateData = (MateFeatureData)feat.GetDefinition();
@@ -175,9 +192,15 @@ namespace WormGearGenerator
             swModelDocExt.SelectByID2("Line9@Sketch2@" + gearName + "-1@" + assemblyName, "EXTSKETCHSEGMENT", 0, 0, 0, true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
             swAssy.AddMate5((int)swMateType_e.swMateGEAR, (int)swMateAlign_e.swMateAlignALIGNED, flip, 0, 0, 0, teethWorm/1000, teethGear/1000, 0, 0, 0, false, false, 0, out errorCode1);
 
+            lRet = pb.UpdateProgress(90);
+
             swModel.ClearSelection2(true);
             swModel.ForceRebuild3(false);
             swModel.SaveAs3(assemblyPath, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_CopyAndOpen);
+
+            pb.UpdateTitle("Сохранение сборки...");
+            lRet = pb.UpdateProgress(100);
+            pb.End();
         }
 
     }

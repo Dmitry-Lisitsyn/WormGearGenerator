@@ -36,6 +36,10 @@ namespace WormGearGenerator
 
         SldWorks swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
 
+        UserProgressBar pb;
+        bool retVal;
+        int lRet;
+
         public Gear(string directory)
         {
             baseDirectory = directory;
@@ -57,6 +61,11 @@ namespace WormGearGenerator
 
         private void changeModel()
         {
+            //Прогресс бар
+            retVal = swApp.GetUserProgressBar(out pb);
+            pb.Start(0, 100, "Создание компонента...");
+            lRet = pb.UpdateProgress(20);
+
             ModelDoc2 swModel;
             PartDoc swComp;
             int errors = 0;
@@ -67,8 +76,10 @@ namespace WormGearGenerator
            
             swComp = (PartDoc)swApp.OpenDoc6(_path, (int)swDocumentTypes_e.swDocPART, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
             swModel = (ModelDoc2)swComp;
-
             swModel = (ModelDoc2)swApp.ActiveDoc;
+
+            pb.UpdateTitle("Изменение компонента...");
+            lRet = pb.UpdateProgress(25);
 
             swEqnMgr = (EquationMgr)swModel.GetEquationMgr();
             if (swEqnMgr == null)
@@ -84,11 +95,15 @@ namespace WormGearGenerator
                 equation = $"\"g_z\"={_z}mm";
                 swEqnMgr.Equation[2] = equation;
 
+                lRet = pb.UpdateProgress(35);
+
                 equation = $"\"g_df\"={_df}";
                 swEqnMgr.Equation[3] = equation;
 
                 equation = $"\"g_da\" = {_da}mm";
                 swEqnMgr.Equation[4] = equation;
+
+                lRet = pb.UpdateProgress(45);
 
                 equation = $"\"g_beta\" = {_beta}mm";
                 swEqnMgr.Equation[5] = equation;
@@ -96,11 +111,15 @@ namespace WormGearGenerator
                 equation = $"\"g_degpres\" = {_pressureAngle}";
                 swEqnMgr.Equation[6] = equation;
 
+                lRet = pb.UpdateProgress(55);
+
                 equation = $"\"w_df1\" = {_df1}mm";
                 swEqnMgr.Equation[7] = equation;
 
                 equation = $"\"w_da1\" = {_da1}";
                 swEqnMgr.Equation[8] = equation;
+
+                lRet = pb.UpdateProgress(65);
 
                 equation = $"\"w_d1\" = {_d1}";
                 swEqnMgr.Equation[9] = equation;
@@ -108,11 +127,15 @@ namespace WormGearGenerator
                 equation = $"\"px\" = {_px}";
                 swEqnMgr.Equation[10] = equation;
 
+                lRet = pb.UpdateProgress(75);
+
                 equation = $"\"w_z\" = {_z1}";
                 swEqnMgr.Equation[11] = equation;
 
                 equation = $"\"g_dw\" = {_dw}";
                 swEqnMgr.Equation[12] = equation;
+
+                lRet = pb.UpdateProgress(85);
 
                 equation = $"\"rightorLeft\" = {_rightOrLeft}";
                 swEqnMgr.Equation[13] = equation;
@@ -125,12 +148,19 @@ namespace WormGearGenerator
 
                 swEqnMgr.EvaluateAll();
 
+                pb.UpdateTitle("Изменение компонента...");
+                lRet = pb.UpdateProgress(95);
+
                 if (_material != null)
                     setMaterial(swComp, _material.Name, _material.Database);
 
                 swModel.ForceRebuild3(false);
                 
                 swModel.SaveAs3(_path, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_CopyAndOpen);
+
+                pb.UpdateTitle("Сохранение компонента...");
+                lRet = pb.UpdateProgress(100);
+                pb.End();
             }
             catch (Exception e)
             {

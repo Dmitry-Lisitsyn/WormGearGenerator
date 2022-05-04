@@ -14,13 +14,11 @@ namespace WormGearGenerator.Helpers
         public string length_Worm { get; set; } = "140";
         public string koef_diamWorm { get; set; } = "10";
         public string av_diamWorm { get; set; } = "40";
-
         //Червячное колесо
         public string teeth_Gear { get; set; } = "60";
         public string width_Gear { get; set; } = "20";
         public string koef_Smesh { get; set; } = "1";
         public string hole_Gear { get; set; } = "0";
-
         //Общие в силовом
         public string PowerWorm { get; set; } = "0.1"; //>=0
         public string PowerGear { get; set; }
@@ -28,9 +26,7 @@ namespace WormGearGenerator.Helpers
         public string VelocityGear { get; set; }
         public string MomentWorm { get; set; }
         public string MomentGear { get; set; }
-
         public string KPD { get; set; } // 0.1 - 1
-
         //Параметры материалов
         public string sigmaV { get; set; } = "250"; //>=0
         public string sigmaT { get; set; } = "160"; //>=0
@@ -38,13 +34,12 @@ namespace WormGearGenerator.Helpers
         public string E_gear { get; set; } = "101000";//>=0
         public string Puasson_worm { get; set; } = "0.3";//>=0
         public string Puasson_gear { get; set; } = "0.31";//>=0
-
         //Коэффициенты
         public string Ko { get; set; } = "1.200"; //1 - 5
         public string Kv { get; set; } = "1.042"; //1 - 6
         public string y { get; set; } = "0.125"; // 0.02 - 0.8
         public string time { get; set; } = "10000"; // >=1
-        
+        //Проверка на прочность, изгиб и температуру
         public string temperature { get; set; }
         public string contact_calc { get; set; }
         public string contact { get; set; }
@@ -302,11 +297,13 @@ namespace WormGearGenerator.Helpers
             this._window = window;
         }
 
+        //Проверка словаря на наличие ошибки у поля
         private bool isErrorExist(Dictionary<string, string> dict, string property)
         {
             return dict.ContainsKey(property);
         }
 
+        //Добавление ошибки в словарь
         private void addError(Dictionary<string, string> dict, string property, string message)
         {
             if (isErrorExist(dict, property))
@@ -315,6 +312,7 @@ namespace WormGearGenerator.Helpers
             dict.Add(property, message);
         }
 
+        //Проверка поля на ошибку
         public bool validateError( Dictionary<string, string> dict, string property, string message, Func<bool> ruleCheck)
         {
             bool check = ruleCheck();
@@ -329,17 +327,12 @@ namespace WormGearGenerator.Helpers
             return check;
         }
 
+        //Удаление ошибки из словаря
         private void removeError(Dictionary<string, string> dict, string property)
         {
             if (dict.ContainsKey(property))
                 dict.Remove(property);
         }
-
-        //private void  Clear()
-        //{
-        //    errors.Clear();
-        //}
-
 
     }
 }

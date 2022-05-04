@@ -33,17 +33,10 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <!--<Style TargetType="DataGridRow">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding Active}" Value="False">
-                    <Setter Property="Foreground" Value="Red" />
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>-->
     </Window.Resources>
 
     <TabControl HorizontalAlignment="Left" Height="630" VerticalAlignment="Top" Width="919" RenderTransformOrigin="0.399,0.434">
-        <TabItem Margin="2,0,-2.4,-0.4" RenderTransformOrigin="0.5,0.506" Width="82" Height="34" VerticalAlignment="Bottom">
+        <TabItem Margin="2,0,-2,0" RenderTransformOrigin="0.5,0.506" Width="82">
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
                     <Image Source="img/tabModel.png" Width="20" RenderTransformOrigin="0.5,0.632"/>
@@ -275,8 +268,8 @@
                             <ColumnDefinition Width="165"/>
                             <ColumnDefinition Width="165"/>
                         </Grid.ColumnDefinitions>
-                        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="27" Margin="10,3,0,0" VerticalAlignment="Top" Width="150"/>
                         <Label Content="Передаточное отношение" Margin="0,30,164.4,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="20" Padding="5,0"/>
+                        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="22" Margin="7,5,0,0" VerticalAlignment="Top" Width="144"/>
                         <Label Content="Модуль" Grid.Column="1" Margin="0.4,30,0.4,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Height="20" Padding="5,0"/>
                         <Label Content="Угол профиля" Grid.Column="1" Margin="164.4,30,0.2,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Height="20" Padding="5,0"/>
                         <Label Content="Угол наклона зуба" Grid.Column="2" Margin="164.6,30,0,0" VerticalAlignment="Top" HorizontalContentAlignment="Center" Grid.ColumnSpan="2" Height="20" Padding="5,0"/>
@@ -303,7 +296,7 @@
                                 </ToolTip>
                             </ComboBox.ToolTip>
                         </ComboBox>
-                        <TextBox x:Name="DegTeethValue" ToolTipService.ShowOnDisabled="True"  Text="{Binding deg_TeethValue, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}"  Grid.Column="3" HorizontalAlignment="Left" Height="25" Margin="19.8,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged" >
+                        <TextBox x:Name="DegTeethValue" ToolTipService.ShowOnDisabled="True"  Text="{Binding deg_TeethValue, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"  Grid.Column="3" HorizontalAlignment="Left" Height="25" Margin="19.8,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged" >
                             <TextBox.ToolTip>
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
@@ -313,9 +306,6 @@
                             </TextBox.ToolTip>
                         </TextBox>
                         <Button x:Name="Expander_showCalc"  Grid.Column="3" HorizontalAlignment="Left" Margin="133,-4,0,57" VerticalAlignment="Bottom" Width="25" Height="25" BorderBrush="Black" Background="White" Click="Expander_Calculations_Click">
-                            <StackPanel x:Name="stack_openCalc">
-                                <Image Source="img/openCalculation.png" Height="18" Width="17"/>
-                            </StackPanel>
                             <Button.ToolTip>
                                 <ToolTip Foreground="Black">
                                     <StackPanel>
@@ -323,12 +313,11 @@
                                     </StackPanel>
                                 </ToolTip>
                             </Button.ToolTip>
-                        </Button>
-                        <Button x:Name="buOpen_json" HorizontalAlignment="Left" Margin="15,7,0,53" Width="20" Height="20" Background="White" BorderBrush="White" Click="buOpen_json_Click">
-                            <StackPanel>
-                                <Image Source="img/open.png" Height="18" Width="17"/>
-                                <Label Content="Settings" HorizontalAlignment="Center"/>
+                            <StackPanel x:Name="stack_openCalc">
+                                <Image Source="img/openCalculation.png" Height="18" Width="17"/>
                             </StackPanel>
+                        </Button>
+                        <Button x:Name="buOpen_json" HorizontalAlignment="Left" Margin="6,5,0,53" Width="25" Background="White" BorderBrush="Black" Click="buOpen_json_Click">
                             <Button.ToolTip>
                                 <ToolTip Foreground="Black">
                                     <StackPanel>
@@ -336,12 +325,11 @@
                                     </StackPanel>
                                 </ToolTip>
                             </Button.ToolTip>
-                        </Button>
-                        <Button x:Name="buSave_json"  HorizontalAlignment="Left" Margin="41,0,0,53" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_json_Click">
                             <StackPanel>
-                                <Image Source="img/save.png" Height="18" Width="17"/>
-                                <Label Content="Settings" HorizontalAlignment="Center"/>
+                                <Image Source="img/open.png" Height="18" Width="17"/>
                             </StackPanel>
+                        </Button>
+                        <Button x:Name="buSave_json"  HorizontalAlignment="Left" Margin="30,0,0,53" VerticalAlignment="Bottom" Width="25" Height="22" Background="White" BorderBrush="Black" Click="buSave_json_Click">
                             <Button.ToolTip>
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
@@ -349,12 +337,11 @@
                                     </StackPanel>
                                 </ToolTip>
                             </Button.ToolTip>
-                        </Button>
-                        <Button x:Name="buSave_PDF"  HorizontalAlignment="Left" Margin="86,0,0,55" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_PDF_Click">
                             <StackPanel>
-                                <Image Source="img/ToPdf.png" Height="18" Width="17"/>
-                                <Label Content="Settings" HorizontalAlignment="Center"/>
+                                <Image Source="img/save.png" Height="18" Width="17"/>
                             </StackPanel>
+                        </Button>
+                        <Button x:Name="buSave_PDF"  HorizontalAlignment="Left" Margin="78,0,0,53" VerticalAlignment="Bottom" Width="25" Height="22" Background="White" BorderBrush="Black" Click="buSave_PDF_Click">
                             <Button.ToolTip>
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
@@ -362,12 +349,11 @@
                                     </StackPanel>
                                 </ToolTip>
                             </Button.ToolTip>
-                        </Button>
-                        <Button x:Name="buSave_docx" HorizontalAlignment="Left" Margin="110,0,0,55" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_docx_Click">
                             <StackPanel>
-                                <Image Source="img/ToWord.png" Height="18" Width="17"/>
-                                <Label Content="Settings" HorizontalAlignment="Center"/>
+                                <Image Source="img/ToPdf.png" Height="18" Width="17"/>
                             </StackPanel>
+                        </Button>
+                        <Button x:Name="buSave_docx" HorizontalAlignment="Left" Margin="102,0,0,53" VerticalAlignment="Bottom" Width="25" Height="22" Background="White" BorderBrush="Black" Click="buSave_docx_Click">
                             <Button.ToolTip>
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
@@ -375,6 +361,9 @@
                                     </StackPanel>
                                 </ToolTip>
                             </Button.ToolTip>
+                            <StackPanel>
+                                <Image Source="img/ToWord.png" Height="18" Width="17"/>
+                            </StackPanel>
                         </Button>
                         <TextBox x:Name="Peredat_Changed" ToolTipService.ShowOnDisabled="True" HorizontalAlignment="Left" Height="25" Margin="20,51,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13">
                             <TextBox.ToolTip>
@@ -387,11 +376,7 @@
                                 </ToolTip>
                             </TextBox.ToolTip>
                         </TextBox>
-                        <Button x:Name="buSave_excel" HorizontalAlignment="Left" Margin="134,0,0,55" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_excel_Click" >
-                            <StackPanel>
-                                <Image Source="img/ToExcel.png" Height="18" Width="17"/>
-                                <Label Content="Settings" HorizontalAlignment="Center"/>
-                            </StackPanel>
+                        <Button x:Name="buSave_excel" HorizontalAlignment="Left" Margin="126,0,0,53" VerticalAlignment="Bottom" Width="25" Height="22" Background="White" BorderBrush="Black" Click="buSave_excel_Click" >
                             <Button.ToolTip>
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
@@ -399,12 +384,15 @@
                                     </StackPanel>
                                 </ToolTip>
                             </Button.ToolTip>
+                            <StackPanel>
+                                <Image Source="img/ToExcel.png" Height="18" Width="17"/>
+                            </StackPanel>
                         </Button>
-                        <Button x:Name="buSave_TXT"  HorizontalAlignment="Left" Margin="65,0,0,53" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_TXT_Click">
+                        <Button x:Name="buSave_TXT"  HorizontalAlignment="Left" Margin="54,0,0,53" VerticalAlignment="Bottom" Width="25" Height="22" Background="White" BorderBrush="Black" Click="buSave_TXT_Click">
                             <Button.ToolTip>
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
-                                        <TextBlock Text="Сохранить параметры" />
+                                        <TextBlock Text="Экспорт параметров в TXT" />
                                     </StackPanel>
                                 </ToolTip>
                             </Button.ToolTip>
@@ -443,13 +431,12 @@
                 </Button>
                 <StackPanel x:Name="stackModel" HorizontalAlignment="Left" Height="440" Margin="696,17,0,-197.8" VerticalAlignment="Top" Width="200">
                     <Label Content="Общие параметры" Height="22" FontWeight="Bold" FontSize="10" Padding="5,0" Background="#FFD0CFCF"/>
-                    <DataGrid x:Name="TableGeneral_Model" ColumnWidth="135"  ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                    <DataGrid x:Name="TableGeneral_Model" ColumnWidth="135" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled" HeadersVisibility="None" Height="119" Width="200" ColumnHeaderHeight="22" BorderBrush="Black" FontSize="12" CanUserResizeRows="False" IsReadOnly="True" GridLinesVisibility="Horizontal" FontFamily="Times New Roman" />
                     <Label Content="Червяк" Height="22" FontWeight="Bold" Padding="5,0" FontSize="10" Background="#FFD0CFCF"/>
                     <DataGrid x:Name="TableWorm_Model"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" Height="120" Width="200" ColumnWidth="135" ColumnHeaderHeight="22" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" BorderBrush="Black" FontSize="12" IsReadOnly="True" HeadersVisibility="None" GridLinesVisibility="Horizontal" FontFamily="Times New Roman"/>
                     <Label Content="Червячное колесо" Height="22" FontWeight="Bold" Padding="5,0" FontSize="10" Background="#FFD0CFCF"/>
                     <DataGrid x:Name="TableGear_Model" Height="133" ColumnWidth="135" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ColumnHeaderHeight="22" BorderBrush="Black" Margin="0" FontSize="12" IsReadOnly="True" HeadersVisibility="None" GridLinesVisibility="Horizontal" FontFamily="Times New Roman"/>
-                    <Border BorderBrush="Black" BorderThickness="1" Height="100"/>
                 </StackPanel>
 
             </Grid>
@@ -483,29 +470,15 @@
                         <GroupBox Header="Коэффициенты" Margin="0,0,0.4,0" BorderBrush="Black" Height="125" VerticalAlignment="Top">
                             <Grid Margin="0,-3,0.4,-3.6">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="163.2"/>
-                                    <ColumnDefinition Width="163.2"/>
+                                    <ColumnDefinition Width="180"/>
+                                    <ColumnDefinition Width="146.4"/>
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="22"/>
-                                    <RowDefinition Height="22"/>
-                                    <RowDefinition Height="22"/>
-                                    <RowDefinition Height="22"/>
+                                    <RowDefinition Height="94.4"/>
                                 </Grid.RowDefinitions>
-                                <Label Content="Коэффициент перегрузки Ko" Margin="0,0,0.2,0.4" RenderTransformOrigin="0.188,0.097" Padding="0" HorizontalContentAlignment="Center"/>
-                                <Label Content="Коэффициент скорости Kv" Margin="0" RenderTransformOrigin="0.188,0.097" Padding="0" HorizontalContentAlignment="Center" Grid.Row="1"/>
-                                <Label Content="Коэффициент льюиса (y)" Margin="0" RenderTransformOrigin="0.188,0.097" Padding="0" HorizontalContentAlignment="Center" Grid.Row="2"/>
-                                <Label Content="Срок службы, (ч)" Margin="0" RenderTransformOrigin="0.188,0.097" Padding="0" HorizontalContentAlignment="Center" Grid.Row="3"/>
-                                <TextBox x:Name="KoValue" Text="{Binding Ko, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Height="22" Margin="21.8,2,21.4,22.4" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11" Grid.RowSpan="2">
-                                    <TextBox.ToolTip>
-                                        <ToolTip  Foreground="Black">
-                                            <StackPanel>
-                                                <TextBlock Text="Коэффициент перегрузки Ko" />
-                                            </StackPanel>
-                                        </ToolTip>
-                                    </TextBox.ToolTip>
-                                </TextBox>
-                                <TextBox x:Name="KvValue" Text="{Binding Kv, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Height="22" Margin="21.8,1.8,21.4,22.6" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" Grid.Row="1" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11" Grid.RowSpan="2">
+                                <Label Content="Коэффициент динамич.нагрузки (Kv)" Margin="0,2,0,45.2" RenderTransformOrigin="0.188,0.097" Padding="0" HorizontalContentAlignment="Center" FontSize="10" VerticalContentAlignment="Center"/>
+                                <Label Content="Срок службы, (ч)" Margin="0,59,0,12.2" RenderTransformOrigin="0.188,0.097" Padding="0" HorizontalContentAlignment="Center"/>
+                                <TextBox x:Name="KvValue" Text="{Binding Kv, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Margin="24,14,18.4,59.2" TextWrapping="Wrap" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11">
                                     <TextBox.ToolTip>
                                         <ToolTip  Foreground="Black">
                                             <StackPanel>
@@ -514,16 +487,7 @@
                                         </ToolTip>
                                     </TextBox.ToolTip>
                                 </TextBox>
-                                <TextBox x:Name="yValue" Text="{Binding y, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Height="22" Margin="21.8,1.6,21.4,22.8" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" Grid.Row="2" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11" Grid.RowSpan="2">
-                                    <TextBox.ToolTip>
-                                        <ToolTip  Foreground="Black">
-                                            <StackPanel>
-                                                <TextBlock Text="Коэффициент льюиса (y)" />
-                                            </StackPanel>
-                                        </ToolTip>
-                                    </TextBox.ToolTip>
-                                </TextBox>
-                                <TextBox x:Name="timeValue" Text="{Binding time, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Margin="21.8,1.4,21.4,-0.2" TextWrapping="Wrap" Width="120" HorizontalContentAlignment="Center" Grid.Row="3" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11" Height="22">
+                                <TextBox x:Name="timeValue" Text="{Binding time, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Margin="24,61,18.4,12.2" TextWrapping="Wrap" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Times New Roman" FontSize="11">
                                     <TextBox.ToolTip>
                                         <ToolTip  Foreground="Black">
                                             <StackPanel>
@@ -565,7 +529,7 @@
                         </Grid.ColumnDefinitions>
                         <Border BorderBrush="Black" BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="109" Margin="224.6,6,0,0" Grid.RowSpan="5" VerticalAlignment="Top" Width="152" Grid.ColumnSpan="2"/>
                         <Border BorderBrush="Black" BorderThickness="1" Grid.Column="1" HorizontalAlignment="Left" Height="109" Margin="73.6,6,0,0" Grid.RowSpan="5" VerticalAlignment="Top" Width="152"/>
-                        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="27" Margin="10,6,0,0" VerticalAlignment="Top" Width="150"/>
+                        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="22" Margin="6,8,0,7.6" Width="144"/>
                         <Label Content="Мощность (кВт)" Margin="0" Height="18" Padding="5,0" Width="104" Grid.Row="1"/>
                         <Label Content="Скорость (об/мин)" Margin="0" HorizontalContentAlignment="Center" Height="20" Padding="5,0" Grid.Row="2"/>
                         <Label Content="Крутящий момент (Нм)" Margin="0" HorizontalContentAlignment="Center" Padding="5,0" Grid.Row="3"/>
@@ -634,7 +598,7 @@
                                 </ToolTip>
                             </CheckBox.ToolTip>
                         </CheckBox>
-                        <Button x:Name="buOpen_json_Calc" HorizontalAlignment="Left" Margin="15,10,0,7.6" Width="20" Background="White" BorderBrush="White" Click="buOpen_json_Click" Height="20">
+                        <Button x:Name="buOpen_json_Calc" HorizontalAlignment="Left" Margin="6,7.9,0,6.6" Width="25" Background="White" BorderBrush="Black" Click="buOpen_json_Click" Height="22">
                             <StackPanel>
                                 <Image Source="img/open.png" Height="18" Width="17"/>
                             </StackPanel>
@@ -646,7 +610,7 @@
                                 </ToolTip>
                             </Button.ToolTip>
                         </Button>
-                        <Button x:Name="buSave_json_Calc"  HorizontalAlignment="Left" Margin="41,0,0,7.6" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_json_Click">
+                        <Button x:Name="buSave_json_Calc"  HorizontalAlignment="Left" Margin="30,8,0,7.6" Width="25" Height="22" Background="White" BorderBrush="Black" Click="buSave_json_Click">
                             <StackPanel>
                                 <Image Source="img/save.png" Height="18" Width="17"/>
                             </StackPanel>
@@ -658,7 +622,7 @@
                                 </ToolTip>
                             </Button.ToolTip>
                         </Button>
-                        <Button x:Name="buSave_PDF_Calc"  HorizontalAlignment="Left" Margin="86,0,0,9.6" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_PDF_Click">
+                        <Button x:Name="buSave_PDF_Calc"  HorizontalAlignment="Left" Margin="78,8,0,7.6" Width="25" Height="22" Background="White" BorderBrush="Black" Click="buSave_PDF_Click">
                             <StackPanel>
                                 <Image Source="img/ToPdf.png" Height="18" Width="17"/>
                             </StackPanel>
@@ -670,7 +634,7 @@
                                 </ToolTip>
                             </Button.ToolTip>
                         </Button>
-                        <Button x:Name="buSave_docx_Calc" HorizontalAlignment="Left" Margin="110,0,0,9.6" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_docx_Click">
+                        <Button x:Name="buSave_docx_Calc" HorizontalAlignment="Left" Margin="102,8,0,7.6" Width="25" Height="22" Background="White" BorderBrush="Black" Click="buSave_docx_Click">
                             <StackPanel>
                                 <Image Source="img/ToWord.png" Height="18" Width="17"/>
                             </StackPanel>
@@ -682,7 +646,7 @@
                                 </ToolTip>
                             </Button.ToolTip>
                         </Button>
-                        <Button x:Name="buSave_excel_Calc" HorizontalAlignment="Left" Margin="134,0,0,9.6" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_excel_Click">
+                        <Button x:Name="buSave_excel_Calc" HorizontalAlignment="Left" Margin="126,8,0,7.6" Width="25" Height="22" Background="White" BorderBrush="Black" Click="buSave_excel_Click">
                             <StackPanel>
                                 <Image Source="img/ToExcel.png" Height="18" Width="17"/>
                             </StackPanel>
@@ -724,7 +688,7 @@
                         </TextBox>
                         <RadioButton x:Name="radioWormSel" Content="Червяк" Grid.Column="1" Margin="115.6,9,45,6.6" Height="22"  Tag="_0" RenderTransformOrigin="0.502,0.5"/>
                         <RadioButton x:Name="radioGearSel" Content="Червячное колесо" Grid.Column="2" Margin="16,9,119,6.6" Height="22"  Tag="_1"/>
-                        <Button x:Name="buSave_TXT_Calc"  HorizontalAlignment="Left" Margin="65,0,0,7.6" VerticalAlignment="Bottom" Width="20" Height="20" Background="White" BorderBrush="White" Click="buSave_TXT_Click">
+                        <Button x:Name="buSave_TXT_Calc"  HorizontalAlignment="Left" Margin="54,8,0,7.6" Width="25" Height="22" Background="White" BorderBrush="Black" Click="buSave_TXT_Click">
                             <Button.ToolTip>
                                 <ToolTip  Foreground="Black">
                                     <StackPanel>
@@ -860,21 +824,21 @@
                     </GroupBox>
                 </Grid>
 
-                <Grid Grid.Column="1" Margin="15.8,2,13.6,0.4" Grid.RowSpan="4">
+                <Grid Grid.Column="1" Margin="16,2,14,128" Grid.RowSpan="4">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                         <RowDefinition Height="31*"/>
                     </Grid.RowDefinitions>
                     <StackPanel HorizontalAlignment="Left" Height="439" Margin="1,15,-6,0" VerticalAlignment="Top" Width="210" Grid.RowSpan="2">
                         <Label Content="Общие параметры" Height="22" FontWeight="Bold" FontSize="10" Padding="5,0" Background="#FFD0CFCF" Margin="0,0,9.6,0" Width="200"/>
-                        <DataGrid x:Name="TableGeneral_Calc" ColumnWidth="135"  ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                        <DataGrid x:Name="TableGeneral_Calc" IsReadOnly="True" ColumnWidth="135"  ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled" GridLinesVisibility="Horizontal" FontFamily="Times New Roman" ColumnHeaderHeight="25" BorderBrush="Black" Margin="0,0,9.6,0" Height="165" HeadersVisibility="None" FontSize="11"/>
                         <Label Content="Червяк" Height="22" FontWeight="Bold" Padding="5,0" FontSize="10" Background="#FFD0CFCF" Width="200" Margin="0,0,9.6,0"/>
-                        <DataGrid x:Name="TableWorm_Calc"  ColumnWidth="135"  ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                        <DataGrid x:Name="TableWorm_Calc" IsReadOnly="True" ColumnWidth="135"  ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled" GridLinesVisibility="Horizontal" FontFamily="Times New Roman" ColumnHeaderHeight="25" BorderBrush="Black" Margin="0,0,9.6,0" Height="81" Width="200" HeadersVisibility="None">
                         </DataGrid>
                         <Label Content="Червячное колесо" Height="22" FontWeight="Bold" Padding="5,0" FontSize="10" Background="#FFD0CFCF" Width="200" Margin="0,0,9.6,0"/>
-                        <DataGrid x:Name="TableGear_Calc"  ColumnWidth="135"  ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                        <DataGrid x:Name="TableGear_Calc" IsReadOnly="True" ColumnWidth="135"  ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled" GridLinesVisibility="Horizontal" FontFamily="Times New Roman" ColumnHeaderHeight="25" BorderBrush="Black" Margin="0,0,9.6,0" Height="127" Width="200" HeadersVisibility="None" >
                         </DataGrid>
                     </StackPanel>

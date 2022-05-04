@@ -55,21 +55,30 @@ namespace WormGearGenerator
         public MainWindow()
         {
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
-
+            //Инициализация пути сохранения компонентов при моделировании
             InitializeFolder();
+            //Инициализация компонентов формы 
             InitializeComponent();
 
+            //Контекст данных программы
             validation = new DataValidation(this);
-            this.DataContext = validation;
+            DataContext = validation;
 
+            //Заполнение полей программы начальными данными
             InitializeStartData();
+            //Запуск расчета с начальными данными
             InitializeCalculate();
         }
 
+        /// <summary>
+        /// Иницализация начальной папки для сохранения компонентов
+        /// </summary>
         private void InitializeFolder()
         {
+            //Вызов диалога выбора папки
             System.Windows.Forms.FolderBrowserDialog target = new System.Windows.Forms.FolderBrowserDialog();
             target.Description = "Выберите папку для сохранения сборки";
+            //Обработка выбора
             if (target.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
                 return;
             else
@@ -78,7 +87,7 @@ namespace WormGearGenerator
 
         private void InitializeStartData()
         {
-
+            //Начальные размеры  
             this.Width = 705;
             this.Height = 560;
 
@@ -160,9 +169,7 @@ namespace WormGearGenerator
             //Значения силовых характеристик
             KPDValue.IsEnabled = false;
 
-            KoValue.Text = validation.Ko;
             KvValue.Text = validation.Kv;
-            yValue.Text = validation.y;
             timeValue.Text = validation.time;
 
             radioParam1.IsChecked = true;
@@ -179,12 +186,15 @@ namespace WormGearGenerator
 
         }
 
+        /// <summary>
+        /// Расчет параметров и их отображение в таблицах на вкладках "Модель" и "Расчет"
+        /// </summary>
         private void InitializeCalculate()
         {
-            //Значения внутри полей
+            //Значение модуля
             Module = float.Parse(((Module_combo.Text).Split(' ')[0]), CultureInfo.InvariantCulture.NumberFormat);
 
-            //Угол профиля
+            //Значение угла профиля
             PressureAngle = float.Parse(((ProfileDeg_combo.Text).Split(' ')[0]), CultureInfo.InvariantCulture.NumberFormat);
 
             //Количество оборотов витков
@@ -193,17 +203,14 @@ namespace WormGearGenerator
             //Расчет значений передаточного числа и зубьев колеса
             if (radioParam.IsChecked == true)
             {
-                Peredat = float.Parse(Peredat_combo.Text, CultureInfo.InvariantCulture.NumberFormat);
-                Teeth_gearValue.Text = (float.Parse(Peredat_combo.Text, CultureInfo.InvariantCulture.NumberFormat)
-                * float.Parse(Kol_vitkovValue.Text, CultureInfo.InvariantCulture.NumberFormat)).ToString("0");
+                Peredat = float.Parse(Peredat_combo.Text);
+                Teeth_gearValue.Text = (float.Parse(Peredat_combo.Text) * float.Parse(Kol_vitkovValue.Text)).ToString("0");
             }
             else
             {
-                Peredat_Changed.Text = (float.Parse(Teeth_gearValue.Text, CultureInfo.InvariantCulture.NumberFormat)
-                    / float.Parse(Kol_vitkovValue.Text, CultureInfo.InvariantCulture.NumberFormat)).ToString("0.00");
+                Peredat_Changed.Text = (float.Parse(Teeth_gearValue.Text) / float.Parse(Kol_vitkovValue.Text)).ToString("0.00");
                 Peredat = float.Parse(Peredat_Changed.Text);
             }
-
             //Средний диаметр червяка
             //Угол наклона зуба
             //Коэффициент диаметра червяка 
@@ -228,7 +235,7 @@ namespace WormGearGenerator
                     / float.Parse(Koef_diamValue.Text)) * 180 / Math.PI).ToString(".00");
                 validation.deg_TeethValue = float.Parse(DegTeethValue.Text);
             }
-            
+
             //Делительные диаметры
             d1 = float.Parse(Koef_diamValue.Text) * Module;
             d2 = float.Parse(Teeth_gearValue.Text) * Module;
@@ -253,14 +260,14 @@ namespace WormGearGenerator
             Alpha = (float)(Math.Atan(tan_on_cos) * 180 / Math.PI);
 
             //Межосевое расстояние (aw)
-            aw = Module * (float.Parse(Teeth_gearValue.Text) + float.Parse(Koef_diamValue.Text) + 2*float.Parse(Koef_smeshValue.Text)) / 2;
+            aw = Module * (float.Parse(Teeth_gearValue.Text) + float.Parse(Koef_diamValue.Text) + 2 * float.Parse(Koef_smeshValue.Text)) / 2;
 
             //КПД
             float v1 = (float)((Math.PI * dw1 * float.Parse(VelocityValue.Text)) / 60000);
             //Делительный угол подъема
             float tgy = (float)(Math.Atan((float.Parse(Kol_vitkovValue.Text) / float.Parse(Koef_diamValue.Text))) * 180 / Math.PI);
             //Начальный угол подъема
-            float tgyW = (float)(Math.Atan(float.Parse(Kol_vitkovValue.Text) /( float.Parse(Koef_diamValue.Text)+2*float.Parse(Koef_smeshValue.Text))) * 180 / Math.PI);
+            float tgyW = (float)(Math.Atan(float.Parse(Kol_vitkovValue.Text) / (float.Parse(Koef_diamValue.Text) + 2 * float.Parse(Koef_smeshValue.Text))) * 180 / Math.PI);
 
             float v2 = v1 * (float.Parse(Kol_vitkovValue.Text) / float.Parse(Koef_diamValue.Text));
 
@@ -268,13 +275,13 @@ namespace WormGearGenerator
             float vk = (float)(v1 / Math.Cos(tgyW * Math.PI / 180));
 
             float phiz = (float)(Math.Atan(0.02 + (0.03) / (vk)) * 180 / Math.PI);
-            float Kv = (1200 + v2) / (1200);
+            //float Kv = (1200 + v2) / (1200);
             float KPD;
             if (boolKPD.IsChecked == true)
                 KPD = float.Parse(KPDValue.Text);
             else
-                KPD = (float)(((Math.Tan(tgyW * Math.PI / 180)) / (Math.Tan((tgyW + phiz) * Math.PI / 180))) * 0.96); 
-                KPDValue.Text = KPD.ToString("0.000");
+                KPD = (float)(((Math.Tan(tgyW * Math.PI / 180)) / (Math.Tan((tgyW + phiz) * Math.PI / 180))) * 0.96);
+            KPDValue.Text = KPD.ToString("0.000");
             validation.KPD = KPDValue.Text;
 
             //значения на червяке
@@ -304,7 +311,7 @@ namespace WormGearGenerator
                 Moment = float.Parse(MomentValue.Text);
                 Moment_WG = Moment * Peredat * KPD;
                 Velocity_WG = Velocity / Peredat;
-                Power = (float)((Math.PI * Velocity_WG * Moment_WG) / (30 * KPD))/1000;
+                Power = (float)((Math.PI * Velocity_WG * Moment_WG) / (30 * KPD)) / 1000;
                 Power_WG = Power * KPD;
             }
             else if (radioWormSel.IsChecked == true & RadioType_Calc2.IsChecked == true)
@@ -315,8 +322,8 @@ namespace WormGearGenerator
                 Velocity_WG = Velocity / Peredat;
                 Power_WG = Power * KPD;
                 Moment_WG = Moment * Peredat * KPD;
-
             }
+
             //Колесо
             else if (radioGearSel.IsChecked == true & RadioType_Calc.IsChecked == true)
             {
@@ -332,7 +339,7 @@ namespace WormGearGenerator
             {
                 Velocity_WG = float.Parse(VelocityValue_Gear.Text);
                 Moment_WG = float.Parse(MomentValue_Gear.Text);
-                Power_WG = (float)((Math.PI*Velocity_WG*Moment_WG) / (30))/1000;
+                Power_WG = (float)((Math.PI * Velocity_WG * Moment_WG) / (30)) / 1000;
                 Moment = (Moment_WG / Peredat) * KPD;
                 Velocity = Velocity_WG * Peredat;
                 Power = Power_WG * KPD;
@@ -341,12 +348,12 @@ namespace WormGearGenerator
             {
                 Power_WG = float.Parse(PowerValue_Gear.Text);
                 Moment_WG = float.Parse(MomentValue_Gear.Text);
-                Velocity_WG = (float)((60000*Power_WG) / (2*Math.PI*Moment_WG));
+                Velocity_WG = (float)((60000 * Power_WG) / (2 * Math.PI * Moment_WG));
                 Power = Power_WG * KPD;
                 Velocity = Velocity_WG * Peredat;
                 Moment = (Moment_WG / Peredat) * KPD;
             }
-           
+
             VelocityValue.Text = Velocity.ToString("0.00");
             validation.VelocityWorm = VelocityValue.Text;
 
@@ -376,7 +383,10 @@ namespace WormGearGenerator
             //Радиальная сила передачи
             float Fr = (float)(Ft2 * Math.Tan(PressureAngle * (Math.PI / 180)));
 
-            //Контактное напряжение
+            //Нормальная сила передачи
+            float Fn = (float)(Ft2 / (Math.Cos(PressureAngle * (Math.PI / 180)) * Math.Cos(tgy * (Math.PI / 180))));
+
+            //Коэффициент для вычисления контактного напряжения
             float Koef = 0;
             if (vk >= 10)
                 Koef = (float)1.2;
@@ -384,12 +394,12 @@ namespace WormGearGenerator
                 Koef = (float)1.1;
             else if (vk <= 5)
                 Koef = 1;
-
-            float contact_stress = (float)((170 / (float.Parse(Teeth_gearValue.Text) / float.Parse(Koef_diamValue.Text))) * 
-                Math.Sqrt((float.Parse(MomentValue_Gear.Text) *1000*float.Parse(KvValue.Text))* Math.Pow(((1 + float.Parse(Teeth_gearValue.Text) / float.Parse(Koef_diamValue.Text)) /(aw)), 3)));
+            //Контактное напряжение
+            float contact_stress = (float)((170 / (float.Parse(Teeth_gearValue.Text) / float.Parse(Koef_diamValue.Text))) *
+                Math.Sqrt((float.Parse(MomentValue_Gear.Text) * 1000 * float.Parse(KvValue.Text)) * Math.Pow(((1 + float.Parse(Teeth_gearValue.Text) / float.Parse(Koef_diamValue.Text)) / (aw)), 3)));
             validation.contact_calc = contact_stress.ToString("0.00");
-            
-            //Напряжение изгиба
+
+            //Коэффициент для вычисления напряжения изгиба
             float zv2 = (float)((float.Parse(Teeth_gearValue.Text)) / (Math.Pow(Math.Cos(tgyW * Math.PI / 180), 3)));
             float Yf2 = 0;
             if (zv2 < 37)
@@ -398,18 +408,15 @@ namespace WormGearGenerator
                 Yf2 = (float)(2.21 - 0.0162 * zv2);
             else if (zv2 > 45)
                 Yf2 = (float)(1.72 - 0.0053 * zv2);
-
-            float bending_stress = (float)(((0.7 * Ft2 * Koef) / (float.Parse(Width_gearValue.Text) * Module * Math.Cos(tgyW * Math.PI/180) )) * Yf2);
+            //Напряжение изгиба
+            float bending_stress = (float)(((0.7 * Ft2 * Koef) / (float.Parse(Width_gearValue.Text) * Module * Math.Cos(tgyW * Math.PI / 180))) * Yf2);
             validation.bending_calc = bending_stress.ToString("0.00");
-
-            //Нормальная сила
-            float Fn = (float)(Ft2 / (Math.Cos(PressureAngle * (Math.PI / 180)) * Math.Cos(tgy * (Math.PI / 180))));
 
             //Число циклов нагружения
             float Nk = 60 * float.Parse(VelocityValue_Gear.Text) * float.Parse(timeValue.Text);
 
             //Коэффициент долговечности
-            float Khl = (float)(Math.Pow(((Math.Pow(10,7))/(Nk)), 0.125));
+            float Khl = (float)(Math.Pow(((Math.Pow(10, 7)) / (Nk)), 0.125));
 
             //ожидаемое значение скорости
             float v_wait = (float)((4.5 / 10000) * float.Parse(VelocityValue.Text) * Math.Pow(float.Parse(MomentValue_Gear.Text), 1.0 / 3));
@@ -418,17 +425,17 @@ namespace WormGearGenerator
             float Cv = (float)(1.46 - (v_wait / 7.29) * (1 - (v_wait / 20.2)));
 
             //Допускаемые контактные напряжения
-            limit_contact.Text = (float.Parse(sigmaV.Text)*0.82 * Cv * Khl).ToString("0.00");
+            limit_contact.Text = (float.Parse(sigmaV.Text) * 0.82 * Cv * Khl).ToString("0.00");
             validation.contact = limit_contact.Text;
 
             //предел выносливости зубьев при изгибе
             float limit_bending_Koef = (float)(0.08 * float.Parse(sigmaV.Text) + 0.25 * float.Parse(sigmaT.Text));
-            float Yhl = (float)(Math.Pow(((Math.Pow(10, 6)) / (Nk)), 1.0/9));
+            float Yhl = (float)(Math.Pow(((Math.Pow(10, 6)) / (Nk)), 1.0 / 9));
             limit_bending.Text = (limit_bending_Koef * Yhl).ToString("0.00");
             validation.bending = limit_bending.Text;
 
             //Температура масла при работе
-            float temperature_oil = (float)((float.Parse(PowerValue.Text) *1000 * (1 - KPD)) / (17 * 12.2 * Math.Pow(aw / 1000, 1.17))) + 20;
+            float temperature_oil = (float)((float.Parse(PowerValue.Text) * 1000 * (1 - KPD)) / (17 * 12.2 * Math.Pow(aw / 1000, 1.17))) + 20;
             temperature.Text = temperature_oil.ToString("0.00");
             validation.temperature = temperature.Text;
 
@@ -441,9 +448,12 @@ namespace WormGearGenerator
             TableGeneral_Calc.RowBackground = Brushes.White;
             TableWorm_Calc.RowBackground = Brushes.White;
             TableGear_Calc.RowBackground = Brushes.White;
-           
+
         }
 
+        /// <summary>
+        /// Отображение данных в таблицах на вкладке "Модель"
+        /// </summary>
         private void RefreshTable_Model(float aw_Table, float Module_Table, float Alpha_Table,
             float DaWorm_Table, float DWorm_Table, float DfWorm_Table, float DaGear_Table, float DGear_Table, float DfGear_Table, float DaeGear_Table)
         {
@@ -469,9 +479,11 @@ namespace WormGearGenerator
             gear.Add(new Parameter_values { parameter = "Диаметр впадин (df):", value = DfGear_Table.ToString("0.00") + " мм" });
             TableGear_Model.ItemsSource = gear;
             TableGear_Model.RowHeight = TableGear_Model.Height / gear.Count;
-
         }
 
+        /// <summary>
+        /// Отображение данных в таблицах на вкладке "Расчет"
+        /// </summary>
         private void RefreshTable_Calc(float Fr_Table, float Vk_Table, float Khl_Table, float Ft1_Table,
             float Fa1_Table, float Ft2_Table, float Fa2_Table, float Fn_Table, float contactPres_Table, float bending_Table)
         {
@@ -497,8 +509,7 @@ namespace WormGearGenerator
             gear.Add(new Parameter_values { parameter = "Напряжение изгиба:", value = bending_Table.ToString("0.00") + " МПа" });
             TableGear_Calc.ItemsSource = gear;
             TableGear_Calc.RowHeight = TableGear_Calc.Height / gear.Count;
-
-        }  
+        }
 
         private void RadioSelectComp_Checked(object sender, RoutedEventArgs e)
         {
@@ -559,8 +570,7 @@ namespace WormGearGenerator
             RadioButton pressed = (RadioButton)sender;
             var tag = pressed.Content.ToString();
             string name = (panelGeneral.Children.OfType<RadioButton>().FirstOrDefault(r => (bool)r.IsChecked)).Content.ToString();
-           
-           
+
             PowerValue_Gear.IsEnabled = false;
             VelocityValue_Gear.IsEnabled = false;
             MomentValue_Gear.IsEnabled = false;
@@ -656,16 +666,17 @@ namespace WormGearGenerator
             Material item = (Material)MatGear_combo.SelectedItem;
 
             if (item.Tensile_strength == null)
-            { sigmaV.Text = "0";
+            {
+                sigmaV.Text = "0";
 
             }
             else
                 sigmaV.Text = (float.Parse(item.Tensile_strength) / 1000000).ToString("0.00");
- 
+
             if (item.Yield_strength == null)
             {
                 sigmaT.Text = "0";
-                
+
             }
             else
                 sigmaT.Text = (float.Parse(item.Yield_strength) / 1000000).ToString("0.00");
@@ -673,7 +684,7 @@ namespace WormGearGenerator
             if (item.Elastic_modulus == null)
             {
                 E_gearValue.Text = "0";
- 
+
             }
             else
                 E_gearValue.Text = (float.Parse(item.Elastic_modulus) / 1000000).ToString("0.00");
@@ -703,13 +714,13 @@ namespace WormGearGenerator
 
         private void calc_LengthWorm_Click(object sender, RoutedEventArgs e)
         {
-            LengthValue.Text = (2 * Math.Sqrt(Math.Pow(dae2/2,2)- Math.Pow((aw - da1/2),2) + (Math.PI*Module/2))).ToString("0.00");
+            LengthValue.Text = (2 * Math.Sqrt(Math.Pow(dae2 / 2, 2) - Math.Pow((aw - da1 / 2), 2) + (Math.PI * Module / 2))).ToString("0.00");
             data_Touched();
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-           
+
             if (this.Height == 660)
             {
                 ExpanderModel.IsExpanded = true;
@@ -738,8 +749,8 @@ namespace WormGearGenerator
 
         private void confirm_BuildClick(object sender, RoutedEventArgs e)
         {
-            bool isWorm = Chervyak_combo.Text == "Построить модель" ? true : false;             
-            bool isGear = Gear_combo.Text == "Построить модель" ? true : false;             
+            bool isWorm = Chervyak_combo.Text == "Построить модель" ? true : false;
+            bool isGear = Gear_combo.Text == "Построить модель" ? true : false;
 
             this.Hide();
             if (isWorm == false & isGear == false)
@@ -760,10 +771,10 @@ namespace WormGearGenerator
                     return;
                 }
             }
-            
+
         }
 
-        private void create_components(bool isWorm, bool isGear )
+        private void create_components(bool isWorm, bool isGear)
         {
             try
             {
@@ -780,13 +791,13 @@ namespace WormGearGenerator
 
                 float hole_diameter = 0;
                 if (Hole_bool.IsChecked == true)
-                    hole_diameter = float.Parse(Hole_widthValue.Text)/2;
-                
+                    hole_diameter = float.Parse(Hole_widthValue.Text) / 2;
 
-                if(MatWorm_combo.SelectedIndex != 0)
+
+                if (MatWorm_combo.SelectedIndex != 0)
                     materialWorm = (Material)MatWorm_combo.SelectedItem;
 
-                if(MatGear_combo.SelectedIndex != 0)
+                if (MatGear_combo.SelectedIndex != 0)
                     materialGear = (Material)MatGear_combo.SelectedItem;
 
                 if (isWorm)
@@ -848,7 +859,7 @@ namespace WormGearGenerator
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка во время построения:" + ex.Message);
+                MessageBox.Show("Ошибка во время построения: " + ex.Message);
                 this.Show();
             }
         }
@@ -886,7 +897,7 @@ namespace WormGearGenerator
             }
         }
 
-        private void buCancel_Click(object sender, RoutedEventArgs e) 
+        private void buCancel_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Вы действительно хотите выйти?", "Подтвердите выход", MessageBoxButton.OKCancel, MessageBoxImage.Question).ToString() == "OK")
                 this.Close();
@@ -894,7 +905,7 @@ namespace WormGearGenerator
                 return;
         }
 
-        private void buCalc_Click(object sender, RoutedEventArgs e) {  InitializeCalculate();  }
+        private void buCalc_Click(object sender, RoutedEventArgs e) { InitializeCalculate(); }
 
         private void radioButtonParam_CheckedChanged(object sender, EventArgs e)
         {
@@ -920,6 +931,7 @@ namespace WormGearGenerator
                 Peredat_combo.Visibility = Visibility.Hidden;
             }
         }
+
         private void radioButtonWorm_CheckedChanged(object sender, EventArgs e)
         {
             RadioButton pressed = (RadioButton)sender;
@@ -943,8 +955,6 @@ namespace WormGearGenerator
                 Koef_diamValue.Text = (float.Parse(Kol_vitkovValue.Text)
                     / (Math.Tan(float.Parse(DegTeethValue.Text) * Math.PI / 180))).ToString(".00");
                 Av_diamValue.Text = (float.Parse(Koef_diamValue.Text) * Module).ToString(".00");
-                DegTeethValue.TextChanged += data_TextChanged;
-                Av_diamValue.TextChanged -= data_TextChanged;
             }
             else if (name == "Средний диаметр")
             {
@@ -957,32 +967,39 @@ namespace WormGearGenerator
             }
         }
 
+        /// <summary>
+        ///Сохранение данных программного модуля в json формат
+        /// </summary>
         private void buSave_json_Click(object sender, RoutedEventArgs e)
         {
+            //Сохранение данных для экспорта в json
             var saveParameters = getData(false);
 
+            //Приведение данных в json формат
             string json = JsonConvert.SerializeObject(saveParameters, Newtonsoft.Json.Formatting.Indented);
 
+            //Вызов и инициализация начальных параметров диалогового окна для выбора места сохранения
             System.Windows.Forms.SaveFileDialog SFD = new System.Windows.Forms.SaveFileDialog();
             SFD.FileName = "data";
             SFD.Filter = "Json files (*.json)|*.json";
             SFD.FilterIndex = 2;
             SFD.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            try
+
+            //Обработка нажатия на кнопку ОК в диалоговом окне
+            if (SFD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                if (SFD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    File.WriteAllText(SFD.FileName, json);
-                    MessageBox.Show("Файл успешно сохранен!");
-                }
-                else
-                    return;
+                File.WriteAllText(SFD.FileName, json);
+                FileInfo file = new FileInfo(SFD.FileName);
+                file.Attributes = FileAttributes.ReadOnly;
+                MessageBox.Show("Файл успешно сохранен!");
             }
-            catch { MessageBox.Show("Ошибка в процессе сохранения!"); }
-
-
+            else
+                return;
         }
 
+        /// <summary>
+        ///Октрытие файла с параметрами 
+        /// </summary>
         private void buOpen_json_Click(object sender, RoutedEventArgs e)
         {
             string path = "";
@@ -1004,7 +1021,6 @@ namespace WormGearGenerator
 
             try
             {
-
                 var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonRead);
 
                 if (data["initial parameter"] == "Передаточное отношение")
@@ -1041,12 +1057,12 @@ namespace WormGearGenerator
 
                 for (int i = 0; i < lister.Count; i++)
                 {
-                    if(lister[i].DisplayName == data["material_worm"])
+                    if (lister[i].DisplayName == data["material_worm"])
                         MatWorm_combo.SelectedIndex = i;
                     if (lister[i].DisplayName == data["material_gear"])
                         MatGear_combo.SelectedIndex = i;
                 }
-                
+
                 DegTeethValue.Text = data["tooth_angle"];
 
                 if (data["tooth_direction"] == "Левое")
@@ -1080,10 +1096,7 @@ namespace WormGearGenerator
                 E_wormValue.Text = data["elastic_modulus worm"];
                 Puasson_gearValue.Text = data["Poisson_ratio gear"];
                 Puasson_wormValue.Text = data["Poisson_ratio worm"];
-                
-                KoValue.Text = data["koef peregruz"];
                 KvValue.Text = data["koef_velocity"];
-                yValue.Text = data["koef_luis"];
                 timeValue.Text = data["time_of_work"];
 
                 MessageBox.Show("Успешный импорт данных!", "Информация");
@@ -1208,10 +1221,7 @@ namespace WormGearGenerator
                 {"elastic_modulus worm", E_wormValue.Text},
                 {"Poisson_ratio gear", Puasson_gearValue.Text},
                 {"Poisson_ratio worm", Puasson_wormValue.Text},
-                
-                {"koef peregruz", KoValue.Text},
                 {"koef_velocity", KvValue.Text},
-                {"koef_luis", yValue.Text},
                 {"time_of_work", timeValue.Text} };
 
                 return data;
@@ -1256,21 +1266,18 @@ namespace WormGearGenerator
                 {"Модуль упругости колеса (E), МПа", E_gearValue.Text },
                 {"Коэффициент Пуассона, червяк (μ)", Puasson_wormValue.Text},
                 {"Коэффициент Пуассона, колесо (μ)", Puasson_gearValue.Text },
-                {"Коэффициент Льюиса (y)", yValue.Text },
-                {"Коэффициент перегрузки", KoValue.Text},
                 { "Коэффцииент скорости", KvValue.Text},
                 { "Требуемый срок службы ", timeValue.Text},
                 { "Радиальная сила (Fr)", itemsCalc[0]},
                 { "Нормальная сила (Fn)", itemsCalc[1]},
                 { "Скорость скольжения (vk)", itemsCalc[2]},
                 { "Коэффициент долговечности:", itemsCalc[3]},
-                { "Температура масла при работе:", itemsCalc[4]},
-                { "Окружная сила червяка (Ft)", itemsCalc[5]},
-                { "Осевая сила червяка (Fa)", itemsCalc[6]},
-                { "Окружная сила колеса (Ft)", itemsCalc[7]},
-                { "Осевая сила колеса (Fa)", itemsCalc[8]},
-                { "Контактное напряжение", itemsCalc[9]},
-                { "Напряжение изгиба (σf)", itemsCalc[10]
+                { "Окружная сила червяка (Ft)", itemsCalc[4]},
+                { "Осевая сила червяка (Fa)", itemsCalc[5]},
+                { "Окружная сила колеса (Ft)", itemsCalc[6]},
+                { "Осевая сила колеса (Fa)", itemsCalc[7]},
+                { "Контактное напряжение", itemsCalc[8]},
+                { "Напряжение изгиба (σf)", itemsCalc[9]
                     } };
 
                 return data;
@@ -1278,230 +1285,199 @@ namespace WormGearGenerator
 
         }
 
-
+        /// <summary>
+        ///Экспорт данных в таблицу PDF 
+        /// </summary>
         private void buSave_PDF_Click(object sender, RoutedEventArgs e)
         {
+            //Вызов и инициализация начальных параметров диалогового окна для выбора места сохранения
             System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
             sfd.Filter = "PDF (*.pdf)|*.pdf";
-            sfd.FileName = "Worm Gear Generator.pdf";
-            bool fileError = false;
-            var data = getData(true);
+            sfd.FileName = "Worm Gear Generator.pdf"; ;
 
+            //Обработка нажатия в диалогвоом окне кнопки "ОК"
             if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                if (File.Exists(sfd.FileName))
+                try
                 {
-                    try
+                    //Формирование таблицы PDF для экспорта, инициализация начальных параметров
+                    PdfPTable pdfTable = new PdfPTable(2);
+                    pdfTable.DefaultCell.Padding = 5;
+                    pdfTable.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                    pdfTable.WidthPercentage = 100;
+                    string ttf = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Fonts), "ARIAL.TTF");
+                    var baseFont = BaseFont.CreateFont(ttf, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+                    var font = new iTextSharp.text.Font(baseFont, iTextSharp.text.Font.DEFAULTSIZE, iTextSharp.text.Font.NORMAL);
+
+                    //Чтение необходимых данных
+                    var data = getData(true);
+
+                    //Запись данных в ячейки сформированной таблицы PDF
+                    foreach (KeyValuePair<string, string> entry in data)
                     {
-                        File.Delete(sfd.FileName);
+                        PdfPCell parameter = new PdfPCell(new Phrase(entry.Key, font));
+                        parameter.HorizontalAlignment = Element.ALIGN_CENTER;
+                        pdfTable.AddCell(parameter);
+                        PdfPCell value = new PdfPCell(new Phrase(entry.Value, font));
+                        value.HorizontalAlignment = Element.ALIGN_CENTER;
+                        pdfTable.AddCell(value);
                     }
-                    catch (IOException ex)
+
+                    //Создание файла PDF, запись таблицы в файл
+                    using (FileStream stream = new FileStream(sfd.FileName, FileMode.Create, FileAccess.Write))
                     {
-                        fileError = true;
-                        MessageBox.Show("Ошибка записи файла." + ex.Message);
+                        iTextSharp.text.Document pdfDoc = new iTextSharp.text.Document(PageSize.A4, 10f, 20f, 20f, 10f);
+                        PdfWriter.GetInstance(pdfDoc, stream);
+                        pdfDoc.Open();
+                        pdfDoc.Add(pdfTable);
+                        pdfDoc.Close();
+                        stream.Close();
                     }
+
+                    MessageBox.Show("Файл успешно сохранен!", "Информация");
                 }
-                if (!fileError)
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        PdfPTable pdfTable = new PdfPTable(2);
-                        pdfTable.DefaultCell.Padding = 5;
-                        pdfTable.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
-                        pdfTable.WidthPercentage = 100;
-                        string ttf = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Fonts), "ARIAL.TTF");
-                        var baseFont = BaseFont.CreateFont(ttf, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
-                        var font = new iTextSharp.text.Font(baseFont, iTextSharp.text.Font.DEFAULTSIZE, iTextSharp.text.Font.NORMAL);
-
-
-                        foreach (KeyValuePair<string, string> entry in data)
-                        {
-                            PdfPCell parameter = new PdfPCell(new Phrase(entry.Key, font));
-                            parameter.HorizontalAlignment = Element.ALIGN_CENTER;
-                            pdfTable.AddCell(parameter);
-                            PdfPCell value = new PdfPCell(new Phrase(entry.Value, font));
-                            value.HorizontalAlignment = Element.ALIGN_CENTER;
-                            pdfTable.AddCell(value);
-                        }
-
-
-                        using (FileStream stream = new FileStream(sfd.FileName, FileMode.Create, FileAccess.Write))
-                        {
-                            iTextSharp.text.Document pdfDoc = new iTextSharp.text.Document(PageSize.A4, 10f, 20f, 20f, 10f);
-                            PdfWriter.GetInstance(pdfDoc, stream);
-                            pdfDoc.Open();
-                            pdfDoc.Add(pdfTable);
-                            pdfDoc.Close();
-                            stream.Close();
-                        }
-
-                        MessageBox.Show("Файл успешно сохранен!", "Информация");
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Ошибка :" + ex.Message);
-                    }
+                    MessageBox.Show("Ошибка :" + ex.Message);
                 }
+
             }
         }
 
+        /// <summary>
+        ///Экспорт данных в таблицу docx 
+        /// </summary>
         private void buSave_docx_Click(object sender, RoutedEventArgs e)
         {
+            //Вызов и инициализация начальных параметров диалогового окна для выбора места сохранения
             System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
             sfd.Filter = "DOCX (*.docx)|*.docx";
             sfd.FileName = "Worm Gear Generator.docx";
-            bool fileError = false;
-            var data = getData(true);
 
+            //Обработка нажатия в диалогвоом окне кнопки "ОК"
             if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                if (File.Exists(sfd.FileName))
+                try
                 {
-                    try
+                    //Чтение данных
+                    var data = getData(true);
+
+                    //Создание таблицы docx
+                    var doc = DocX.Create(sfd.FileName);
+                    Xceed.Document.NET.Table t = doc.AddTable(data.Count, 2);
+                    t.Alignment = Alignment.center;
+
+                    //Запись данных в ячейки сформированной таблицы docx
+                    var i = 0;
+                    foreach (KeyValuePair<string, string> entry in data)
                     {
-                        File.Delete(sfd.FileName);
+                        t.Rows[i].Cells[0].Paragraphs.First().Append(entry.Key);
+                        t.Rows[i].Cells[1].Paragraphs.First().Append(entry.Value);
+                        i++;
                     }
-                    catch (IOException ex)
-                    {
-                        fileError = true;
-                        MessageBox.Show("Ошибка записи файла." + ex.Message);
-                    }
+                    //Добавление таблицы в документ
+                    doc.InsertTable(t);
+                    //Сохранение файла
+                    doc.Save();
+
+                    MessageBox.Show("Файл успешно сохранен!", "Информация");
                 }
-                if (!fileError)
+                catch (Exception ex)
                 {
-                    try
-                    {
-                            var doc = DocX.Create(sfd.FileName);
-                            Xceed.Document.NET.Table t = doc.AddTable(data.Count, 2);
-                            t.Alignment = Alignment.center;
-
-                            var i = 0;
-                            foreach (KeyValuePair<string, string> entry in data)
-                            {
-                                t.Rows[i].Cells[0].Paragraphs.First().Append(entry.Key);
-                                t.Rows[i].Cells[1].Paragraphs.First().Append(entry.Value);
-                                i++;
-                            }
-                            doc.InsertTable(t);
-                            doc.Save();
-
-                        MessageBox.Show("Файл успешно сохранен!", "Информация");
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Ошибка :" + ex.Message);
-                    }
-                    
+                    MessageBox.Show("Ошибка :" + ex.Message);
                 }
+
+
             }
         }
 
+        /// <summary>
+        ///Экспорт данных в таблицу xlsx
+        /// </summary>
         private void buSave_excel_Click(object sender, RoutedEventArgs e)
         {
+            //Вызов и инициализация начальных параметров диалогового окна для выбора места сохранения
             System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
             sfd.Filter = "XLSX (*.xlsx)|*.xlsx";
             sfd.FileName = "Worm Gear Generator.xlsx";
-            bool fileError = false;
-            var data = getData(true);
 
+            //Обработка нажатия в диалогвоом окне кнопки "ОК"
             if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                if (File.Exists(sfd.FileName))
+                try
                 {
-                    try
+                    using (var fs = new FileStream(sfd.FileName, FileMode.Create, FileAccess.Write))
                     {
-                        File.Delete(sfd.FileName);
-                    }
-                    catch (IOException ex)
-                    {
-                        fileError = true;
-                        MessageBox.Show("Ошибка записи файла." + ex.Message);
-                    }
-                }
-                if (!fileError)
-                {
-                    try
-                    {
-                        using (var fs = new FileStream(sfd.FileName, FileMode.Create, FileAccess.Write))
+                        //Чтение данных
+                        var data = getData(true);
+
+                        //Создание таблицы xlsx
+                        IWorkbook workbook = new XSSFWorkbook();
+                        NPOI.SS.UserModel.ISheet excelSheet = workbook.CreateSheet("Sheet1");
+
+                        //Запись данных в ячейки сформированной таблицы excel
+                        var i = 0;
+                        foreach (KeyValuePair<string, string> entry in data)
                         {
-                            IWorkbook workbook = new XSSFWorkbook();
-                            NPOI.SS.UserModel.ISheet excelSheet = workbook.CreateSheet("Sheet1");
-                            var i = 0;
-                            foreach (KeyValuePair<string, string> entry in data)
-                            {
-                                IRow row = excelSheet.CreateRow(i);
-                                row.CreateCell(0).SetCellValue(entry.Key);
-                                row.CreateCell(1).SetCellValue(entry.Value);
-                                i++;
-                            }
-
-                            for (int x = 0; x < 2; x++) { excelSheet.AutoSizeColumn(x); }
-
-                            workbook.Write(fs);
+                            IRow row = excelSheet.CreateRow(i);
+                            row.CreateCell(0).SetCellValue(entry.Key);
+                            row.CreateCell(1).SetCellValue(entry.Value);
+                            i++;
                         }
+                        //Установка автоматической ширины
+                        for (int x = 0; x < 2; x++) { excelSheet.AutoSizeColumn(x); }
 
-                        MessageBox.Show("Файл успешно сохранен!", "Информация");
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Ошибка :" + ex.Message);
+                        //Добавление таблицы в файл
+                        workbook.Write(fs);
                     }
 
+                    MessageBox.Show("Файл успешно сохранен!", "Информация");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ошибка :" + ex.Message);
                 }
             }
         }
 
+        /// <summary>
+        ///Экспорт данных в txt
+        /// </summary>
         private void buSave_TXT_Click(object sender, RoutedEventArgs e)
         {
+            //Вызов и инициализация начальных параметров диалогового окна для выбора места сохранения
             System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
             sfd.Filter = "TXT (*.txt)|*.txt";
             sfd.FileName = "Worm Gear Generator.txt";
-            bool fileError = false;
-            var data = getData(true);
 
+            //Обработка нажатия в диалогвоом окне кнопки "ОК"
             if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                if (File.Exists(sfd.FileName))
+                try
                 {
-                    try
+                    using (FileStream fs1 = new FileStream(sfd.FileName, FileMode.Create, FileAccess.Write))
                     {
-                        File.Delete(sfd.FileName);
-                    }
-                    catch (IOException ex)
-                    {
-                        fileError = true;
-                        MessageBox.Show("Ошибка записи файла." + ex.Message);
-                    }
-                }
-                if (!fileError)
-                {
-                    try
-                    {
-                        using (FileStream fs1 = new FileStream(sfd.FileName, FileMode.Create, FileAccess.Write))
+                        //Чтение данных
+                        var data = getData(true);
+                        //Инициализация класса для записи символов в файл
+                        StreamWriter writer = new StreamWriter(fs1);
+
+                        //Запись данных в файл
+                        foreach (KeyValuePair<string, string> entry in data)
                         {
-                            StreamWriter writer = new StreamWriter(fs1);
-                            foreach (KeyValuePair<string, string> entry in data)
-                            {
-                                writer.WriteLine(entry.Key + ": " + entry.Value);
-                            }
-                            
-                            writer.Close();
+                            writer.WriteLine(entry.Key + ": " + entry.Value);
                         }
-
-
-                        MessageBox.Show("Файл успешно сохранен!", "Информация");
+                        writer.Close();
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Ошибка :" + ex.Message);
-                    }
+                    MessageBox.Show("Файл успешно сохранен!", "Информация");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ошибка :" + ex.Message);
                 }
             }
         }
-
-
     };
-
 
     public class Parameter_values
     {
