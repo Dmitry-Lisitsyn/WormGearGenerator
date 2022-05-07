@@ -32,8 +32,11 @@ namespace WormGearGenerator
         float aw, Alpha, dae2, da1, da2, d1, d2, df1, df2, dw1, dw2;
         public SldWorks swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
 
+        //Статус загрузки главного окна
+        public static bool Status;
+
         //инициализация пути сохранения и базового пути
-        string AssemblyPath;
+        string AssemblyPath = null;
         private string baseDirectory = System.Environment.CurrentDirectory;
 
         //пути сохранения компонентов
@@ -59,7 +62,7 @@ namespace WormGearGenerator
             InitializeFolder();
             //Инициализация компонентов формы 
             InitializeComponent();
-
+            
             //Контекст данных программы
             validation = new DataValidation(this);
             DataContext = validation;
@@ -79,10 +82,13 @@ namespace WormGearGenerator
             System.Windows.Forms.FolderBrowserDialog target = new System.Windows.Forms.FolderBrowserDialog();
             target.Description = "Выберите папку для сохранения сборки";
             //Обработка выбора
-            if (target.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
-                return;
-            else
+            if (target.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
                 AssemblyPath = target.SelectedPath;
+                Status = true;
+            }
+            else
+                Status = false;
         }
 
         private void InitializeStartData()
@@ -638,65 +644,59 @@ namespace WormGearGenerator
             TableGear_Calc.RowBackground = color;
         }
 
+        /// <summary>
+        /// Обработка выбора материала из combobox "Материал червяка"
+        /// </summary>
         private void MatWorm_combo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            //Считывание выбранного значения из списка как обьект класса Material
             Material item = (Material)MatWorm_combo.SelectedItem;
 
+            //Обработка характеристик выбранного материала
             if (item.Elastic_modulus == null)
-            {
                 E_wormValue.Text = "0";
-
-            }
             else
                 E_wormValue.Text = (float.Parse(item.Elastic_modulus) / 1000000).ToString("0.00");
 
             if (item.Poisson_ratio == null)
-            {
                 Puasson_wormValue.Text = "0";
-
-            }
             else
                 Puasson_wormValue.Text = item.Poisson_ratio;
-
+            
+            //Изменение цвета таблиц
             data_Touched();
         }
 
+        /// <summary>
+        /// Обработка выбора материала из combobox "Материал червячного колеса"
+        /// </summary>
         private void MatGear_combo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            //Считывание выбранного значения из списка как обьект класса Material
             Material item = (Material)MatGear_combo.SelectedItem;
 
+            //Обработка характеристик выбранного материала
             if (item.Tensile_strength == null)
-            {
                 sigmaV.Text = "0";
-
-            }
             else
                 sigmaV.Text = (float.Parse(item.Tensile_strength) / 1000000).ToString("0.00");
 
             if (item.Yield_strength == null)
-            {
                 sigmaT.Text = "0";
-
-            }
             else
                 sigmaT.Text = (float.Parse(item.Yield_strength) / 1000000).ToString("0.00");
 
             if (item.Elastic_modulus == null)
-            {
                 E_gearValue.Text = "0";
-
-            }
             else
                 E_gearValue.Text = (float.Parse(item.Elastic_modulus) / 1000000).ToString("0.00");
 
             if (item.Poisson_ratio == null)
-            {
                 Puasson_gearValue.Text = "0";
-
-            }
             else
                 Puasson_gearValue.Text = item.Poisson_ratio;
-
+            
+            //Изменение цвета таблиц
             data_Touched();
         }
 
@@ -759,7 +759,7 @@ namespace WormGearGenerator
             }
             else
             {
-                ConfirmFolders foldersWindow = new ConfirmFolders(this, AssemblyPath, isWorm, isGear);
+                ConfirmFolders foldersWindow = new ConfirmFolders(AssemblyPath, isWorm, isGear);
                 foldersWindow.Topmost = true;
                 foldersWindow.ShowDialog();
 
@@ -780,25 +780,13 @@ namespace WormGearGenerator
             {
                 Worm worm = new Worm(baseDirectory);
                 Gear gear = new Gear(baseDirectory);
-                Material materialWorm = null;
-                Material materialGear = null;
 
-                int rightOrLeft;
-                if (radioLeft.IsChecked == true)
-                    rightOrLeft = 0;
-                else
-                    rightOrLeft = 1;
+                int rightOrLeft = radioLeft.IsChecked == true ? 0 : 1;
 
-                float hole_diameter = 0;
-                if (Hole_bool.IsChecked == true)
-                    hole_diameter = float.Parse(Hole_widthValue.Text) / 2;
-
-
-                if (MatWorm_combo.SelectedIndex != 0)
-                    materialWorm = (Material)MatWorm_combo.SelectedItem;
-
-                if (MatGear_combo.SelectedIndex != 0)
-                    materialGear = (Material)MatGear_combo.SelectedItem;
+                float hole_diameter = Hole_bool.IsChecked == true ? hole_diameter = float.Parse(Hole_widthValue.Text) / 2 : 0;
+                
+                Material materialWorm = MatWorm_combo.SelectedIndex != 0 ? (Material)MatWorm_combo.SelectedItem : null;
+                Material materialGear = MatGear_combo.SelectedIndex != 0 ? (Material)MatGear_combo.SelectedItem : null;
 
                 if (isWorm)
                 {
@@ -847,7 +835,7 @@ namespace WormGearGenerator
                     sldobj.CreateAssembly(_pathAssembly);
 
                     //добавляем компоненты
-                    sldobj.AddComponent(worm, gear, _pathAssembly);
+                    sldobj.AddComponents(worm, gear, _pathAssembly);
 
                     //добавление зависимостей
                     var teethGear = float.Parse(Teeth_gearValue.Text);

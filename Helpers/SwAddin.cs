@@ -16,12 +16,14 @@ namespace WormGearGenerator
     [ComVisible(true)]
     [Guid("B5AB2AC9-B4B7-4826-A58C-CC774FADE641")]
     [DisplayName("Worm Gear Generator")]
-    [Description("Description of addin")]
+    [Description("Генератор черячной передачи предназначен для автоматического расчета параметров" +
+        " червячной передачи и ее моделирования на основании введенных пользователем данных.")]
     public class SwAddin : SwAddInEx
     {
         public MainWindow window;
         [Title("Worm Gear Generator")]
-        [Description("Description of addin")]
+        [Description("Генератор черячной передачи предназначен для автоматического расчета параметров" +
+        " червячной передачи и ее моделирования на основании введенных пользователем данных.")]
         [Icon(typeof(Resources), nameof(Resources.Icon))]
 
         [ComRegisterFunction]
@@ -39,7 +41,8 @@ namespace WormGearGenerator
         private enum WormGear
         {
            [Title("Worm Gear Generator")]
-           [Description("Description of addin")]
+           [Description("Генератор черячной передачи предназначен для автоматического расчета параметров" +
+        " червячной передачи и ее моделирования на основании введенных пользователем данных.")]
            [Icon(typeof(Resources), nameof(Resources.Icon))]
            [CommandItemInfo(true, true, WorkspaceTypes_e.Assembly, true)]
             CreateWpfForm
@@ -58,7 +61,10 @@ namespace WormGearGenerator
             {
                 case WormGear.CreateWpfForm:
                     var wpfPopupWnd = CreatePopupWindow<MainWindow>();
-                    wpfPopupWnd.ShowDialog();
+                    if (MainWindow.Status)
+                        wpfPopupWnd.ShowDialog();
+                    else
+                        break;
                     break;
             }
         }

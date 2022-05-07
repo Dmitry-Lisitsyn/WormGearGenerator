@@ -21,7 +21,7 @@
             <ColumnDefinition Width="31*"/>
         </Grid.ColumnDefinitions>
 
-        <Border BorderThickness="1" Margin="0,0.6,-4.6,-33" Grid.Row="4" Grid.ColumnSpan="4" Background="#FFF0F0F0">
+        <Border BorderThickness="1" Margin="0,1,-1,-33" Grid.Row="4" Grid.ColumnSpan="4" Background="#FFF0F0F0">
             <Grid Margin="328.2,0.2,28.6,-2.2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="49*"/>
@@ -34,7 +34,7 @@
 
         <Label Content="Компонент" Margin="0,0,0.4,25.2" Padding="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontFamily="Times New Roman" Background="#FFF0F0F0" Grid.RowSpan="2"/>
         <Label Content="Имя файла" Margin="0,0,0,25.2" Padding="0,0,0,2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Times New Roman" Background="#FFF0F0F0" Grid.RowSpan="2" Grid.Column="1"/>
-        <Label Content="Путь к файлу" Grid.Column="1" Margin="128.6,0,28.4,25.2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="0" FontFamily="Times New Roman" Background="#FFF0F0F0" Grid.ColumnSpan="3" Grid.RowSpan="2"/>
+        <Label Content="Путь к файлу" Grid.Column="2" Margin="1,0,0,25" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="0" FontFamily="Times New Roman" Background="#FFF0F0F0" Grid.RowSpan="2"/>
         <Button x:Name="browseFolderAssembly" Content="..." Grid.Column="3" HorizontalAlignment="Center" Margin="5.8,0,3.4,3.2" Grid.Row="1" Width="22" RenderTransformOrigin="0.152,-0.105" Height="19" VerticalAlignment="Bottom" Click="browseFolderAssembly_Click"/>
         <Button x:Name="browseFolderWorm" Content="..." Grid.Column="3" HorizontalAlignment="Center" Margin="5.8,2.8,3.4,2.8" Grid.Row="2" VerticalAlignment="Center" Width="22" Height="20" RenderTransformOrigin="0.152,-0.105" Click="browseFolderWorm_Click"/>
         <Button x:Name="browseFolderGear" Content="...." Grid.Column="3" HorizontalAlignment="Center" Margin="5.8,3.2,3.4,3.4" Grid.Row="3" VerticalAlignment="Center" Width="22" Height="19" RenderTransformOrigin="0.152,-0.105" Click="browseFolderGear_Click"/>

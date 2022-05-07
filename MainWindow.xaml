@@ -170,6 +170,13 @@
                                 <StackPanel>
                                     <Image Source="img/calc.png" Height="19"  />
                                 </StackPanel>
+                                <Button.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Расче длины червяка" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Button.ToolTip>
                             </Button>
                         </Grid>
                     </GroupBox>
@@ -256,6 +263,13 @@
                                 <StackPanel>
                                     <Image Source="img/calc.png" Height="19"  />
                                 </StackPanel>
+                                <Button.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Расчет ширины грани" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Button.ToolTip>
                             </Button>
                         </Grid>
                     </GroupBox>
