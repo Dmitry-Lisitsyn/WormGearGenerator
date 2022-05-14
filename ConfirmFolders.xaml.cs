@@ -184,9 +184,10 @@ namespace WormGearGenerator
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
-            validateFolders(folderAssembly.Text, nameAssembly.Text);
-            validateFolders(folderWorm.Text, nameWorm.Text);
-            validateFolders(folderGear.Text, nameGear.Text);
+            if (!validateFolders(folderAssembly.Text, nameAssembly.Text) ||
+            !validateFolders(folderWorm.Text, nameWorm.Text) ||
+            !validateFolders(folderGear.Text, nameGear.Text))
+                return;
 
             MainWindow._pathAssembly = folderAssembly.Text;
             MainWindow._pathWorm = folderWorm.Text;
@@ -200,14 +201,15 @@ namespace WormGearGenerator
             this.Close();
         }
 
-        private void validateFolders(string path, string name)
+        private bool validateFolders(string path, string name)
         {
             if (File.Exists(path))
                 if (MessageBox.Show("Файл с таким именем уже существует ("+name+"). Заменить файл в папке назначения?", "Подтвердите действие",
                     MessageBoxButton.OKCancel, MessageBoxImage.Question).ToString() == "OK")
                     File.Delete(path);
                 else
-                    return;
+                    return false;
+            return true;
         }
 
     }

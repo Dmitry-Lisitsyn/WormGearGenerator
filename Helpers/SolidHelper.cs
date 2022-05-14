@@ -28,7 +28,7 @@ namespace WormGearGenerator
            swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
         }
 
-        //Создание файла сборки
+        //Создание файла сборки для компонентов
         public void CreateAssembly(string path)
         {
             ModelDoc2 swModel;
@@ -196,6 +196,37 @@ namespace WormGearGenerator
             pb.UpdateTitle("Сохранение сборки...");
             lRet = pb.UpdateProgress(100);
             pb.End();
+        }
+
+        public void addToAssembly(string currentAssemblyName, string generateAssemblyPath)
+        {
+            //Инициализация объектов
+            ModelDoc2 swModel;
+            AssemblyDoc swAssy;
+            object components;
+            int errorCode1 = 0;
+
+            //Активация документа со сборкой
+            swAssy = (AssemblyDoc)swApp.ActivateDoc3(currentAssemblyName, true, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, ref errorCode1);
+            swModel = (ModelDoc2)swAssy;
+
+            components = swAssy.AddComponent5(generateAssemblyPath, (int)swAddComponentConfigOptions_e.swAddComponentConfigOptions_CurrentSelectedConfig, "", false, "", 0, 0, 0);
+            swApp.CloseDoc(generateAssemblyPath);
+
+            //Сохранение документа
+            swModel.SaveAs3(currentAssemblyName, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_CopyAndOpen);
+        }
+
+        //Сохранение пустой сборки
+        public void saveInitialAssembly(string filename)
+        {
+            ModelDoc2 swModel;
+            swModel = (ModelDoc2)swApp.ActiveDoc;
+
+            if (File.Exists(filename))
+                File.Delete(filename);
+                
+            swModel.SaveAs3(filename, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_CopyAndOpen);
         }
 
     }

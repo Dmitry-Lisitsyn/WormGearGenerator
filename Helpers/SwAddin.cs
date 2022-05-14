@@ -18,13 +18,15 @@ namespace WormGearGenerator
     [DisplayName("Worm Gear Generator")]
     [Description("Генератор черячной передачи предназначен для автоматического расчета параметров" +
         " червячной передачи и ее моделирования на основании введенных пользователем данных.")]
+   
     public class SwAddin : SwAddInEx
     {
-        public MainWindow window;
         [Title("Worm Gear Generator")]
         [Description("Генератор черячной передачи предназначен для автоматического расчета параметров" +
         " червячной передачи и ее моделирования на основании введенных пользователем данных.")]
         [Icon(typeof(Resources), nameof(Resources.Icon))]
+
+        private MainWindow _window;
 
         [ComRegisterFunction]
         public new static void RegisterFunction(Type t)
@@ -38,6 +40,7 @@ namespace WormGearGenerator
             SwAddInEx.UnregisterFunction(t);
         }
 
+        //кнопка на интерфейсе
         private enum WormGear
         {
            [Title("Worm Gear Generator")]
@@ -47,23 +50,27 @@ namespace WormGearGenerator
            [CommandItemInfo(true, true, WorkspaceTypes_e.Assembly, true)]
             CreateWpfForm
         }
-
+        //Добавление обработки нажатия к элементу дополнения
         public override void OnConnect()
         {
             CommandManager.AddCommandGroup<WormGear>().CommandClick += OnCommandClick;
         }
 
+        //Обработка клика по кнопке дополнения
         private void OnCommandClick(WormGear cmd)
         {
-            //var activeDoc = Application.Documents.Active;
-
             switch (cmd)
             {
-                case WormGear.CreateWpfForm:
-                    var wpfPopupWnd = CreatePopupWindow<MainWindow>();
-                    if (MainWindow.Status)
-                        wpfPopupWnd.ShowDialog();
-                    else
+                case WormGear.CreateWpfForm:        
+                    //Запуск программы
+                    _window = new MainWindow();
+                    if (_window.InitialPath != null)
+                    {
+                        //Если был выбран начальный путь сохранения компонентов, окно открывается
+                        _window.Topmost = true;
+                        _window.Show();
+                    }
+                        else
                         break;
                     break;
             }

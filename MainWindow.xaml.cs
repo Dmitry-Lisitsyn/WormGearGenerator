@@ -17,6 +17,8 @@ using NPOI.XSSF.UserModel;
 using System.Runtime.InteropServices;
 using System.Windows.Media;
 using WormGearGenerator.Helpers;
+using SolidWorks.Interop.swconst;
+using System.Diagnostics;
 
 namespace WormGearGenerator
 {
@@ -33,10 +35,11 @@ namespace WormGearGenerator
         public SldWorks swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
 
         //Статус загрузки главного окна
-        public static bool Status;
+        public bool Status;
 
         //инициализация пути сохранения и базового пути
-        string AssemblyPath = null;
+        public string InitialPath = null;
+        string _pathFromProject;
         private string baseDirectory = System.Environment.CurrentDirectory;
 
         //пути сохранения компонентов
@@ -53,13 +56,58 @@ namespace WormGearGenerator
         public static bool buildAccepted { get; set; }
 
         //инициализация объекта класса проверки полей программы
-        DataValidation validation;
+        private DataValidation validation;
+
+        //инициализация объекта класса MaterialHelper
+        private MaterialHelper MatObj;
+
+        //инициализация объекта класса Worm
+        private Worm worm;
+
+        //инициализация объекта класса Gear
+        private Gear gear;
+
+        //инициализация объекта класса SolidHelper
+        private SolidHelper sldobj;
+
+        //инциализация объекта класса ConfirmFolders
+        private ConfirmFolders foldersWindow;
 
         public MainWindow()
         {
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
-            //Инициализация пути сохранения компонентов при моделировании
-            InitializeFolder();
+            ModelDoc2 swModel = default(ModelDoc2);
+            AssemblyDoc swNewPart = default(AssemblyDoc);
+
+            sldobj = new SolidHelper();
+            swNewPart = (AssemblyDoc)swApp.ActiveDoc;
+            swModel = (ModelDoc2)swNewPart;
+            //Чтение пути сохранения открытой сборки 
+            _pathFromProject = swModel.GetPathName();
+
+            //Проверка наличия сборки
+            if (_pathFromProject == String.Empty)
+            {
+                //Сохранение нвоого файла сборки
+                InitialPath = InitializeFolder();
+                if (InitialPath == null)
+                    return;
+                else
+                {
+                    //Сохранение файла новой сборки
+                    sldobj.saveInitialAssembly(InitialPath);
+                    //Сохранение пути файла новой сборки
+                    _pathFromProject = InitialPath;
+                    //Место сохранения сборки
+                    InitialPath = InitialPath.Replace("\\" + swModel.GetTitle() + ".sldasm", "");
+                }
+            }
+            else 
+            {
+                //Сохранение пути сборки если она существует
+                InitialPath = _pathFromProject.Replace("\\" + swModel.GetTitle() + ".sldasm", "");
+            }
+
             //Инициализация компонентов формы 
             InitializeComponent();
             
@@ -76,19 +124,17 @@ namespace WormGearGenerator
         /// <summary>
         /// Иницализация начальной папки для сохранения компонентов
         /// </summary>
-        private void InitializeFolder()
+        private string InitializeFolder()
         {
-            //Вызов диалога выбора папки
-            System.Windows.Forms.FolderBrowserDialog target = new System.Windows.Forms.FolderBrowserDialog();
-            target.Description = "Выберите папку для сохранения сборки";
-            //Обработка выбора
-            if (target.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                AssemblyPath = target.SelectedPath;
-                Status = true;
-            }
+            System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
+            sfd.Filter = "Assembly File (*.sldasm)|*.sldasm";
+            sfd.FileName = "NewAssembly.sldasm"; ;
+
+            //Обработка нажатия в диалогвоом окне кнопки "ОК"
+            if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                return sfd.FileName;
             else
-                Status = false;
+                return null;
         }
 
         private void InitializeStartData()
@@ -153,7 +199,7 @@ namespace WormGearGenerator
             VelocityValue.Text = validation.VelocityWorm.ToString(); ;
 
             //Заполнение материалов
-            MaterialHelper MatObj = new MaterialHelper(swApp);
+            MatObj = new MaterialHelper(swApp);
             var lister = MatObj.GetMaterials();
             lister.Insert(0, new Material
             {
@@ -445,9 +491,11 @@ namespace WormGearGenerator
             temperature.Text = temperature_oil.ToString("0.00");
             validation.temperature = temperature.Text;
 
+            //Отображение расчетных данных в таблицах
             RefreshTable_Model(aw, Module, Alpha, da1, d1, df1, da2, d2, df2, dae2);
             RefreshTable_Calc(Fr, vk, Khl, Ft1, Fa1, Ft2, Fa2, Fn, contact_stress, bending_stress);
 
+            //Изменение цвета заднего фона на белый
             TableGeneral_Model.RowBackground = Brushes.White;
             TableWorm_Model.RowBackground = Brushes.White;
             TableGear_Model.RowBackground = Brushes.White;
@@ -759,7 +807,7 @@ namespace WormGearGenerator
             }
             else
             {
-                ConfirmFolders foldersWindow = new ConfirmFolders(AssemblyPath, isWorm, isGear);
+                foldersWindow = new ConfirmFolders(InitialPath, isWorm, isGear);
                 foldersWindow.Topmost = true;
                 foldersWindow.ShowDialog();
 
@@ -778,16 +826,17 @@ namespace WormGearGenerator
         {
             try
             {
-                Worm worm = new Worm(baseDirectory);
-                Gear gear = new Gear(baseDirectory);
-
+                //Считывание значений направления зубьев
                 int rightOrLeft = radioLeft.IsChecked == true ? 0 : 1;
-
+                //Считывание значения отверстия червячного оклеса
                 float hole_diameter = Hole_bool.IsChecked == true ? hole_diameter = float.Parse(Hole_widthValue.Text) / 2 : 0;
-                
+                //Считывание выбранных материалов
                 Material materialWorm = MatWorm_combo.SelectedIndex != 0 ? (Material)MatWorm_combo.SelectedItem : null;
                 Material materialGear = MatGear_combo.SelectedIndex != 0 ? (Material)MatGear_combo.SelectedItem : null;
 
+                //Инициализация объекта класса червяка
+                worm = new Worm();
+                //Построение червяка
                 if (isWorm)
                 {
                     //передача параметров червяка
@@ -804,6 +853,9 @@ namespace WormGearGenerator
                     worm._material = materialWorm;
                     worm.create();
                 }
+                //Инициализация объекта класса червячного колеса
+                gear = new Gear(baseDirectory);
+                //Построение червячного колеса
                 if (isGear)
                 {
                     //передача параметров колеса
@@ -826,11 +878,10 @@ namespace WormGearGenerator
                     gear._hole_diameter = hole_diameter;
                     gear._material = materialGear;
                     gear.create();
-                }
+                } 
+                //Проверка построения компонентов, создание сборки
                 if (isWorm & isGear)
                 {
-                    SolidHelper sldobj = new SolidHelper();
-
                     //создаем сборку
                     sldobj.CreateAssembly(_pathAssembly);
 
@@ -840,7 +891,11 @@ namespace WormGearGenerator
                     //добавление зависимостей
                     var teethGear = float.Parse(Teeth_gearValue.Text);
                     var vitWorm = float.Parse(Kol_vitkovValue.Text);
+
                     sldobj.AddMates(_pathAssembly, _nameAssembly, _nameWorm, _nameGear, aw, teethGear, vitWorm, rightOrLeft);
+
+                    sldobj.addToAssembly(_pathFromProject, _pathAssembly);
+
                 }
 
                 Directory.SetCurrentDirectory(baseDirectory);
@@ -892,6 +947,8 @@ namespace WormGearGenerator
             else
                 return;
         }
+
+        
 
         private void buCalc_Click(object sender, RoutedEventArgs e) { InitializeCalculate(); }
 
@@ -1467,7 +1524,7 @@ namespace WormGearGenerator
         }
     };
 
-    public class Parameter_values
+    public struct Parameter_values
     {
         public string parameter { get; set; }
         public string value { get; set; }

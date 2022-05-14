@@ -34,6 +34,9 @@ namespace WormGearGenerator.Helpers
         public string E_gear { get; set; } = "101000";//>=0
         public string Puasson_worm { get; set; } = "0.3";//>=0
         public string Puasson_gear { get; set; } = "0.31";//>=0
+       
+
+        public int userID { get; private set; }
         //Коэффициенты
         public string Ko { get; set; } = "1.200"; //1 - 5
         public string Kv { get; set; } = "1.042"; //1 - 6

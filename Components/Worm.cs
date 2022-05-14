@@ -16,6 +16,7 @@ namespace WormGearGenerator
 {
     class Worm
     {
+        //Геометрические параметры червяка
         public float _da { get; set; }
         public float _d { get; set; }
         public float _df { get; set; }
@@ -25,39 +26,37 @@ namespace WormGearGenerator
         public float _z { get; set; }
         public int _rightOrLeft { get; set; }
         public float _aw { get; set; }
+        //Параметр материала
         public Material _material { get; set; }
-
+        //Путь сохранения файла
         public string _path { get; set; }
-        private string baseDirectory;
-
+        //Объект приложения SolidWorks
         SldWorks swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
-
+        //Свойства для работы со шкалой загрузки
         UserProgressBar pb;
         bool retVal;
         int lRet;
 
-        public Worm(string directory)
-        {
-            baseDirectory = directory;
-        }
-
+        //Создание модели червяка
         public void create()
         {
             string destPath = _path;
-
+            //Проверка существующего файла
             if (!File.Exists(destPath))
+                //Содание модели червяка
                 File.WriteAllBytes(destPath, Properties.Resources.WormTemp);
-
+            //Изменение параметров модели червяка
             changeModel();
         }
 
         private void changeModel()
         {
-            //Прогресс бар
+            //Инициализация шкалы загрузки
             retVal = swApp.GetUserProgressBar(out pb);
             pb.Start(0, 100, "Создание компонента...");
             lRet = pb.UpdateProgress(20);
 
+            //Инициализация объектов и переменных
             ModelDoc2 swModel;
             PartDoc swComp;
             int errors = 0;
@@ -65,19 +64,22 @@ namespace WormGearGenerator
             EquationMgr swEqnMgr = default(EquationMgr);
             string equation = null;
 
+            //Открытие файла червяка
             swComp = (PartDoc)swApp.OpenDoc6(_path, (int)swDocumentTypes_e.swDocPART, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
             swModel = (ModelDoc2)swComp;
             swModel = (ModelDoc2)swApp.ActiveDoc;
-
+            //Увеличение значения шкалы загрузки
             pb.UpdateTitle("Изменение компонента...");
             lRet = pb.UpdateProgress(25);
 
+            //Подключение модуля уравнений
             swEqnMgr = (EquationMgr)swModel.GetEquationMgr();
             if (swEqnMgr == null)
                 errorMsg(swApp, "Ошибка подключения к модели");
             swEqnMgr.AutomaticSolveOrder = true;
             swEqnMgr.AutomaticRebuild = true;
 
+            //Изменение параметров модели
             try
             {
                 equation = $"\"_da\" = {_da}mm";
@@ -95,6 +97,7 @@ namespace WormGearGenerator
                 equation = $"\"pressure_angle\"={_pressureAngle}";
                 swEqnMgr.Equation[4] = equation;
 
+                //Увеличение значения шкалы загрузки
                 lRet = pb.UpdateProgress(30);
 
                 equation = $"\"length\" = {_length}mm";
@@ -111,6 +114,7 @@ namespace WormGearGenerator
                 equation = $"\"distance\" = {distance}mm";
                 swEqnMgr.Equation[8] = equation;
 
+                //Увеличение значения шкалы загрузки
                 lRet = pb.UpdateProgress(50);
 
                 equation = $"\"z\" = {_z}";
@@ -133,6 +137,7 @@ namespace WormGearGenerator
                 equation = $"\"cham1\" = {cham1}";
                 swEqnMgr.Equation[14] = equation;
 
+                //Увеличение значения шкалы загрузки
                 lRet = pb.UpdateProgress(70);
 
                 equation = $"\"D1@Boss-Extrude1\" = {_length}mm";
@@ -174,6 +179,7 @@ namespace WormGearGenerator
                 equation = $"\"D5@LeftHelix\" = {(int)(_length / px) + 3}";
                 swEqnMgr.Equation[27] = equation;
 
+                //Увеличение значения шкалы загрузки
                 lRet = pb.UpdateProgress(80);
 
                 equation = $"\"D7@LeftHelix\" = {90}deg";
@@ -184,33 +190,34 @@ namespace WormGearGenerator
 
                 swEqnMgr.EvaluateAll();
 
+                //Увеличение значения шкалы загрузки
                 pb.UpdateTitle("Применение материала...");
                 lRet = pb.UpdateProgress(90);
 
+                //Применение материала к компоненту 
                 if (_material != null)
                     setMaterial(swComp, _material.Name, _material.Database);
 
+                //Перестроение документа
                 swModel.ForceRebuild3(false);
+                //Сохранение файла компонента
                 swModel.SaveAs3(_path, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_CopyAndOpen);
 
+                //Увеличение значения шкалы загрузки, завершение работы шкалы загрузки
                 pb.UpdateTitle("Сохранение компонента...");
                 lRet = pb.UpdateProgress(100);
                 pb.End();
 
             }
+            //Обработка ошибок
             catch (Exception e)
             {
                 errorMsg(swApp, "Ошибка в процессе редактирования модели! " + e.Message);
                 pb.End();
             }
-           
         }
 
-        private void setMaterial(PartDoc myPart, string materialName, string database)
-        {
-            myPart.SetMaterialPropertyName2("default", database, materialName);
-        }
-
+        //Создание сообщений с ошибками
         private void errorMsg(SldWorks swApp, string Message)
         {
             swApp.SendMsgToUser2(Message, 0, 0);
@@ -218,6 +225,14 @@ namespace WormGearGenerator
             swApp.RecordLine("'*** " + Message);
             swApp.RecordLine("");
         }
+
+        //Применение материала
+        private void setMaterial(PartDoc myPart, string materialName, string database)
+        {
+            myPart.SetMaterialPropertyName2("default", database, materialName);
+        }
+
+       
 
     }
 }
