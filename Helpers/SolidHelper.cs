@@ -217,6 +217,64 @@ namespace WormGearGenerator
             swModel.SaveAs3(currentAssemblyName, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_CopyAndOpen);
         }
 
+        public void addMatesToFaces(string selectedComponent, string selectedEntity, string generalAssemblyPath, string assemblyPath, string assemblyName, string wormName, string gearName)
+        {
+            ModelDoc2 swModel;
+            AssemblyDoc swAssy;
+            Face2 swFace ;
+            Body2 swBody;
+            SelectData swSelData;
+            Component2 swComp;
+            ModelDocExtension swModelDocExt;
+
+            Entity swEntity = default(Entity);
+            SelectionMgr swSelMgr = default(SelectionMgr);
+            
+            int mateSelMark;
+            bool bValue = false;
+            int errorCode1 = 0;
+            string currentFaceName;
+
+
+            //Активация документа со сборкой
+            swAssy = (AssemblyDoc)swApp.ActivateDoc3(generalAssemblyPath, true, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, ref errorCode1);
+            swModel = (ModelDoc2)swAssy;
+
+            //Иницииализация объекта для выбора элементов компонентов 
+            swModel = (ModelDoc2)swApp.ActiveDoc;
+            swModelDocExt = swModel.Extension;
+            mateSelMark = 1;
+            swSelMgr = (SelectionMgr)swModel.SelectionManager;
+
+            swSelData = swSelMgr.CreateSelectData();
+
+            selectedComponent = selectedComponent.Split('@')[0];
+            swComp = swAssy.GetComponentByName(selectedComponent);
+
+            swBody = (Body2)swComp.GetBody();
+            swFace = (Face2)swBody.GetFirstFace();
+            do
+            {
+                currentFaceName = swModel.GetEntityName(swFace);
+                if (currentFaceName == selectedEntity)
+                {
+                    swEntity = (Entity)swFace;
+                    bValue = swEntity.Select4(true, swSelData);
+                }
+                swFace = (Face2)swFace.GetNextFace();
+            } while (swFace != null);
+
+            string sel = "Line9@Sketch2@" + assemblyName + "-1@" + swModel.GetTitle() + "/" + gearName + "-1@" + assemblyName;
+
+            swModelDocExt.SelectByID2(sel, "EXTSKETCHPOINT", 0, 0, 0,
+                true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
+
+            swAssy.AddMate5((int)swMateType_e.swMateCONCENTRIC, (int)swMateAlign_e.swMateAlignALIGNED, 
+                false, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, out errorCode1);
+
+        }
+
+
         //Сохранение пустой сборки
         public void saveInitialAssembly(string filename)
         {

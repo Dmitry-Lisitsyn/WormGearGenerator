@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WormGearGenerator"
         mc:Ignorable="d"
-        Title="Worm Gear Generator" Height="660" Width="932" FontFamily="Javanese Text" VerticalAlignment="Center" ResizeMode="NoResize" SizeChanged="Window_SizeChanged">
+        Title="Worm Gear Generator" Height="660" Width="932" FontFamily="Javanese Text" VerticalAlignment="Center" ResizeMode="CanMinimize" SizeChanged="Window_SizeChanged">
     <Window.Resources>
         <Style TargetType="{x:Type TextBox}">
             <Style.Triggers>
@@ -106,7 +106,7 @@
                                 <ColumnDefinition Width="175*"/>
                                 <ColumnDefinition Width="141*"/>
                             </Grid.ColumnDefinitions>
-                            <ComboBox x:Name="Chervyak_combo" Margin="5,7,5.2,5.4" Grid.Column="1" FontFamily="Times New Roman"/>
+                            <ComboBox x:Name="Chervyak_combo" Margin="5.4,6,49,7" FontFamily="Times New Roman" Height="19" Grid.Column="1" Width="87"/>
                             <TextBox x:Name="Kol_vitkovValue"  Text="{Binding kol_vitkov, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}"  Grid.Column="1" Margin="5.4,14,4,6.2" TextWrapping="Wrap" Grid.Row="1" Height="23" FontFamily="Times New Roman" HorizontalContentAlignment="Center" FontSize="13" VerticalContentAlignment="Center" TextChanged="data_TextChanged">
                                 <TextBox.ToolTip>
                                     <ToolTip  Foreground="Black" >
@@ -159,7 +159,6 @@
                                     </ToolTip>
                                 </TextBox.ToolTip>
                             </TextBox>
-                            <Label Content="Компонент" Margin="0,2,1,45.8" HorizontalContentAlignment="Center" Grid.RowSpan="2"/>
                             <Label Content="Количество витков" Margin="0,11.6,0,7.8" Grid.Row="1" HorizontalContentAlignment="Center" Padding="5,5,5,0"/>
                             <Label Content="Количество оборотов витков" Margin="4,11.6,3.6,7.8" HorizontalAlignment="Center" Grid.Row="3" Width="170" Height="26" Padding="5,5,0,0" HorizontalContentAlignment="Center"/>
                             <Label Content="Длина червяка" Margin="33,13.8,56.6,0" Height="22" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Top" Width="88" FontSize="12" Padding="0" HorizontalContentAlignment="Center"/>
@@ -177,6 +176,31 @@
                                     </ToolTip>
                                 </Button.ToolTip>
                             </Button>
+                            <ToggleButton x:Name="selectCylindrical_Worm" HorizontalAlignment="Left" Margin="96.4,5,0,0" VerticalAlignment="Top" Width="20" Height="22" Background="White" BorderBrush="White" Checked="selectFace" Unchecked="unselectFace" Grid.Column="1">
+                                <ToggleButton.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Выбор цилиндрической грани в качестве базового элемента для размещения" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </ToggleButton.ToolTip>
+                                <StackPanel>
+                                    <Image Source="img/cylinder.png" Height="18" OpacityMask="White"  />
+                                </StackPanel>
+                            </ToggleButton>
+                            <Button x:Name="c_Copy" HorizontalAlignment="Left" Margin="119,5,0,0" VerticalAlignment="Top" Width="20" Height="22" Background="White" BorderBrush="White" Click="calc_LengthWorm_Click" Grid.Column="1">
+                                <Button.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Расче длины червяка" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Button.ToolTip>
+                                <StackPanel>
+                                    <Image Source="img/layers.png" Height="18"  />
+                                </StackPanel>
+                            </Button>
+                            <Label Content="Компонент" Margin="0,2,142,7" HorizontalContentAlignment="Center" Padding="5,5,5,0" Grid.ColumnSpan="2"/>
                         </Grid>
                     </GroupBox>
                     <GroupBox Header="Параметры червячного колеса" Margin="0,4,4,18" Grid.Column="2" BorderBrush="Black" HorizontalAlignment="Left">
@@ -194,7 +218,7 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="138.4"/>
                             </Grid.ColumnDefinitions>
-                            <ComboBox x:Name="Gear_combo" Margin="5,7,5.2,5.4" Grid.Column="1" FontFamily="Times New Roman"/>
+                            <ComboBox x:Name="Gear_combo" Margin="5.4,6,45.2,7" FontFamily="Times New Roman" Width="87" Height="19" Grid.Column="1"/>
                             <TextBox x:Name="Teeth_gearValue" ToolTipService.ShowOnDisabled="True"  Text="{Binding teeth_Gear, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Margin="5.2,14,4.2,6.2" TextWrapping="Wrap" Grid.Row="1" Height="23" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged" VerticalAlignment="Stretch">
                                 <TextBox.ToolTip>
                                     <ToolTip  Foreground="Black">
@@ -225,7 +249,6 @@
                                     </ToolTip>
                                 </TextBox.ToolTip>
                             </TextBox>
-                            <Label Content="Компонент" Margin="0,2,1,45.8" HorizontalContentAlignment="Center" Grid.RowSpan="2"/>
                             <Label Content="Количество зубьев" Margin="0,11.6,0,7.8" Grid.Row="1" HorizontalContentAlignment="Center" Padding="5,5,5,2"/>
                             <Label Content="Ширина грани, [мм]" Margin="16,13.8,36.8,3.4" HorizontalAlignment="Center" Grid.Row="2" Width="120" Height="26" Padding="0" HorizontalContentAlignment="Center"/>
                             <Label Content="Коэффициент смещения" Margin="0,15.4,0,0" Height="22" HorizontalAlignment="Center" Grid.Row="3" VerticalAlignment="Top" Width="172" Padding="0" HorizontalContentAlignment="Center"/>
@@ -270,6 +293,31 @@
                                     </ToolTip>
                                 </Button.ToolTip>
                             </Button>
+                            <Button x:Name="selectCylindrical_Gear" HorizontalAlignment="Left" Margin="96.4,5,0,0" VerticalAlignment="Top" Width="20" Height="22" Background="White" BorderBrush="White" Click="selectFace" Grid.Column="1">
+                                <Button.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Расче длины червяка" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Button.ToolTip>
+                                <StackPanel>
+                                    <Image Source="img/cylinder.png" Height="18"  />
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="c_Copy2" HorizontalAlignment="Left" Margin="119,5,-0.8,0" VerticalAlignment="Top" Width="20" Height="22" Background="White" BorderBrush="White" Click="calc_LengthWorm_Click" Grid.Column="1">
+                                <Button.ToolTip>
+                                    <ToolTip  Foreground="Black">
+                                        <StackPanel>
+                                            <TextBlock Text="Расче длины червяка" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Button.ToolTip>
+                                <StackPanel>
+                                    <Image Source="img/layers.png" Height="18"  />
+                                </StackPanel>
+                            </Button>
+                            <Label Content="Компонент" Margin="-6,3,0.8,7" HorizontalContentAlignment="Center" Padding="5,5,5,0"/>
                         </Grid>
                     </GroupBox>
                 </Grid>

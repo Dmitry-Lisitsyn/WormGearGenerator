@@ -81,6 +81,16 @@ namespace WormGearGenerator.Properties {
         }
         
         /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap cylinder {
+            get {
+                object obj = ResourceManager.GetObject("cylinder", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
         internal static byte[] GearTemp {
@@ -116,6 +126,16 @@ namespace WormGearGenerator.Properties {
         internal static System.Drawing.Bitmap Kol_vitkov {
             get {
                 object obj = ResourceManager.GetObject("Kol_vitkov", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap layers {
+            get {
+                object obj = ResourceManager.GetObject("layers", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

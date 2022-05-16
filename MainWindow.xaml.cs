@@ -19,6 +19,9 @@ using System.Windows.Media;
 using WormGearGenerator.Helpers;
 using SolidWorks.Interop.swconst;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Windows.Threading;
+using System.Threading;
 
 namespace WormGearGenerator
 {
@@ -52,6 +55,13 @@ namespace WormGearGenerator
         public static string _nameWorm { get; set; }
         public static string _nameGear { get; set; }
 
+        public object swFaceObject;
+
+        public string selectedEntity;
+        public string selectedComponent;
+
+        CancellationTokenSource _tokenSource = null;
+
         //подтверждение построения
         public static bool buildAccepted { get; set; }
 
@@ -73,6 +83,7 @@ namespace WormGearGenerator
         //инциализация объекта класса ConfirmFolders
         private ConfirmFolders foldersWindow;
 
+
         public MainWindow()
         {
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
@@ -83,7 +94,7 @@ namespace WormGearGenerator
             swNewPart = (AssemblyDoc)swApp.ActiveDoc;
             swModel = (ModelDoc2)swNewPart;
             //Чтение пути сохранения открытой сборки 
-            _pathFromProject = swModel.GetPathName();
+            _pathFromProject = swModel.GetPathName().ToLower();
 
             //Проверка наличия сборки
             if (_pathFromProject == String.Empty)
@@ -96,21 +107,22 @@ namespace WormGearGenerator
                 {
                     //Сохранение файла новой сборки
                     sldobj.saveInitialAssembly(InitialPath);
+                    InitialPath = InitialPath.ToLower();
                     //Сохранение пути файла новой сборки
                     _pathFromProject = InitialPath;
                     //Место сохранения сборки
-                    InitialPath = InitialPath.Replace("\\" + swModel.GetTitle() + ".sldasm", "");
+                    InitialPath = InitialPath.Replace("\\" + swModel.GetTitle().ToLower() + ".sldasm", "");
                 }
             }
-            else 
+            else
             {
                 //Сохранение пути сборки если она существует
-                InitialPath = _pathFromProject.Replace("\\" + swModel.GetTitle() + ".sldasm", "");
+                InitialPath = _pathFromProject.Replace("\\" + swModel.GetTitle().ToLower() + ".sldasm", "");
             }
 
             //Инициализация компонентов формы 
             InitializeComponent();
-            
+
             //Контекст данных программы
             validation = new DataValidation(this);
             DataContext = validation;
@@ -710,7 +722,7 @@ namespace WormGearGenerator
                 Puasson_wormValue.Text = "0";
             else
                 Puasson_wormValue.Text = item.Poisson_ratio;
-            
+
             //Изменение цвета таблиц
             data_Touched();
         }
@@ -743,7 +755,7 @@ namespace WormGearGenerator
                 Puasson_gearValue.Text = "0";
             else
                 Puasson_gearValue.Text = item.Poisson_ratio;
-            
+
             //Изменение цвета таблиц
             data_Touched();
         }
@@ -878,7 +890,7 @@ namespace WormGearGenerator
                     gear._hole_diameter = hole_diameter;
                     gear._material = materialGear;
                     gear.create();
-                } 
+                }
                 //Проверка построения компонентов, создание сборки
                 if (isWorm & isGear)
                 {
@@ -896,6 +908,8 @@ namespace WormGearGenerator
 
                     sldobj.addToAssembly(_pathFromProject, _pathAssembly);
 
+                    sldobj.addMatesToFaces(selectedComponent, selectedEntity,
+                        _pathFromProject, _pathAssembly, _nameAssembly, _nameWorm, _nameGear);
                 }
 
                 Directory.SetCurrentDirectory(baseDirectory);
@@ -948,7 +962,120 @@ namespace WormGearGenerator
                 return;
         }
 
-        
+        private void unselectFace(object sender, RoutedEventArgs e)
+        {
+            //Отчистка выбора
+            ModelDoc2 swModel;
+            swModel = (ModelDoc2)swApp.ActiveDoc;
+            swModel.ClearSelection2(true);
+
+            //Отмена процесса выбора грани
+            _tokenSource.Cancel();
+        }
+
+        private async void selectFace(object sender, RoutedEventArgs e)
+        {
+            //Получение токена для контроля выполнения
+            _tokenSource = new CancellationTokenSource();
+            var token = _tokenSource.Token;
+
+            //Запуск асинхронного прцоесса выбора грани
+            await Task.Run(() => waitForCylinderSelection(token));
+        }
+
+        private void waitForCylinderSelection(CancellationToken token)
+        {
+            //Инициализация начальных параметров
+            int FILTER = (int)swSelectType_e.swSelFACES;
+            ModelDoc2 swModel;
+            swModel = (ModelDoc2)swApp.ActiveDoc;
+            Face2 swFace;
+            Feature swFeature;
+            SelectionMgr swSelMgr = default(SelectionMgr); ;
+            object swObject = null;
+            Surface swSurf;
+
+            //Проверяем, открыт ли документ
+            if (swModel != null)
+            {
+                //Отчистка выбора
+                swModel.ClearSelection2(true);
+                //Вызов менеджера выбора
+                swSelMgr = (SelectionMgr)swModel.SelectionManager;
+                //Процесс выполняется пока не выбрана цилиндрическая грань
+                while (swObject == null)
+                {
+                    //Обработка выбранной грани
+                    for (int i = 1; i <= swSelMgr.GetSelectedObjectCount2(-1); i++)
+                    {
+                        //Проверка, что была выбрана грань
+                        if (swSelMgr.GetSelectedObjectType3(i, -1) == FILTER)
+                        {
+                            //Обработка грани
+                            swObject = swSelMgr.GetSelectedObject6(i, -1);
+                            swFace = (Face2)swObject;
+                            swSurf = (Surface)swFace.GetSurface();
+
+                            //Обработка выбора нецилиндрической грани
+                            if (!swSurf.IsCylinder())
+                            {
+                                swObject = null;
+                                MessageBox.Show("Выберите цилиндрическую грань!");
+                                swModel.ClearSelection2(true);
+                            }
+                        }
+                    }
+                    //Выполнение сторонних операций
+                    DoEvents();
+                    //Обработка отмены операции пользователем
+                    if (token.IsCancellationRequested)
+                        return;
+                }
+                //Объект грани
+                swFaceObject = swObject;
+
+                //Получение значения грани
+                swFace = (Face2)swObject;
+                swFeature = (Feature)swFace.GetFeature();
+
+                //вывод названия компонента, подсборки и сборки
+                Entity swEntity = default(Entity);
+                Component2 swComponent = default(Component2);
+
+                //Получение компонента у выбранной грани
+                swEntity = (Entity)swObject;
+                swComponent = (Component2)swEntity.GetComponent();
+
+                //Имя для вызова выбранной грани
+                string entityName = swComponent.GetSelectByIDString() + ":" + swFeature.Name;
+
+                //Применение имени грани
+                bool boolstatus = swModel.SelectedFaceProperties(0, 0, 0, 0, 0, 0, 0, true, entityName);
+
+                //Вызов имени грани
+                string currentFaceName = swModel.GetEntityName(swFace);
+
+                //передавать еще имя entity
+                MessageBox.Show(currentFaceName);
+                MessageBox.Show(swComponent.GetSelectByIDString());
+
+                //Передача значения грани и модели в глобальные переменные
+                selectedEntity = currentFaceName;
+                selectedComponent = swComponent.GetSelectByIDString();
+
+                //Выбирает грань - ебашится колесо концентрично по линии эскиза
+                //Выбирает по плоскости - прикрепляется стенкой к выходу вала
+                //две кнопки у компонента, меняю на них цвет если выбрано/не выбрано
+                //если выбрано вызываю метод, который выбирает дополнительно элементы у колеса и червяка и ебашит зависимости
+                //если нет - ничего не делаю
+            }
+
+        }
+        public static void DoEvents()
+        {
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Background,
+                                                  new Action(delegate { }));
+        }
 
         private void buCalc_Click(object sender, RoutedEventArgs e) { InitializeCalculate(); }
 
