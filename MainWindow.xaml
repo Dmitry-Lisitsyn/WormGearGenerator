@@ -176,11 +176,11 @@
                                     </ToolTip>
                                 </Button.ToolTip>
                             </Button>
-                            <ToggleButton x:Name="selectCylindrical_Worm" HorizontalAlignment="Left" Margin="96.4,5,0,0" VerticalAlignment="Top" Width="20" Height="22" Background="White" BorderBrush="White" Checked="selectFace" Unchecked="unselectFace" Grid.Column="1">
+                            <ToggleButton x:Name="selectCylindrical_Worm" HorizontalAlignment="Left" Margin="96.4,5,0,0" VerticalAlignment="Top" Width="20" Height="22" Background="White" BorderBrush="White" Checked="selectCylindricalFace" Unchecked="unselectCylinderFace" Grid.Column="1">
                                 <ToggleButton.ToolTip>
                                     <ToolTip  Foreground="Black">
                                         <StackPanel>
-                                            <TextBlock Text="Выбор цилиндрической грани в качестве базового элемента для размещения" />
+                                            <TextBlock Text="Выбор цилиндрической грани в качестве базового элемента для размещения червяка" />
                                         </StackPanel>
                                     </ToolTip>
                                 </ToggleButton.ToolTip>
@@ -188,18 +188,18 @@
                                     <Image Source="img/cylinder.png" Height="18" OpacityMask="White"  />
                                 </StackPanel>
                             </ToggleButton>
-                            <Button x:Name="c_Copy" HorizontalAlignment="Left" Margin="119,5,0,0" VerticalAlignment="Top" Width="20" Height="22" Background="White" BorderBrush="White" Click="calc_LengthWorm_Click" Grid.Column="1">
-                                <Button.ToolTip>
+                            <ToggleButton x:Name="selectFace_Worm" HorizontalAlignment="Left" Margin="119,5,0,0" VerticalAlignment="Top" Width="20" Height="22" Background="White" BorderBrush="White" Checked="selectFace" Unchecked="unselectFace" Grid.Column="1">
+                                <ToggleButton.ToolTip>
                                     <ToolTip  Foreground="Black">
                                         <StackPanel>
-                                            <TextBlock Text="Расче длины червяка" />
+                                            <TextBlock Text="Выбор плоской грани в качестве базового расположения червяка" />
                                         </StackPanel>
                                     </ToolTip>
-                                </Button.ToolTip>
+                                </ToggleButton.ToolTip>
                                 <StackPanel>
                                     <Image Source="img/layers.png" Height="18"  />
                                 </StackPanel>
-                            </Button>
+                            </ToggleButton>
                             <Label Content="Компонент" Margin="0,2,142,7" HorizontalContentAlignment="Center" Padding="5,5,5,0" Grid.ColumnSpan="2"/>
                         </Grid>
                     </GroupBox>
@@ -293,30 +293,30 @@
                                     </ToolTip>
                                 </Button.ToolTip>
                             </Button>
-                            <Button x:Name="selectCylindrical_Gear" HorizontalAlignment="Left" Margin="96.4,5,0,0" VerticalAlignment="Top" Width="20" Height="22" Background="White" BorderBrush="White" Click="selectFace" Grid.Column="1">
-                                <Button.ToolTip>
+                            <ToggleButton x:Name="selectCylindrical_Gear" HorizontalAlignment="Left" Margin="96.4,5,0,0" VerticalAlignment="Top" Width="20" Height="22" Background="White" BorderBrush="White" Checked="selectCylindricalFace" Unchecked="unselectCylinderFace" Grid.Column="1">
+                                <ToggleButton.ToolTip>
                                     <ToolTip  Foreground="Black">
                                         <StackPanel>
-                                            <TextBlock Text="Расче длины червяка" />
+                                            <TextBlock Text="Выбор цилиндрической грани в качестве базового элемента для размещения колеса" />
                                         </StackPanel>
                                     </ToolTip>
-                                </Button.ToolTip>
+                                </ToggleButton.ToolTip>
                                 <StackPanel>
                                     <Image Source="img/cylinder.png" Height="18"  />
                                 </StackPanel>
-                            </Button>
-                            <Button x:Name="c_Copy2" HorizontalAlignment="Left" Margin="119,5,-0.8,0" VerticalAlignment="Top" Width="20" Height="22" Background="White" BorderBrush="White" Click="calc_LengthWorm_Click" Grid.Column="1">
-                                <Button.ToolTip>
+                            </ToggleButton>
+                            <ToggleButton x:Name="selectFace_Gear" HorizontalAlignment="Left" Margin="119,5,-0.8,0" VerticalAlignment="Top" Width="20" Height="22" Background="White" BorderBrush="White" Checked="selectFace" Unchecked="unselectFace" Grid.Column="1">
+                                <ToggleButton.ToolTip>
                                     <ToolTip  Foreground="Black">
                                         <StackPanel>
-                                            <TextBlock Text="Расче длины червяка" />
+                                            <TextBlock Text="Выбор плоской грани в качестве базового расположения колеса" />
                                         </StackPanel>
                                     </ToolTip>
-                                </Button.ToolTip>
+                                </ToggleButton.ToolTip>
                                 <StackPanel>
                                     <Image Source="img/layers.png" Height="18"  />
                                 </StackPanel>
-                            </Button>
+                            </ToggleButton>
                             <Label Content="Компонент" Margin="-6,3,0.8,7" HorizontalContentAlignment="Center" Padding="5,5,5,0"/>
                         </Grid>
                     </GroupBox>

@@ -284,6 +284,8 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Resources\GearTemp.SLDPRT" />
+    <None Include="Resources\WormTemp.SLDPRT" />
     <None Include="res\GearTemp.SLDPRT" />
     <None Include="res\WormTemp.SLDPRT" />
   </ItemGroup>

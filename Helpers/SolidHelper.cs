@@ -24,8 +24,8 @@ namespace WormGearGenerator
 
         public SolidHelper()
         {
-           // Считываение текущей сессии запущенного приложения SolidWorks
-           swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
+            // Считываение текущей сессии запущенного приложения SolidWorks
+            swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
         }
 
         //Создание файла сборки для компонентов
@@ -67,7 +67,7 @@ namespace WormGearGenerator
             //Присваивание массивов к объектам
             compNames = xcompnames;
             coorSysNames = xcoorsysnames;
-    
+
             //Активация документа сборки
             swModel = (ModelDoc2)swApp.ActivateDoc3(assemblyPath, true, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, ref errors);
             //Добавление компонентов в документ сборки
@@ -113,7 +113,7 @@ namespace WormGearGenerator
 
             //Создание зависимости плоскости червячного колеса с плоскостью сборки
             swModel.ClearSelection2(true);
-            swModelDocExt.SelectByID2("Front Plane@" + gearName +"-1@"+ assemblyName, "PLANE", 0, 0, 0,
+            swModelDocExt.SelectByID2("Front Plane@" + gearName + "-1@" + assemblyName, "PLANE", 0, 0, 0,
                 true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
             swModelDocExt.SelectByID2("Front Plane", "PLANE", 0, 0, 0,
                 true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
@@ -182,7 +182,7 @@ namespace WormGearGenerator
             swModelDocExt.SelectByID2("Line9@Sketch2@" + gearName + "-1@" + assemblyName, "EXTSKETCHSEGMENT",
                 0, 0, 0, true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
             swAssy.AddMate5((int)swMateType_e.swMateGEAR, (int)swMateAlign_e.swMateAlignALIGNED, flip,
-                0, 0, 0, teethWorm/1000, teethGear/1000, 0, 0, 0, false, false, 0, out errorCode1);
+                0, 0, 0, teethWorm / 1000, teethGear / 1000, 0, 0, 0, false, false, 0, out errorCode1);
             //Увеличение значения шкалы загрузки
             lRet = pb.UpdateProgress(90);
 
@@ -210,48 +210,47 @@ namespace WormGearGenerator
             swAssy = (AssemblyDoc)swApp.ActivateDoc3(currentAssemblyName, true, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, ref errorCode1);
             swModel = (ModelDoc2)swAssy;
 
-            components = swAssy.AddComponent5(generateAssemblyPath, (int)swAddComponentConfigOptions_e.swAddComponentConfigOptions_CurrentSelectedConfig, "", false, "", 0, 0, 0);
+            //Добавление сборки
+            components = swAssy.AddComponent5(generateAssemblyPath, (int)swAddComponentConfigOptions_e.swAddComponentConfigOptions_CurrentSelectedConfig, "", false, "",
+                MainWindow.pointsOfOriginComponent[0], MainWindow.pointsOfOriginComponent[1], MainWindow.pointsOfOriginComponent[2]);
             swApp.CloseDoc(generateAssemblyPath);
 
             //Сохранение документа
             swModel.SaveAs3(currentAssemblyName, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_CopyAndOpen);
         }
 
-        public void addMatesToFaces(string selectedComponent, string selectedEntity, string generalAssemblyPath, string assemblyPath, string assemblyName, string wormName, string gearName)
+        public void addMatesToFaces(string selectedComponent, string selectedEntity, string generalAssemblyPath, string assemblyName, string wormName, string gearName, string WGcomponent)
         {
+            //Инициализация начальных параметров
             ModelDoc2 swModel;
             AssemblyDoc swAssy;
-            Face2 swFace ;
+            Face2 swFace;
             Body2 swBody;
             SelectData swSelData;
-            Component2 swComp;
             ModelDocExtension swModelDocExt;
+            Entity swEntity;
+            SelectionMgr swSelMgr;
 
-            Entity swEntity = default(Entity);
-            SelectionMgr swSelMgr = default(SelectionMgr);
-            
             int mateSelMark;
-            bool bValue = false;
             int errorCode1 = 0;
             string currentFaceName;
-
+            string selectInWG = null;
 
             //Активация документа со сборкой
             swAssy = (AssemblyDoc)swApp.ActivateDoc3(generalAssemblyPath, true, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, ref errorCode1);
             swModel = (ModelDoc2)swAssy;
 
-            //Иницииализация объекта для выбора элементов компонентов 
+            //Иницииализация объектов для выбора элементов компонентов 
             swModel = (ModelDoc2)swApp.ActiveDoc;
             swModelDocExt = swModel.Extension;
             mateSelMark = 1;
             swSelMgr = (SelectionMgr)swModel.SelectionManager;
-
             swSelData = swSelMgr.CreateSelectData();
 
-            selectedComponent = selectedComponent.Split('@')[0];
-            swComp = swAssy.GetComponentByName(selectedComponent);
+            //Считывание тела детали, выбранной пользователем
+            swBody = getByName(swAssy, selectedComponent);
 
-            swBody = (Body2)swComp.GetBody();
+            //Выбор грани
             swFace = (Face2)swBody.GetFirstFace();
             do
             {
@@ -259,21 +258,112 @@ namespace WormGearGenerator
                 if (currentFaceName == selectedEntity)
                 {
                     swEntity = (Entity)swFace;
-                    bValue = swEntity.Select4(true, swSelData);
+                    swEntity.Select4(true, swSelData);
                 }
                 swFace = (Face2)swFace.GetNextFace();
             } while (swFace != null);
 
-            string sel = "Line9@Sketch2@" + assemblyName + "-1@" + swModel.GetTitle() + "/" + gearName + "-1@" + assemblyName;
+            //Создание зависимости между выбранной гранью и компонентом
+            if (WGcomponent != null)
+            {
+                if (WGcomponent == "WormCylinder")
+                {
+                    selectInWG = "Line2@Sketch5@" + assemblyName + "-1@" + swModel.GetTitle() + "/" + wormName + "-1@" + assemblyName;
+                    swModelDocExt.SelectByID2(selectInWG, "EXTSKETCHSEGMENT", 0, 0, 0,
+                        true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
+                    swAssy.AddMate5((int)swMateType_e.swMateCONCENTRIC, (int)swMateAlign_e.swMateAlignALIGNED,
+                    false, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, out errorCode1);
+                }
+                else if (WGcomponent == "GearCylinder")
+                {
+                    selectInWG = "Line9@Sketch2@" + assemblyName + "-1@" + swModel.GetTitle() + "/" + gearName + "-1@" + assemblyName;
+                    swModelDocExt.SelectByID2(selectInWG, "EXTSKETCHSEGMENT", 0, 0, 0,
+                        true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
+                    swAssy.AddMate5((int)swMateType_e.swMateCONCENTRIC, (int)swMateAlign_e.swMateAlignALIGNED,
+                    false, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, out errorCode1);
+                }
+                else if (WGcomponent == "GearFace")
+                {
+                    //Считывание тела колеса
+                    var swEntityGear = default(Entity);
+                    var swBodyGear = getByName(swAssy, gearName + "-1");
+                    var swFaceGear = (Face2)swBodyGear.GetFirstFace();
+                    do
+                    {
+                        currentFaceName = swModel.GetEntityName(swFaceGear);
+                        if (currentFaceName == "FrontTempFace")
+                        {
+                            swEntityGear = (Entity)swFaceGear;
+                            swEntityGear.Select4(true, swSelData);
+                        }
+                        swFaceGear = (Face2)swFaceGear.GetNextFace();
+                    } while (swFaceGear != null);
 
-            swModelDocExt.SelectByID2(sel, "EXTSKETCHPOINT", 0, 0, 0,
-                true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
+                    swAssy.AddMate5((int)swMateType_e.swMateANGLE, (int)swMateAlign_e.swMateAlignALIGNED,
+                    false, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, out errorCode1);
+                }
+                else if (WGcomponent == "WormFace")
+                {
+                    //Считывание тела червяка
+                    var swEntityWorm = default(Entity);
+                    var swBodyWorm = getByName(swAssy, gearName + "-1");
+                    var swFaceWorm = (Face2)swBodyWorm.GetFirstFace();
+                    do
+                    {
+                        currentFaceName = swModel.GetEntityName(swFaceWorm);
+                        if (currentFaceName == "LeftTempFace")
+                        {
+                            swEntityWorm = (Entity)swFaceWorm;
+                            swEntityWorm.Select4(true, swSelData);
+                        }
+                        swFaceWorm = (Face2)swFaceWorm.GetNextFace();
+                    } while (swFaceWorm != null);
 
-            swAssy.AddMate5((int)swMateType_e.swMateCONCENTRIC, (int)swMateAlign_e.swMateAlignALIGNED, 
-                false, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, out errorCode1);
+                    swAssy.AddMate5((int)swMateType_e.swMateANGLE, (int)swMateAlign_e.swMateAlignALIGNED,
+                    false, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, out errorCode1);
+                }    
+            }
 
+            //Сброс выделения
+            swModel.ClearSelection2(true);
+            //Перестроение документа
+            swModel.ForceRebuild3(false);
+            //Сохранение документа
+            swModel.SaveAs3(generalAssemblyPath, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_CopyAndOpen);
         }
 
+        private Body2 getByName(AssemblyDoc assy, string name)
+        {
+            Component2 swComp;
+            Body2 swBody = null;
+            string[] str;
+
+            if (name.Contains("@"))
+                str = name.Split('@');
+            else
+            {
+                var list = new List<string>();
+                list.Add(name);
+                str = list.ToArray();
+            }
+
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (str[i].Contains("/"))
+                {
+                    var substr = str[i].Split('/');
+                    swComp = assy.GetComponentByName(substr[1]);
+                }
+                else
+                    swComp = assy.GetComponentByName(str[i]);
+
+                swBody = (Body2)swComp.GetBody();
+                if (swBody != null)
+                    return swBody;
+
+            }
+            return swBody;
+        }
 
         //Сохранение пустой сборки
         public void saveInitialAssembly(string filename)
@@ -283,7 +373,7 @@ namespace WormGearGenerator
 
             if (File.Exists(filename))
                 File.Delete(filename);
-                
+
             swModel.SaveAs3(filename, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_CopyAndOpen);
         }
 
