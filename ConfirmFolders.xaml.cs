@@ -203,13 +203,21 @@ namespace WormGearGenerator
 
         private bool validateFolders(string path, string name)
         {
-            if (File.Exists(path))
-                if (MessageBox.Show("Файл с таким именем уже существует ("+name+"). Заменить файл в папке назначения?", "Подтвердите действие",
-                    MessageBoxButton.OKCancel, MessageBoxImage.Question).ToString() == "OK")
-                    File.Delete(path);
-                else
-                    return false;
-            return true;
+            try
+            {
+                if (File.Exists(path))
+                    if (MessageBox.Show("Файл с таким именем уже существует (" + name + "). Заменить файл в папке назначения?", "Подтвердите действие",
+                        MessageBoxButton.OKCancel, MessageBoxImage.Question).ToString() == "OK")
+                        File.Delete(path);
+                    else
+                        return false;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка! Возможно компонент в данный момент используется");
+                return false;
+            }
         }
 
     }

@@ -56,6 +56,7 @@ namespace WormGearGenerator
 
             //Добаление имен компонентов в массив
             string[] xcompnames = new string[2];
+            //IF компоненты построены
             xcompnames[0] = worm._path;
             xcompnames[1] = gear._path;
 
@@ -110,6 +111,7 @@ namespace WormGearGenerator
             retVal = swApp.GetUserProgressBar(out pb);
             pb.Start(0, 100, "Создание зависимостей...");
             lRet = pb.UpdateProgress(30);
+
 
             //Создание зависимости плоскости червячного колеса с плоскостью сборки
             swModel.ClearSelection2(true);
@@ -228,7 +230,7 @@ namespace WormGearGenerator
             Body2 swBody;
             SelectData swSelData;
             ModelDocExtension swModelDocExt;
-            Entity swEntity;
+            Entity swEntity = null;
             SelectionMgr swSelMgr;
 
             int mateSelMark;
@@ -261,7 +263,7 @@ namespace WormGearGenerator
                     swEntity.Select4(true, swSelData);
                 }
                 swFace = (Face2)swFace.GetNextFace();
-            } while (swFace != null);
+            } while (swFace != null || swEntity != null);
 
             //Создание зависимости между выбранной гранью и компонентом
             if (WGcomponent != null)

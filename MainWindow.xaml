@@ -106,7 +106,7 @@
                                 <ColumnDefinition Width="175*"/>
                                 <ColumnDefinition Width="141*"/>
                             </Grid.ColumnDefinitions>
-                            <ComboBox x:Name="Chervyak_combo" Margin="5.4,6,49,7" FontFamily="Times New Roman" Height="19" Grid.Column="1" Width="87"/>
+                            <ComboBox x:Name="Worm_combo" Margin="5.4,6,49,7" FontFamily="Times New Roman" Height="19" Grid.Column="1" Width="87"  SelectionChanged="Chervyak_combo_SelectionChanged"/>
                             <TextBox x:Name="Kol_vitkovValue"  Text="{Binding kol_vitkov, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}"  Grid.Column="1" Margin="5.4,14,4,6.2" TextWrapping="Wrap" Grid.Row="1" Height="23" FontFamily="Times New Roman" HorizontalContentAlignment="Center" FontSize="13" VerticalContentAlignment="Center" TextChanged="data_TextChanged">
                                 <TextBox.ToolTip>
                                     <ToolTip  Foreground="Black" >
@@ -201,6 +201,8 @@
                                 </StackPanel>
                             </ToggleButton>
                             <Label Content="Компонент" Margin="0,2,142,7" HorizontalContentAlignment="Center" Padding="5,5,5,0" Grid.ColumnSpan="2"/>
+                            <Border x:Name="border_cylinderWorm" BorderBrush="Black" BorderThickness="0" Grid.Column="1" HorizontalAlignment="Left" Height="5" Margin="96.4,27,0,0" VerticalAlignment="Top" Width="20"/>
+                            <Border x:Name="border_faceWorm" BorderBrush="Black" BorderThickness="0" Grid.Column="1" HorizontalAlignment="Left" Margin="119.4,27,0,0" Width="20"/>
                         </Grid>
                     </GroupBox>
                     <GroupBox Header="Параметры червячного колеса" Margin="0,4,4,18" Grid.Column="2" BorderBrush="Black" HorizontalAlignment="Left">
@@ -218,7 +220,7 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="138.4"/>
                             </Grid.ColumnDefinitions>
-                            <ComboBox x:Name="Gear_combo" Margin="5.4,6,45.2,7" FontFamily="Times New Roman" Width="87" Height="19" Grid.Column="1"/>
+                            <ComboBox x:Name="Gear_combo" Margin="5.4,6,45.2,7" FontFamily="Times New Roman" Width="87" Height="19" Grid.Column="1" SelectionChanged="Gear_combo_SelectionChanged"/>
                             <TextBox x:Name="Teeth_gearValue" ToolTipService.ShowOnDisabled="True"  Text="{Binding teeth_Gear, ValidatesOnDataErrors = True, UpdateSourceTrigger = PropertyChanged}" Grid.Column="1" Margin="5.2,14,4.2,6.2" TextWrapping="Wrap" Grid.Row="1" Height="23" HorizontalContentAlignment="Center" FontFamily="Times New Roman" VerticalContentAlignment="Center" FontSize="13" TextChanged="data_TextChanged" VerticalAlignment="Stretch">
                                 <TextBox.ToolTip>
                                     <ToolTip  Foreground="Black">
@@ -318,6 +320,8 @@
                                 </StackPanel>
                             </ToggleButton>
                             <Label Content="Компонент" Margin="-6,3,0.8,7" HorizontalContentAlignment="Center" Padding="5,5,5,0"/>
+                            <Border x:Name="border_cylinderGear" BorderBrush="Black" BorderThickness="0" Grid.Column="1" HorizontalAlignment="Left" Height="5" Margin="96.4,27,0,0" VerticalAlignment="Top" Width="20"/>
+                            <Border x:Name="border_faceGear" BorderBrush="Black" BorderThickness="0" Grid.Column="1" HorizontalAlignment="Left" Height="5" Margin="119.2,27,-0.8,0" VerticalAlignment="Top" Width="20"/>
                         </Grid>
                     </GroupBox>
                 </Grid>
