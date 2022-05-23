@@ -38,6 +38,7 @@ namespace WormGearGenerator
         float Peredat;
         float aw, Alpha, dae2, da1, da2, d1, d2, df1, df2, dw1, dw2;
         public SldWorks swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
+        
         //Статус загрузки главного окна
         public bool Status;
         //инициализация пути сохранения и базового пути
@@ -56,33 +57,27 @@ namespace WormGearGenerator
         public object swFaceObject = null;
         public string selectedEntity;
         public string selectedComponent;
-
         public bool GearOrWorm;
 
         public static double[] pointsOfOriginComponent = new double[3];
         Face2[] faceArray = new Face2[2];
 
+        //Токены отмены выполнения ансинхронных методов
         CancellationTokenSource _tokenSourceCylinder = new CancellationTokenSource();
         CancellationTokenSource _tokenSourceFace = new CancellationTokenSource();
 
         //подтверждение построения
         public static bool buildAccepted { get; set; }
-
         //инициализация объекта класса проверки полей программы
         private DataValidation validation;
-
         //инициализация объекта класса MaterialHelper
         private MaterialHelper MatObj;
-
         //инициализация объекта класса Worm
         private Worm worm;
-
         //инициализация объекта класса Gear
         private Gear gear;
-
         //инициализация объекта класса SolidHelper
         private SolidHelper sldobj;
-
         //инциализация объекта класса ConfirmFolders
         private ConfirmFolders foldersWindow;
 
@@ -96,6 +91,7 @@ namespace WormGearGenerator
             sldobj = new SolidHelper();
             swNewPart = (AssemblyDoc)swApp.ActiveDoc;
             swModel = (ModelDoc2)swNewPart;
+
             //Чтение пути сохранения открытой сборки 
             _pathFromProject = swModel.GetPathName().ToLower();
 
@@ -152,6 +148,9 @@ namespace WormGearGenerator
                 return null;
         }
 
+        /// <summary>
+        ///Инициализация начальных данных, заполнение полей
+        /// </summary>
         private void InitializeStartData()
         {
             //Начальные размеры  
@@ -259,10 +258,10 @@ namespace WormGearGenerator
         private void InitializeCalculate()
         {
             //Значение модуля
-            Module = float.Parse(((Module_combo.Text).Split(' ')[0]), CultureInfo.InvariantCulture.NumberFormat);
+            Module = float.Parse(((Module_combo.Text).Split(' ')[0]));
 
             //Значение угла профиля
-            PressureAngle = float.Parse(((ProfileDeg_combo.Text).Split(' ')[0]), CultureInfo.InvariantCulture.NumberFormat);
+            PressureAngle = float.Parse(((ProfileDeg_combo.Text).Split(' ')[0]));
 
             //Количество оборотов витков
             Kol_oborotovValue.Text = (Math.Floor(float.Parse(LengthValue.Text) / (Module * Math.PI)) + 3).ToString();
@@ -332,9 +331,11 @@ namespace WormGearGenerator
             //КПД
             float v1 = (float)((Math.PI * dw1 * float.Parse(VelocityValue.Text)) / 60000);
             //Делительный угол подъема
-            float tgy = (float)(Math.Atan((float.Parse(Kol_vitkovValue.Text) / float.Parse(Koef_diamValue.Text))) * 180 / Math.PI);
+            float tgy = (float)(Math.Atan((float.Parse(Kol_vitkovValue.Text) 
+                / float.Parse(Koef_diamValue.Text))) * 180 / Math.PI);
             //Начальный угол подъема
-            float tgyW = (float)(Math.Atan(float.Parse(Kol_vitkovValue.Text) / (float.Parse(Koef_diamValue.Text) + 2 * float.Parse(Koef_smeshValue.Text))) * 180 / Math.PI);
+            float tgyW = (float)(Math.Atan(float.Parse(Kol_vitkovValue.Text) 
+                / (float.Parse(Koef_diamValue.Text) + 2 * float.Parse(Koef_smeshValue.Text))) * 180 / Math.PI);
 
             float v2 = v1 * (float.Parse(Kol_vitkovValue.Text) / float.Parse(Koef_diamValue.Text));
 
@@ -463,7 +464,8 @@ namespace WormGearGenerator
                 Koef = 1;
             //Контактное напряжение
             float contact_stress = (float)((170 / (float.Parse(Teeth_gearValue.Text) / float.Parse(Koef_diamValue.Text))) *
-                Math.Sqrt((float.Parse(MomentValue_Gear.Text) * 1000 * float.Parse(KvValue.Text)) * Math.Pow(((1 + float.Parse(Teeth_gearValue.Text) / float.Parse(Koef_diamValue.Text)) / (aw)), 3)));
+                Math.Sqrt((float.Parse(MomentValue_Gear.Text) * 1000 * float.Parse(KvValue.Text))
+                * Math.Pow(((1 + float.Parse(Teeth_gearValue.Text) / float.Parse(Koef_diamValue.Text)) / (aw)), 3)));
             validation.contact_calc = contact_stress.ToString("0.00");
 
             //Коэффициент для вычисления напряжения изгиба
@@ -502,7 +504,7 @@ namespace WormGearGenerator
             validation.bending = limit_bending.Text;
 
             //Температура масла при работе
-            float temperature_oil = (float)((float.Parse(PowerValue.Text) * 1000 * (1 - KPD)) / (17 * 12.2 * Math.Pow(aw / 1000, 1.17))) + 20;
+            float temperature_oil = (float)((float.Parse(PowerValue.Text) * 1000 * (1 - KPD)) / (17 * 12.2 * Math.Pow(aw / 1000, 1.71))) + 20;
             temperature.Text = temperature_oil.ToString("0.00");
             validation.temperature = temperature.Text;
 
@@ -580,6 +582,9 @@ namespace WormGearGenerator
             TableGear_Calc.RowHeight = TableGear_Calc.Height / gear.Count;
         }
 
+        /// <summary>
+        /// Выбор компонента на вклаке "Расчет"
+        /// </summary>
         private void RadioSelectComp_Checked(object sender, RoutedEventArgs e)
         {
             RadioButton pressed = (RadioButton)sender;
@@ -634,6 +639,9 @@ namespace WormGearGenerator
             }
         }
 
+        /// <summary>
+        /// Выбор типа расчета на вкладе "расчет"
+        /// </summary>
         private void RadioSelectType_Checked(object sender, RoutedEventArgs e)
         {
             RadioButton pressed = (RadioButton)sender;
@@ -688,14 +696,24 @@ namespace WormGearGenerator
             }
         }
 
+        /// <summary>
+        /// Вызво изменения цвета таблицы
+        /// </summary>
         private void data_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (((TextBox)sender).IsFocused)
                 data_Touched();
 
         }
+
+        /// <summary>
+        /// Обработка изменения какого-либо значения в выпадающих списках
+        /// </summary>
         private void combo_SelectionChanged(object sender, SelectionChangedEventArgs e) { data_Touched(); }
 
+        /// <summary>
+        /// Изменение цвета таблиц
+        /// </summary>
         private void data_Touched()
         {
             var color = Brushes.LightGray;
@@ -763,6 +781,9 @@ namespace WormGearGenerator
             data_Touched();
         }
 
+        /// <summary>
+        /// Расчет ширины венца зубчатого колеса
+        /// </summary>
         private void calc_WidthGear_Click(object sender, RoutedEventArgs e)
         {
             var teeth = float.Parse(Kol_vitkovValue.Text);
@@ -774,7 +795,9 @@ namespace WormGearGenerator
             data_Touched();
         }
 
-
+        /// <summary>
+        /// Расчет длины червяка
+        /// </summary>
         private void calc_LengthWorm_Click(object sender, RoutedEventArgs e)
         {
             LengthValue.Text = (2 * Math.Sqrt(Math.Pow(dae2 / 2, 2) - Math.Pow((aw - da1 / 2), 2) + (Math.PI * Module / 2))).ToString("0.00");
@@ -810,22 +833,29 @@ namespace WormGearGenerator
 
         }
 
+        /// <summary>
+        /// Подтверждение построения сборки
+        /// </summary>
         private void confirm_BuildClick(object sender, RoutedEventArgs e)
         {
+            //Обработка построения компонентов
             bool isWorm = Worm_combo.Text == "Построить" ? true : false;
             bool isGear = Gear_combo.Text == "Построить" ? true : false;
 
             this.Hide();
+            //Обработка значений построения компонентов
             if (isWorm == false & isGear == false)
             {
                 return;
             }
             else
             {
+                //Передача праметров в окно "Подтверждение"
                 foldersWindow = new ConfirmFolders(InitialPath, isWorm, isGear);
                 foldersWindow.Topmost = true;
                 foldersWindow.ShowDialog();
 
+                //Обработка подтверждения построения
                 if (buildAccepted == true)
                     create_components(isWorm, isGear);
                 else
@@ -837,6 +867,9 @@ namespace WormGearGenerator
 
         }
 
+        /// <summary>
+        /// Построение компонентов, сборки, создание зависимостей
+        /// </summary>
         private void create_components(bool isWorm, bool isGear)
         {
             try
@@ -869,7 +902,7 @@ namespace WormGearGenerator
                     worm.create();
                 }
                 //Инициализация объекта класса червячного колеса
-                gear = new Gear(baseDirectory);
+                gear = new Gear();
                 //Построение червячного колеса
                 if (isGear)
                 {
@@ -913,30 +946,32 @@ namespace WormGearGenerator
                     //Добавление в текущую сборку
                     sldobj.addToAssembly(_pathFromProject, _pathAssembly);
 
-                    //Создание зависимостей внутри текущей сборки, изменение условия (если была выбрана только одна цилиндр грань или какой-либо фейс)
+                    //Создание зависимостей внутри текущей сборки
+                    // изменение условия(если была выбрана только одна цилиндр грань или какой-либо фейс)
+                    //параметры из словаря со значением червяка
+                    //параметры из словаря со значением колеса
+                    //параметры фейса
+                    //Если выбрана цилиндрическая грань, то передаю туда параметры из словаря
                     string GearOrWorm = String.Empty;
                     if (((selectCylindrical_Gear.IsChecked == true) || (selectCylindrical_Worm.IsChecked == true)
                         ||(selectFace_Gear.IsChecked == true) || (selectFace_Worm.IsChecked == true)) & swFaceObject != null)
                     {
                         if (selectCylindrical_Worm.IsChecked == true)
                             GearOrWorm = "WormCylinder";
-                        //параметры из словаря со значением червяка
                         else if (selectCylindrical_Gear.IsChecked == true)
                             GearOrWorm = "GearCylinder";
-                        //параметры из словаря со значением колеса
                         else if (selectFace_Gear.IsChecked == true)
                             GearOrWorm = "GearFace";
-                        //параметры фейса
                         else if (selectFace_Worm.IsChecked == true)
                             GearOrWorm = "WormFace";
-                        //параметры фейса
-                        //Если выбрана цилиндрическая грань, то передаю туда параметры из словаря
+
                         sldobj.addMatesToFaces(selectedComponent, selectedEntity,
                             _pathFromProject, _nameAssembly, _nameWorm, _nameGear, GearOrWorm);
                     }
                 }
-
-                Directory.SetCurrentDirectory(baseDirectory);
+                _tokenSourceCylinder.Cancel();
+                _tokenSourceFace.Cancel();
+                Directory.SetCurrentDirectory(baseDirectory);           
             }
             catch (Exception ex)
             {
@@ -945,6 +980,9 @@ namespace WormGearGenerator
             }
         }
 
+        /// <summary>
+        /// Изменение отображения поля для значения ширины отверстия колеса
+        /// </summary>
         private void CheckBox_Hole_Changed(object sender, RoutedEventArgs e)
         {
             if (Hole_bool.IsChecked == true)
@@ -953,6 +991,9 @@ namespace WormGearGenerator
                 Hole_widthValue.Visibility = Visibility.Hidden;
         }
 
+        /// <summary>
+        ///Изменение типа расчета КПД
+        /// </summary>
         private void CheckBox_KPD_Changed(object sender, RoutedEventArgs e)
         {
             if (boolKPD.IsChecked == true)
@@ -965,6 +1006,9 @@ namespace WormGearGenerator
 
         private void Expander_Collapsed(object sender, RoutedEventArgs e) { this.Height = 550; }
 
+        /// <summary>
+        ///Отображение/скрытие таблиц
+        /// </summary>
         private void Expander_Calculations_Click(object sender, RoutedEventArgs e)
         {
             if (this.Width == 932)
@@ -978,6 +1022,9 @@ namespace WormGearGenerator
             }
         }
 
+        /// <summary>
+        ///Закрытие окна программы
+        /// </summary>
         private void buCancel_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Вы действительно хотите выйти?", "Подтвердите выход", MessageBoxButton.OKCancel, MessageBoxImage.Question).ToString() == "OK")
@@ -992,36 +1039,44 @@ namespace WormGearGenerator
                 return;
         }
 
+        /// <summary>
+        /// Отмена выбора цилиндрической грани
+        /// </summary>
         private void unselectCylinderFace(object sender, RoutedEventArgs e)
         {
-            swFaceObject = null;
-            selectedEntity = selectedComponent = null;
-
+            swFaceObject = selectedEntity = selectedComponent = null;
             switch ((sender as ToggleButton).Name)
             {
                 case "selectCylindrical_Worm":
                     border_cylinderWorm.Background = Brushes.White;
-                    selectFace_Worm.IsEnabled = true;
-                    if (Gear_combo.Text == "Построить")
-                        selectFace_Gear.IsEnabled = true;
+                    if (selectCylindrical_Gear.IsChecked != true)
+                    {
+                        selectFace_Worm.IsEnabled = true;
+                        if (Gear_combo.Text == "Построить")
+                            selectFace_Gear.IsEnabled = true;
+                    }
                     break;
                 case "selectCylindrical_Gear":
                     border_cylinderGear.Background = Brushes.White;
-                    selectFace_Gear.IsEnabled = true;
-                    if (Worm_combo.Text == "Построить")
-                        selectFace_Worm.IsEnabled = true;
+                    if (selectCylindrical_Worm.IsChecked != true)
+                    {
+                        selectFace_Gear.IsEnabled = true;
+                        if (Worm_combo.Text == "Построить")
+                            selectFace_Worm.IsEnabled = true;
+                    }
                     break;
             }
-
-            //Отчистка выбора
+            //Очистка выбора
             ModelDoc2 swModel;
             swModel = (ModelDoc2)swApp.ActiveDoc;
             swModel.ClearSelection2(true);
-
             //Отмена процесса выбора грани
             _tokenSourceCylinder.Cancel();
         }
 
+        /// <summary>
+        ///Выбор цилиндрической грани
+        /// </summary>
         private async void selectCylindricalFace(object sender, RoutedEventArgs e)
         {
             ModelDoc2 swModel;
@@ -1030,19 +1085,22 @@ namespace WormGearGenerator
             selectFace_Gear.IsChecked = selectFace_Worm.IsChecked = false;
             selectFace_Gear.IsEnabled = selectFace_Worm.IsEnabled = false;
 
+            //Закрытие потока выбора плоской грани
             _tokenSourceFace.Cancel();
             //Получение токена для контроля выполнения
             _tokenSourceCylinder = new CancellationTokenSource();
             var token = _tokenSourceCylinder.Token;
 
+            //Очистка предварительного выбора
             if ((sender as ToggleButton).Name == "selectCylindrical_Gear" & selectCylindrical_Worm.IsChecked != true)
                 swModel.ClearSelection2(true);
             else if ((sender as ToggleButton).Name == "selectCylindrical_Worm" & selectCylindrical_Gear.IsChecked != true)
                 swModel.ClearSelection2(true);
 
-                //Запуск асинхронного прцоесса выбора грани
-                await Task.Run(() => waitForCylinderSelection(token));
+            //Запуск асинхронного процесса выбора грани
+            await Task.Run(() => waitForCylinderSelection(token));
 
+            //Визуальная обработка выбора грани
             if (selectedEntity == null || selectedComponent == null)
                 selectCylindrical_Gear.IsChecked = selectCylindrical_Worm.IsChecked = false;
             else
@@ -1061,28 +1119,28 @@ namespace WormGearGenerator
             }
         }
 
+        /// <summary>
+        /// обработка выбора цилиндрической грани
+        /// </summary>
         private void waitForCylinderSelection(CancellationToken token)
         {
             //Инициализация начальных параметров
             ModelDoc2 swModel;
             swModel = (ModelDoc2)swApp.ActiveDoc;
             Face2 swFace;
-            Feature swFeature;
             SelectionMgr swSelMgr;
             Surface swSurf;
-            //ModelDocExtension swModelDocExt;
-
+            Entity swEntity;
+            Component2 swComponent;
             int FILTER = (int)swSelectType_e.swSelFACES;
             object swObject = null;
 
             //Проверяем, открыт ли документ
             if (swModel != null)
             {
-               // swModelDocExt = swModel.Extension;
                 //Вызов менеджера выбора
                 swSelMgr = (SelectionMgr)swModel.SelectionManager;
                 //Процесс выполняется пока не выбрана цилиндрическая грань
-
                 while (swObject == null)
                 {
                     //Обработка выбранной грани
@@ -1094,17 +1152,8 @@ namespace WormGearGenerator
                             swObject = swSelMgr.GetSelectedObject6(i, -1);
                             swFace = (Face2)swObject;
                             swSurf = (Surface)swFace.GetSurface();
-
-                            //if (faceArray.Length == 0)
-                            //    faceArray[0] = swFace;
-
-                            //if (faceArray.Length != 0)
-                            //{
-                            //    faceArray[1] = swFace;
-                            //    swModelDocExt.MultiSelect2(faceArray, true, null);
-                            //}
+                           
                             //Обработка выбора нецилиндрической грани
-
                             if (!swSurf.IsCylinder())
                             {
                                 MessageBox.Show("Выберите цилиндрическую грань!");
@@ -1132,11 +1181,6 @@ namespace WormGearGenerator
 
                 //Получение значения грани
                 swFace = (Face2)swObject;
-                swFeature = (Feature)swFace.GetFeature();
-
-                //вывод названия компонента, подсборки и сборки
-                Entity swEntity;
-                Component2 swComponent;
 
                 //Получение компонента у выбранной грани
                 swEntity = (Entity)swObject;
@@ -1144,14 +1188,9 @@ namespace WormGearGenerator
 
                 //Имя для вызова выбранной грани
                 string entityName = getRandomString();
-                //= swComponent.GetSelectByIDString() + ":" + swFeature.Name;
 
                 //Применение имени грани
                 swModel.SelectedFaceProperties(0, 0, 0, 0, 0, 0, 0, true, entityName);
-
-                //передавать еще имя entity
-               // MessageBox.Show(swModel.GetEntityName(swFace));
-               // MessageBox.Show(swComponent.GetSelectByIDString());
 
                 //Передача значения грани и модели в глобальные переменные
                 selectedEntity = swModel.GetEntityName(swFace);
@@ -1159,11 +1198,24 @@ namespace WormGearGenerator
             }
         }
 
+        //swFeature = (Feature) swFace.GetFeature();
+        //ModelDocExtension swModelDocExt;
+        // swModelDocExt = swModel.Extension;
+        //if (faceArray.Length == 0)
+        //    faceArray[0] = swFace;
+
+        //if (faceArray.Length != 0)
+        //{
+        //    faceArray[1] = swFace;
+        //    swModelDocExt.MultiSelect2(faceArray, true, null);
+        //}
+
+        /// <summary>
+        ///Отмена выбора грани
+        /// </summary>
         private void unselectFace(object sender, RoutedEventArgs e)
         {
-            swFaceObject = null;
-            selectedEntity = selectedComponent = null;
-
+            swFaceObject = selectedEntity = selectedComponent = null;
             switch ((sender as ToggleButton).Name)
             {
                 case "selectFace_Worm":
@@ -1186,21 +1238,23 @@ namespace WormGearGenerator
                     break;
             }
 
-            //Отчистка выбора
+            //Очистка выбора
             ModelDoc2 swModel;
             swModel = (ModelDoc2)swApp.ActiveDoc;
             swModel.ClearSelection2(true);
-
             //Отмена процесса выбора грани
             _tokenSourceFace.Cancel();
         }
 
+        /// <summary>
+        ///Выбор грани
+        /// </summary>
         private async void selectFace(object sender, RoutedEventArgs e)
         {
             selectCylindrical_Gear.IsChecked = selectCylindrical_Worm.IsChecked = false;
             selectCylindrical_Gear.IsEnabled = selectCylindrical_Worm.IsEnabled = false;
-            string objname = ((ToggleButton)sender).Name;
-            switch (objname)
+
+            switch (((ToggleButton)sender).Name)
             {
                 case "selectFace_Worm":
                     selectFace_Gear.IsChecked = false;
@@ -1213,23 +1267,22 @@ namespace WormGearGenerator
                     border_faceWorm.Background = Brushes.White;
                     break;
             }
-
+            //Завершения выполнения потока цилиндрической грани
             _tokenSourceCylinder.Cancel();
             //Получение токена для контроля выполнения
-            //Создавать новый токен
             _tokenSourceFace = new CancellationTokenSource();
             var token = _tokenSourceFace.Token;
 
             //Запуск асинхронного прцоесса выбора грани
             await Task.Run(() => waitForFaceSelection(token));
 
+            //Визуальная обработка выбора грани
             if (selectedEntity == null || selectedComponent == null)
                 selectFace_Gear.IsChecked = selectFace_Worm.IsChecked = false;
             else
             {
                 var bc = new BrushConverter();
                 var color_selected = bc.ConvertFromString("#FFA2FDAA");
-
                 switch ((sender as ToggleButton).Name)
                 {
                     case "selectFace_Worm":
@@ -1242,23 +1295,24 @@ namespace WormGearGenerator
             }
         }
 
+        /// <summary>
+        ///Обработка выбора грани
+        /// </summary>
         private void waitForFaceSelection(CancellationToken token)
         {
             //Инициализация начальных параметров
             ModelDoc2 swModel;
             swModel = (ModelDoc2)swApp.ActiveDoc;
             Face2 swFace;
-            Feature swFeature;
             SelectionMgr swSelMgr;
+            Entity swEntity;
+            Component2 swComponent;
             Surface swSurf;
 
-            selectedEntity = null;
-            selectedComponent = null;
             int FILTER = (int)swSelectType_e.swSelFACES;
             object swObject = null;
             double centerU, centerV;
-            double[] Evals;
-            double[] pointsOfCenterFace = new double[3];
+            double[] Evals = new double[6];
 
             //Проверяем, открыт ли документ
             if (swModel != null)
@@ -1281,17 +1335,6 @@ namespace WormGearGenerator
                             swFace = (Face2)swObject;
                             swSurf = (Surface)swFace.GetSurface();
 
-                            double[] vUvBounds = (double[])swFace.GetUVBounds();
-
-                            centerU = ((double)vUvBounds[0] + (double)vUvBounds[1]) / 2;
-                            centerV = ((double)vUvBounds[2] + (double)vUvBounds[3]) / 2;
-
-                            Evals = (double[])swSurf.Evaluate(centerU, centerV, 0, 0);
-
-                            pointsOfCenterFace[0] = Evals[0];
-                            pointsOfCenterFace[1] = Evals[1];
-                            pointsOfCenterFace[2] = Evals[2];
-
                             //Обработка выбора нецилиндрической грани
                             if (swSurf.IsCylinder())
                             {
@@ -1300,6 +1343,14 @@ namespace WormGearGenerator
                                 swEnt.DeSelect();
                                 swObject = null;
                                 return;
+                            }
+                            else
+                            {
+                                double[] vUvBounds = (double[])swFace.GetUVBounds();
+                                centerU = ((double)vUvBounds[0] + (double)vUvBounds[1]) / 2;
+                                centerV = ((double)vUvBounds[2] + (double)vUvBounds[3]) / 2;
+                                //Вычисление центра грани
+                                Evals = (double[])swSurf.Evaluate(centerU, centerV, 0, 0);
                             }
                         }
                         else if (swSelMgr.GetSelectedObjectType3(i, -1) != FILTER)
@@ -1315,61 +1366,43 @@ namespace WormGearGenerator
                     if (token.IsCancellationRequested)
                         return;
                 }
-
                 MathTransform swTransform;
                 MathPoint swmathPt;
                 MathUtility swmathUtils;
-
                 swmathUtils = (MathUtility)swApp.GetMathUtility();
 
                 //Объект грани
                 swFaceObject = swObject;
-
                 //Получение значения грани
                 swFace = (Face2)swObject;
-                swFeature = (Feature)swFace.GetFeature();
-
-                //вывод названия компонента, подсборки и сборки
-                Entity swEntity;
-                Component2 swComponent;
-
                 //Получение компонента у выбранной грани
                 swEntity = (Entity)swObject;
                 swComponent = (Component2)swEntity.GetComponent();
 
+                //Начальная точка
                 swTransform = swComponent.Transform2;
                 double[] dOrigPt = new double[3];
                 dOrigPt[0] = 0;
                 dOrigPt[1] = 0;
                 dOrigPt[2] = 0;
-
                 swmathPt = (MathPoint)swmathUtils.CreatePoint(dOrigPt);
                 swmathPt = (MathPoint)swmathPt.MultiplyTransform(swTransform);
-
                 double[] vCompOriginPt = (double[])swmathPt.ArrayData;
 
                 pointsOfOriginComponent = vCompOriginPt;
-
-                pointsOfOriginComponent[0] += pointsOfCenterFace[0];
-                pointsOfOriginComponent[1] += pointsOfCenterFace[1];
-                pointsOfOriginComponent[2] += pointsOfCenterFace[2];
+                pointsOfOriginComponent[0] += Evals[0];
+                pointsOfOriginComponent[1] += Evals[1];
+                pointsOfOriginComponent[2] += Evals[2];
 
                 //Имя для вызова выбранной грани
                 string entityName = getRandomString();
-                    //= swComponent.GetSelectByIDString() + ":" + swFeature.Name;
-
                 //Применение имени грани
                 swModel.SelectedFaceProperties(0, 0, 0, 0, 0, 0, 0, true, entityName);
-
-               // MessageBox.Show(swModel.GetEntityName(swFace));
-                //MessageBox.Show(swComponent.GetSelectByIDString());
-
                 //Передача значения грани и модели в глобальные переменные
                 selectedEntity = swModel.GetEntityName(swFace);
                 selectedComponent = swComponent.GetSelectByIDString();
             }
         }
-
 
         public static void DoEvents()
         {
@@ -1377,10 +1410,14 @@ namespace WormGearGenerator
                                                   new Action(delegate { }));
         }
 
-
-
+        /// <summary>
+        ///Вызов расчета параметров
+        /// </summary>
         private void buCalc_Click(object sender, RoutedEventArgs e) { InitializeCalculate(); }
 
+        /// <summary>
+        ///Обработка построения червяка
+        /// </summary>
         private void Chervyak_combo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             switch (Worm_combo.SelectedIndex)
@@ -1400,6 +1437,9 @@ namespace WormGearGenerator
             }
         }
 
+        /// <summary>
+        /// Обработка построения колеса
+        /// </summary>
         private void Gear_combo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             switch (Gear_combo.SelectedIndex)
@@ -1419,6 +1459,9 @@ namespace WormGearGenerator
             }
         }
 
+        /// <summary>
+        ///Обработка выбора начального параметра
+        /// </summary>
         private void radioButtonParam_CheckedChanged(object sender, EventArgs e)
         {
             RadioButton pressed = (RadioButton)sender;
@@ -1444,11 +1487,14 @@ namespace WormGearGenerator
             }
         }
 
+        /// <summary>
+        /// Обработка выбора параметра для определения размера червяка
+        /// </summary>
         private void radioButtonWorm_CheckedChanged(object sender, EventArgs e)
         {
             RadioButton pressed = (RadioButton)sender;
             string name = pressed.Content.ToString();
-            Module = float.Parse(((Module_combo.Text).Split(' ')[0]), CultureInfo.InvariantCulture.NumberFormat);
+            Module = float.Parse(((Module_combo.Text).Split(' ')[0]));
             if (name == "Коэффициент диаметра")
             {
                 Koef_diamValue.IsEnabled = true;
@@ -1479,6 +1525,9 @@ namespace WormGearGenerator
             }
         }
 
+        /// <summary>
+        ///Генерация случайной строки
+        /// </summary>
         private string getRandomString()
         {
             var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -1582,7 +1631,6 @@ namespace WormGearGenerator
                     Yield_strength = "160000000"
                 });
 
-
                 for (int i = 0; i < lister.Count; i++)
                 {
                     if (lister[i].DisplayName == data["material_worm"])
@@ -1592,7 +1640,6 @@ namespace WormGearGenerator
                 }
 
                 DegTeethValue.Text = data["tooth_angle"];
-
                 if (data["tooth_direction"] == "Левое")
                     radioLeft.IsChecked = true;
                 else if (data["tooth_direction"] == "Правое")
@@ -1642,43 +1689,24 @@ namespace WormGearGenerator
             var itemsModel = new List<string>();
             var itemsCalc = new List<string>();
 
-            //Данные из таблицы Общие параметры, вкладка Модель
-            foreach (var item in TableGeneral_Model.Items.OfType<Parameter_values>())
+            var tableGeneralModel = TableGeneral_Model.Items.OfType<Parameter_values>();
+            var tableWormModel = TableWorm_Model.Items.OfType<Parameter_values>();
+            var tableGearModel = TableGear_Model.Items.OfType<Parameter_values>();
+            var tablesModel = tableGeneralModel.Concat(tableWormModel.Concat(tableGearModel));
+
+            //Данные из таблиц вкладки Модель
+            foreach (var item in tablesModel)
             {
                 var value = item.value;
                 itemsModel.Add(value);
             }
+            var tableGeneralCalc = TableGeneral_Calc.Items.OfType<Parameter_values>();
+            var tableWormCalc = TableWorm_Calc.Items.OfType<Parameter_values>();
+            var tableGearCalc = TableGear_Calc.Items.OfType<Parameter_values>();
+            var tablesCalc = tableGeneralCalc.Concat(tableWormCalc.Concat(tableGearCalc));
 
-            //Данные из таблицы Червяк, вкладка Модель
-            foreach (var item in TableWorm_Model.Items.OfType<Parameter_values>())
-            {
-                var value = item.value;
-                itemsModel.Add(value);
-            }
-
-            //Данные из таблицы Червячное колесо, вкладка Модель
-            foreach (var item in TableGear_Model.Items.OfType<Parameter_values>())
-            {
-                var value = item.value;
-                itemsModel.Add(value);
-            }
-
-            //Данные из таблицы Общие параметры, вкладка Расчет
-            foreach (var item in TableGeneral_Calc.Items.OfType<Parameter_values>())
-            {
-                var value = item.value;
-                itemsCalc.Add(value);
-            }
-
-            //Данные из таблицы Червяк, вкладка Расчет
-            foreach (var item in TableWorm_Calc.Items.OfType<Parameter_values>())
-            {
-                var value = item.value;
-                itemsCalc.Add(value);
-            }
-
-            //Данные из таблицы Червячное колесо, вкладка Расчет
-            foreach (var item in TableGear_Calc.Items.OfType<Parameter_values>())
+            //Данные из таблиц вкладки Расчет
+            foreach (var item in tablesCalc)
             {
                 var value = item.value;
                 itemsCalc.Add(value);
@@ -1914,8 +1942,6 @@ namespace WormGearGenerator
                 {
                     MessageBox.Show("Ошибка :" + ex.Message);
                 }
-
-
             }
         }
 
@@ -1987,7 +2013,7 @@ namespace WormGearGenerator
                     {
                         //Чтение данных
                         var data = getData(true);
-                        //Инициализация класса для записи символов в файл
+                        //Инициализация объекта класса StreamWrite для записи символов в файл
                         StreamWriter writer = new StreamWriter(fs1);
 
                         //Запись данных в файл

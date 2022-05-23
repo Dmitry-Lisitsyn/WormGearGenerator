@@ -32,10 +32,8 @@ namespace WormGearGenerator
         public void CreateAssembly(string path)
         {
             ModelDoc2 swModel;
-
             //Новое окно сборки
             swModel = (ModelDoc2)swApp.NewAssembly();
-
             //Сохраняем сборку
             swModel.SaveAs3(path, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_CopyAndOpen);
         }
@@ -48,7 +46,6 @@ namespace WormGearGenerator
             object components;
             object compNames;
             object coorSysNames;
-            double[] compXforms = new double[16];
             int errors = 0;
 
             //Считывание открытого окна сборки
@@ -221,7 +218,9 @@ namespace WormGearGenerator
             swModel.SaveAs3(currentAssemblyName, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_CopyAndOpen);
         }
 
-        public void addMatesToFaces(string selectedComponent, string selectedEntity, string generalAssemblyPath, string assemblyName, string wormName, string gearName, string WGcomponent)
+        public void addMatesToFaces(string selectedComponent, string selectedEntity,
+            string generalAssemblyPath, string assemblyName, string wormName,
+            string gearName, string WGcomponent)
         {
             //Инициализация начальных параметров
             ModelDoc2 swModel;
@@ -239,9 +238,9 @@ namespace WormGearGenerator
             string selectInWG = null;
 
             //Активация документа со сборкой
-            swAssy = (AssemblyDoc)swApp.ActivateDoc3(generalAssemblyPath, true, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, ref errorCode1);
+            swAssy = (AssemblyDoc)swApp.ActivateDoc3(generalAssemblyPath, true,
+                (int)swOpenDocOptions_e.swOpenDocOptions_Silent, ref errorCode1);
             swModel = (ModelDoc2)swAssy;
-
             //Иницииализация объектов для выбора элементов компонентов 
             swModel = (ModelDoc2)swApp.ActiveDoc;
             swModelDocExt = swModel.Extension;
@@ -263,67 +262,77 @@ namespace WormGearGenerator
                     swEntity.Select4(true, swSelData);
                 }
                 swFace = (Face2)swFace.GetNextFace();
-            } while (swFace != null || swEntity != null);
+            } while (swFace != null || swEntity == null);
 
-            //Создание зависимости между выбранной гранью и компонентом
-            if (WGcomponent != null)
+            if(swEntity != null)
             {
-                if (WGcomponent == "WormCylinder")
+                //Создание зависимости между выбранной гранью и компонентом
+                if (WGcomponent != null)
                 {
-                    selectInWG = "Line2@Sketch5@" + assemblyName + "-1@" + swModel.GetTitle() + "/" + wormName + "-1@" + assemblyName;
-                    swModelDocExt.SelectByID2(selectInWG, "EXTSKETCHSEGMENT", 0, 0, 0,
-                        true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
-                    swAssy.AddMate5((int)swMateType_e.swMateCONCENTRIC, (int)swMateAlign_e.swMateAlignALIGNED,
-                    false, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, out errorCode1);
-                }
-                else if (WGcomponent == "GearCylinder")
-                {
-                    selectInWG = "Line9@Sketch2@" + assemblyName + "-1@" + swModel.GetTitle() + "/" + gearName + "-1@" + assemblyName;
-                    swModelDocExt.SelectByID2(selectInWG, "EXTSKETCHSEGMENT", 0, 0, 0,
-                        true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
-                    swAssy.AddMate5((int)swMateType_e.swMateCONCENTRIC, (int)swMateAlign_e.swMateAlignALIGNED,
-                    false, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, out errorCode1);
-                }
-                else if (WGcomponent == "GearFace")
-                {
-                    //Считывание тела колеса
-                    var swEntityGear = default(Entity);
-                    var swBodyGear = getByName(swAssy, gearName + "-1");
-                    var swFaceGear = (Face2)swBodyGear.GetFirstFace();
-                    do
+                    if (WGcomponent == "WormCylinder")
                     {
-                        currentFaceName = swModel.GetEntityName(swFaceGear);
-                        if (currentFaceName == "FrontTempFace")
-                        {
-                            swEntityGear = (Entity)swFaceGear;
-                            swEntityGear.Select4(true, swSelData);
-                        }
-                        swFaceGear = (Face2)swFaceGear.GetNextFace();
-                    } while (swFaceGear != null);
-
-                    swAssy.AddMate5((int)swMateType_e.swMateANGLE, (int)swMateAlign_e.swMateAlignALIGNED,
-                    false, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, out errorCode1);
-                }
-                else if (WGcomponent == "WormFace")
-                {
-                    //Считывание тела червяка
-                    var swEntityWorm = default(Entity);
-                    var swBodyWorm = getByName(swAssy, gearName + "-1");
-                    var swFaceWorm = (Face2)swBodyWorm.GetFirstFace();
-                    do
+                        selectInWG = "Line2@Sketch5@" + assemblyName + "-1@" + swModel.GetTitle() + "/" + wormName + "-1@" + assemblyName;
+                        swModelDocExt.SelectByID2(selectInWG, "EXTSKETCHSEGMENT", 0, 0, 0,
+                            true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
+                        swAssy.AddMate5((int)swMateType_e.swMateCONCENTRIC, (int)swMateAlign_e.swMateAlignALIGNED,
+                        false, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, out errorCode1);
+                    }
+                    else if (WGcomponent == "GearCylinder")
                     {
-                        currentFaceName = swModel.GetEntityName(swFaceWorm);
-                        if (currentFaceName == "LeftTempFace")
-                        {
-                            swEntityWorm = (Entity)swFaceWorm;
-                            swEntityWorm.Select4(true, swSelData);
-                        }
-                        swFaceWorm = (Face2)swFaceWorm.GetNextFace();
-                    } while (swFaceWorm != null);
+                        selectInWG = "Line9@Sketch2@" + assemblyName + "-1@" + swModel.GetTitle() + "/" + gearName + "-1@" + assemblyName;
+                        swModelDocExt.SelectByID2(selectInWG, "EXTSKETCHSEGMENT", 0, 0, 0,
+                            true, mateSelMark, null, (int)swSelectOption_e.swSelectOptionDefault);
+                        swAssy.AddMate5((int)swMateType_e.swMateCONCENTRIC, (int)swMateAlign_e.swMateAlignALIGNED,
+                        false, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, out errorCode1);
+                    }
 
-                    swAssy.AddMate5((int)swMateType_e.swMateANGLE, (int)swMateAlign_e.swMateAlignALIGNED,
-                    false, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, out errorCode1);
-                }    
+                    else if (WGcomponent == "GearFace")
+                    {
+                        //Считывание тела колеса
+                        var swEntityGear = default(Entity);
+                        var swBodyGear = getByName(swAssy, gearName + "-1");
+                        var swFaceGear = (Face2)swBodyGear.GetFirstFace();
+                        do
+                        {
+                            currentFaceName = swModel.GetEntityName(swFaceGear);
+                            if (currentFaceName == "FrontTempFace")
+                            {
+                                swEntityGear = (Entity)swFaceGear;
+                                swEntityGear.Select4(true, swSelData);
+                            }
+                            swFaceGear = (Face2)swFaceGear.GetNextFace();
+                        } while (swFaceGear != null);
+
+                        swAssy.AddMate5((int)swMateType_e.swMateANGLE, (int)swMateAlign_e.swMateAlignALIGNED,
+                        false, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, out errorCode1);
+                    }
+                    else if (WGcomponent == "WormFace")
+                    {
+                        //Считывание тела червяка
+                        var swEntityWorm = default(Entity);
+                        
+                        var swBodyWorm = getByName(swAssy, wormName + "-1");
+                        var swFaceWorm = (Face2)swBodyWorm.GetFirstFace();
+                        do
+                        {
+                            currentFaceName = swModel.GetEntityName(swFaceWorm);
+                            if (currentFaceName == "LeftTempFace")
+                            {
+                                swEntityWorm = (Entity)swFaceWorm;
+                                swEntityWorm.Select4(true, swSelData);
+                            }
+                            swFaceWorm = (Face2)swFaceWorm.GetNextFace();
+                        } while (swFaceWorm != null);
+
+                        swAssy.AddMate5((int)swMateType_e.swMateANGLE, (int)swMateAlign_e.swMateAlignALIGNED,
+                        false, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, out errorCode1);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Ошибка! Выбранный объект размещения оказался недоступен.", "Ошибка");
+                    return;
+                }
             }
 
             //Сброс выделения
@@ -348,7 +357,6 @@ namespace WormGearGenerator
                 list.Add(name);
                 str = list.ToArray();
             }
-
             for (int i = 0; i < str.Length; i++)
             {
                 if (str[i].Contains("/"))
@@ -358,11 +366,9 @@ namespace WormGearGenerator
                 }
                 else
                     swComp = assy.GetComponentByName(str[i]);
-
                 swBody = (Body2)swComp.GetBody();
                 if (swBody != null)
                     return swBody;
-
             }
             return swBody;
         }

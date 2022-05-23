@@ -29,32 +29,25 @@ namespace WormGearGenerator
         public float _dae { get; set; }
         public int _rightOrLeft { get; set; }
         public float _hole_diameter { get; set; }
+        //Параметр материала
         public Material _material { get; set; }
-
+        //Путь сохранения файла
         public string _path { get; set; }
-        private string baseDirectory;
-
+        //Объект приложения SolidWorks
         SldWorks swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
-
+        //Свойства для работы со шкалой загрузки
         UserProgressBar pb;
         bool retVal;
         int lRet;
 
-        public Gear(string directory)
-        {
-            baseDirectory = directory;
-        }
-
         public void create()
         {
-            //string fileNameWorm = Directory.GetParent(baseDirectory).Parent.FullName + "\\res\\Part1.SLDPRT";
             string destPath = _path;
-
+            //Проверка существующего файла
             if (!File.Exists(destPath))
                 File.WriteAllBytes(destPath, Properties.Resources.GearTemp);
-                //File.Copy(fileNameWorm, destPath);
-
             changeModel();
+            //Создание отверстия
             if (_hole_diameter != 0)
                 createHole();
         }
@@ -66,6 +59,7 @@ namespace WormGearGenerator
             pb.Start(0, 100, "Создание компонента...");
             lRet = pb.UpdateProgress(20);
 
+            //Инициализация объектов и переменных
             ModelDoc2 swModel;
             PartDoc swComp;
             int errors = 0;
@@ -73,20 +67,22 @@ namespace WormGearGenerator
             EquationMgr swEqnMgr = default(EquationMgr);
             string equation = null;
 
-           
+            //Открытие файла червяка
             swComp = (PartDoc)swApp.OpenDoc6(_path, (int)swDocumentTypes_e.swDocPART, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
             swModel = (ModelDoc2)swComp;
             swModel = (ModelDoc2)swApp.ActiveDoc;
-
+            //Увеличение значения шкалы загрузки
             pb.UpdateTitle("Изменение компонента...");
             lRet = pb.UpdateProgress(25);
 
+            //Подключение модуля уравнений
             swEqnMgr = (EquationMgr)swModel.GetEquationMgr();
             if (swEqnMgr == null)
                 errorMsg(swApp, "Ошибка подключения к модели");
-         
+            swEqnMgr.AutomaticSolveOrder = true;
             swEqnMgr.AutomaticRebuild = true;
 
+            //Изменение параметров модели
             try
             {
                 equation = $"\"g_aw\" = {_aw}mm";
@@ -148,16 +144,19 @@ namespace WormGearGenerator
 
                 swEqnMgr.EvaluateAll();
 
+                //Увеличение значения шкалы загрузки
                 pb.UpdateTitle("Изменение компонента...");
                 lRet = pb.UpdateProgress(95);
 
+                //Применение материала к компоненту 
                 if (_material != null)
                     setMaterial(swComp, _material.Name, _material.Database);
 
+                //Перестроение документа
                 swModel.ForceRebuild3(false);
-                
+                //Сохранение файла компонента
                 swModel.SaveAs3(_path, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_CopyAndOpen);
-
+                //Увеличение значения шкалы загрузки, завершение работы шкалы загрузки
                 pb.UpdateTitle("Сохранение компонента...");
                 lRet = pb.UpdateProgress(100);
                 pb.End();

@@ -53,21 +53,21 @@ namespace WormGearGenerator
         /// </summary>
         private static void ReadMaterials(string database, ref List<Material> list)
         {
-            // Проверяем, существует ли файл с базой 
+            // Проверка существования файла с базой 
             if (!File.Exists(database))
                 Console.WriteLine("Указанной базы материалов не существует");
             try
             {
-                // если найден, то открываем его
+                // если найден, то открывается
                 using (var stream = File.Open(database, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    // парсим как хмл
+                    // парсинг как хмл
                     var xmlDoc = XDocument.Load(stream);
                     var materials = new List<Material>();
-                    // проходим по структуре документа 
+                    // поиск по структуре документа 
                     xmlDoc.Root.Elements("classification")?.ToList()?.ForEach(f =>
                     {
-                        // берем классификацию
+                        // чтение классификации
                         var classification = f.Attribute("name")?.Value;
 
                         string ex = null;
@@ -75,7 +75,7 @@ namespace WormGearGenerator
                         string sigxt = null;
                         string sigyld = null;
 
-                        // проходим по всем материалам
+                        // поиск по всем материалам
                         f.Elements("material").ToList().ForEach(material =>
                         {
                             material.Elements("physicalproperties").ToList().ForEach(physic =>
@@ -90,7 +90,7 @@ namespace WormGearGenerator
                                 physic.Elements("SIGYLD").ToList().ForEach(prop4 =>{ sigyld = prop4.Attribute("value")?.Value; });
                             });
 
-                            // добавляем их в лист 
+                            // добавление их в лист 
                             materials.Add(new Material
                             {
                                 Database = database,
@@ -107,14 +107,14 @@ namespace WormGearGenerator
                         });
                     });
 
-                    // Все что нашли добавляем в лист
+                    // Все что найдено добавляем в лист
                     if (materials.Count > 0)
                         list.AddRange(materials);
                 }
             }
             catch (Exception ex)
             {
-                // если у нас ошиибка, выводим ее
+                // вывод ошибки
                 MessageBox.Show(ex.Message);
             }
         }
@@ -126,33 +126,23 @@ namespace WormGearGenerator
         {
         //Классификация матриала
         public string Classification { get; set; }
-
         //Название материала
         public string Name { get; set; }
-
         //Описание материала
         public string Description { get; set; }
-
         //База данных материала
         public string Database { get; set; }
-
         //Отображаемое имя материала
         public string DisplayName => $"{Name} ({Classification})";
-
         //Статус поиска базы данных материала
         public bool DatabaseFileFound { get; set; }
-
         //Модуль упругости
         public string Elastic_modulus { get; set; }
-
         //Коэффициент пуассона
         public string Poisson_ratio { get; set; }
-
         //Предел прочности
         public string Tensile_strength { get; set; }
-
         //Предел текучести
         public string Yield_strength { get; set; }
-
     }
 }

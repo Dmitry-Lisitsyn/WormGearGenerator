@@ -65,7 +65,8 @@ namespace WormGearGenerator
             string equation = null;
 
             //Открытие файла червяка
-            swComp = (PartDoc)swApp.OpenDoc6(_path, (int)swDocumentTypes_e.swDocPART, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
+            swComp = (PartDoc)swApp.OpenDoc6(_path, (int)swDocumentTypes_e.swDocPART,
+                (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref errors, ref warnings);
             swModel = (ModelDoc2)swComp;
             swModel = (ModelDoc2)swApp.ActiveDoc;
             //Увеличение значения шкалы загрузки
@@ -231,8 +232,5 @@ namespace WormGearGenerator
         {
             myPart.SetMaterialPropertyName2("default", database, materialName);
         }
-
-       
-
     }
 }

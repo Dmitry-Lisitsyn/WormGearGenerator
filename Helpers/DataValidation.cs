@@ -8,8 +8,8 @@ namespace WormGearGenerator.Helpers
 {
     public class DataValidation : System.ComponentModel.IDataErrorInfo
     {
-        public float deg_TeethValue { get; set; }
         //Червяк
+        public float deg_TeethValue { get; set; }
         public string kol_vitkov { get; set; } = "4";
         public string length_Worm { get; set; } = "140";
         public string koef_diamWorm { get; set; } = "10";
@@ -20,28 +20,25 @@ namespace WormGearGenerator.Helpers
         public string koef_Smesh { get; set; } = "1";
         public string hole_Gear { get; set; } = "0";
         //Общие в силовом
-        public string PowerWorm { get; set; } = "0.1"; //>=0
+        public string PowerWorm { get; set; } = "0.1"; 
         public string PowerGear { get; set; }
-        public string VelocityWorm { get; set; } = "1000"; //>=1000000
+        public string VelocityWorm { get; set; } = "1000";
         public string VelocityGear { get; set; }
         public string MomentWorm { get; set; }
         public string MomentGear { get; set; }
         public string KPD { get; set; } // 0.1 - 1
         //Параметры материалов
-        public string sigmaV { get; set; } = "250"; //>=0
-        public string sigmaT { get; set; } = "160"; //>=0
-        public string E_worm { get; set; } = "206000";//>=0
-        public string E_gear { get; set; } = "101000";//>=0
-        public string Puasson_worm { get; set; } = "0.3";//>=0
-        public string Puasson_gear { get; set; } = "0.31";//>=0
-       
-
-        public int userID { get; private set; }
+        public string sigmaV { get; set; } = "250"; 
+        public string sigmaT { get; set; } = "160"; 
+        public string E_worm { get; set; } = "206000";
+        public string E_gear { get; set; } = "101000";
+        public string Puasson_worm { get; set; } = "0.3";
+        public string Puasson_gear { get; set; } = "0.31";
         //Коэффициенты
-        public string Ko { get; set; } = "1.200"; //1 - 5
-        public string Kv { get; set; } = "1.042"; //1 - 6
-        public string y { get; set; } = "0.125"; // 0.02 - 0.8
-        public string time { get; set; } = "10000"; // >=1
+        public string Ko { get; set; } = "1.200"; 
+        public string Kv { get; set; } = "1.042"; 
+        public string y { get; set; } = "0.125"; 
+        public string time { get; set; } = "10000";
         //Проверка на прочность, изгиб и температуру
         public string temperature { get; set; }
         public string contact_calc { get; set; }
