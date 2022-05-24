@@ -70,15 +70,6 @@ namespace WormGearGenerator
             }
             else
             {
-                //Если червяк не строится, то отключаются поля, связанные со сборкой и червяком
-                //Удаление данных пути сохранения сборки
-                folderAssembly.Text = null;
-
-                //Удаление данных имени сборки и отключение поля
-                nameAssembly.TextChanged -= nameAssembly_TextChanged;
-                nameAssembly.Text = null;
-                nameAssembly.IsEnabled = false;
-
                 //Отключение поля имени файла червяка
                 nameWorm.TextChanged -= nameWorm_TextChanged;
                 nameWorm.IsEnabled = false;
@@ -88,7 +79,6 @@ namespace WormGearGenerator
 
                 //Отключение кнопок, для изменения пути сохранения файлов червяка и сборки
                 browseFolderWorm.IsEnabled = false;
-                browseFolderAssembly.IsEnabled = false;
             }
             //Обработка отображения параметров файла червячного колеса
             if (_isGear == true)
@@ -99,15 +89,6 @@ namespace WormGearGenerator
             }
             else
             {
-                //Если червячное колесо не строится, то отключаются поля, связанные со сборкой и червячным колесом
-                //Удаление данных пути сохранения сборки
-                folderAssembly.Text = null;
-
-                //Удаление данных имени сборки и отключение поля
-                nameAssembly.TextChanged -= nameAssembly_TextChanged;
-                nameAssembly.Text = null;
-                nameAssembly.IsEnabled = false;
-
                 //Отключение поля имени файла червячного колеса
                 nameGear.TextChanged -= nameGear_TextChanged;
                 nameGear.IsEnabled = false;
@@ -117,7 +98,6 @@ namespace WormGearGenerator
 
                 //Отключение кнопок, для изменения пути сохранения файлов червячного колеса и сборки
                 browseFolderGear.IsEnabled = false;
-                browseFolderAssembly.IsEnabled = false;
             }        
             
         }

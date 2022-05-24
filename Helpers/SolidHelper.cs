@@ -50,29 +50,46 @@ namespace WormGearGenerator
 
             //Считывание открытого окна сборки
             swAssy = (AssemblyDoc)swApp.ActiveDoc;
+            if (worm._path != null & gear._path != null)
+            {
+                //Добаление имен компонентов в массив
+                string[] xcompnames = new string[2];
+                //IF компоненты построены
+                xcompnames[0] = worm._path;
+                xcompnames[1] = gear._path;
 
-            //Добаление имен компонентов в массив
-            string[] xcompnames = new string[2];
-            //IF компоненты построены
-            xcompnames[0] = worm._path;
-            xcompnames[1] = gear._path;
+                //Добавление координатных систем компонентов в массив
+                string[] xcoorsysnames = new string[2];
+                xcoorsysnames[0] = "Coordinate System1";
+                xcoorsysnames[1] = "Coordinate System1";
 
-            //Добавление координатных систем компонентов в массив
-            string[] xcoorsysnames = new string[2];
-            xcoorsysnames[0] = "Coordinate System1";
-            xcoorsysnames[1] = "Coordinate System1";
+                //Присваивание массивов к объектам
+                compNames = xcompnames;
+                coorSysNames = xcoorsysnames;
 
-            //Присваивание массивов к объектам
-            compNames = xcompnames;
-            coorSysNames = xcoorsysnames;
+                //Активация документа сборки
+                swModel = (ModelDoc2)swApp.ActivateDoc3(assemblyPath, true, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, ref errors);
+                //Добавление компонентов в документ сборки
+                components = swAssy.AddComponents3(compNames, null, coorSysNames);
+                //Закрытие открытых файлов компонентов в среде SolidWorks
+                swApp.CloseDoc(xcompnames[0]);
+                swApp.CloseDoc(xcompnames[1]);
+            }
+            else
+            {
+                swModel = (ModelDoc2)swApp.ActivateDoc3(assemblyPath, true, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, ref errors);
+                string pathComponent;
+                if (worm._path != null)
+                    pathComponent = worm._path;
+                else
+                    pathComponent = gear._path;
 
-            //Активация документа сборки
-            swModel = (ModelDoc2)swApp.ActivateDoc3(assemblyPath, true, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, ref errors);
-            //Добавление компонентов в документ сборки
-            components = swAssy.AddComponents3(compNames, null, coorSysNames);
-            //Закрытие открытых файлов компонентов в среде SolidWorks
-            swApp.CloseDoc(xcompnames[0]);
-            swApp.CloseDoc(xcompnames[1]);
+                //Добавление сборки
+                components = swAssy.AddComponent5(pathComponent, (int)swAddComponentConfigOptions_e.swAddComponentConfigOptions_CurrentSelectedConfig, "", false, "",
+                    0, 0, 0);
+                swApp.CloseDoc(pathComponent);
+            }
+
             //Перестроение документа
             swAssy.ForceRebuild();
             //Фокус камеры на компоненты

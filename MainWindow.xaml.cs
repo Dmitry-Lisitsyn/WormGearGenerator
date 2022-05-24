@@ -18,11 +18,9 @@ using System.Runtime.InteropServices;
 using System.Windows.Media;
 using WormGearGenerator.Helpers;
 using SolidWorks.Interop.swconst;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Threading;
-using System.Collections;
 using System.Windows.Controls.Primitives;
 
 namespace WormGearGenerator
@@ -38,7 +36,7 @@ namespace WormGearGenerator
         float Peredat;
         float aw, Alpha, dae2, da1, da2, d1, d2, df1, df2, dw1, dw2;
         public SldWorks swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
-        
+
         //Статус загрузки главного окна
         public bool Status;
         //инициализация пути сохранения и базового пути
@@ -331,10 +329,10 @@ namespace WormGearGenerator
             //КПД
             float v1 = (float)((Math.PI * dw1 * float.Parse(VelocityValue.Text)) / 60000);
             //Делительный угол подъема
-            float tgy = (float)(Math.Atan((float.Parse(Kol_vitkovValue.Text) 
+            float tgy = (float)(Math.Atan((float.Parse(Kol_vitkovValue.Text)
                 / float.Parse(Koef_diamValue.Text))) * 180 / Math.PI);
             //Начальный угол подъема
-            float tgyW = (float)(Math.Atan(float.Parse(Kol_vitkovValue.Text) 
+            float tgyW = (float)(Math.Atan(float.Parse(Kol_vitkovValue.Text)
                 / (float.Parse(Koef_diamValue.Text) + 2 * float.Parse(Koef_smeshValue.Text))) * 180 / Math.PI);
 
             float v2 = v1 * (float.Parse(Kol_vitkovValue.Text) / float.Parse(Koef_diamValue.Text));
@@ -928,50 +926,49 @@ namespace WormGearGenerator
                     gear.create();
                 }
                 //Проверка построения компонентов, создание сборки
-                //убирается условие
+                //создаем сборку
+                sldobj.CreateAssembly(_pathAssembly);
+
+                //добавляем компоненты
+                sldobj.AddComponents(worm, gear, _pathAssembly);
+
                 if (isWorm & isGear)
                 {
-                    //создаем сборку
-                    sldobj.CreateAssembly(_pathAssembly);
-
-                    //добавляем компоненты
-                    sldobj.AddComponents(worm, gear, _pathAssembly);
-
                     //добавление зависимостей
                     var teethGear = float.Parse(Teeth_gearValue.Text);
                     var vitWorm = float.Parse(Kol_vitkovValue.Text);
                     //если строим оба - делаем, если нет - пропускаем, УЧИТЫВАТЬ, ЕСЛИ ВЫБИРАЕМ ОБЕ ГРАНИ - УБИРАЕМ ЗАВИСИМОСТИ (ПЕРЕДАЕМ СЛОВАРЬ)
                     sldobj.AddMates(_pathAssembly, _nameAssembly, _nameWorm, _nameGear, aw, teethGear, vitWorm, rightOrLeft);
-
-                    //Добавление в текущую сборку
-                    sldobj.addToAssembly(_pathFromProject, _pathAssembly);
-
-                    //Создание зависимостей внутри текущей сборки
-                    // изменение условия(если была выбрана только одна цилиндр грань или какой-либо фейс)
-                    //параметры из словаря со значением червяка
-                    //параметры из словаря со значением колеса
-                    //параметры фейса
-                    //Если выбрана цилиндрическая грань, то передаю туда параметры из словаря
-                    string GearOrWorm = String.Empty;
-                    if (((selectCylindrical_Gear.IsChecked == true) || (selectCylindrical_Worm.IsChecked == true)
-                        ||(selectFace_Gear.IsChecked == true) || (selectFace_Worm.IsChecked == true)) & swFaceObject != null)
-                    {
-                        if (selectCylindrical_Worm.IsChecked == true)
-                            GearOrWorm = "WormCylinder";
-                        else if (selectCylindrical_Gear.IsChecked == true)
-                            GearOrWorm = "GearCylinder";
-                        else if (selectFace_Gear.IsChecked == true)
-                            GearOrWorm = "GearFace";
-                        else if (selectFace_Worm.IsChecked == true)
-                            GearOrWorm = "WormFace";
-
-                        sldobj.addMatesToFaces(selectedComponent, selectedEntity,
-                            _pathFromProject, _nameAssembly, _nameWorm, _nameGear, GearOrWorm);
-                    }
                 }
+                //Добавление в текущую сборку
+                sldobj.addToAssembly(_pathFromProject, _pathAssembly);
+
+                //Создание зависимостей внутри текущей сборки
+                // изменение условия(если была выбрана только одна цилиндр грань или какой-либо фейс)
+                //параметры из словаря со значением червяка
+                //параметры из словаря со значением колеса
+                //параметры фейса
+                //Если выбрана цилиндрическая грань, то передаю туда параметры из словаря
+                string GearOrWorm = String.Empty;
+                if (((selectCylindrical_Gear.IsChecked == true) || (selectCylindrical_Worm.IsChecked == true)
+                    || (selectFace_Gear.IsChecked == true) || (selectFace_Worm.IsChecked == true)) & swFaceObject != null)
+                {
+                    if (selectCylindrical_Worm.IsChecked == true)
+                        GearOrWorm = "WormCylinder";
+                    else if (selectCylindrical_Gear.IsChecked == true)
+                        GearOrWorm = "GearCylinder";
+                    else if (selectFace_Gear.IsChecked == true)
+                        GearOrWorm = "GearFace";
+                    else if (selectFace_Worm.IsChecked == true)
+                        GearOrWorm = "WormFace";
+
+                    sldobj.addMatesToFaces(selectedComponent, selectedEntity,
+                        _pathFromProject, _nameAssembly, _nameWorm, _nameGear, GearOrWorm);
+                }
+
                 _tokenSourceCylinder.Cancel();
                 _tokenSourceFace.Cancel();
-                Directory.SetCurrentDirectory(baseDirectory);           
+                Directory.SetCurrentDirectory(baseDirectory);
             }
             catch (Exception ex)
             {
@@ -1152,7 +1149,7 @@ namespace WormGearGenerator
                             swObject = swSelMgr.GetSelectedObject6(i, -1);
                             swFace = (Face2)swObject;
                             swSurf = (Surface)swFace.GetSurface();
-                           
+
                             //Обработка выбора нецилиндрической грани
                             if (!swSurf.IsCylinder())
                             {
