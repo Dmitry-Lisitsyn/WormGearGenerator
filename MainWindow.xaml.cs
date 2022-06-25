@@ -34,7 +34,7 @@ namespace WormGearGenerator
         float Module;
         float PressureAngle;
         float Peredat;
-        float aw, Alpha, dae2, da1, da2, d1, d2, df1, df2, dw1, dw2;
+        float aw, Alpha, dae2, da1, da2, d1, d2, df1, df2, dw1, dw2, h1, ha1;
         public SldWorks swApp = (SldWorks)Marshal.GetActiveObject("SldWorks.Application");
 
         //Статус загрузки главного окна
@@ -323,6 +323,10 @@ namespace WormGearGenerator
             float tan_on_cos = (float)(Math.Tan(PressureAngle * Math.PI / 180) * Math.Cos(float.Parse(DegTeethValue.Text) * Math.PI / 180));
             Alpha = (float)(Math.Atan(tan_on_cos) * 180 / Math.PI);
 
+            //Высота витков червяка
+            h1 = (float)Math.Round(2.2 * Module);
+            ha1 = Module;
+
             //Межосевое расстояние (aw)
             aw = Module * (float.Parse(Teeth_gearValue.Text) + float.Parse(Koef_diamValue.Text) + 2 * float.Parse(Koef_smeshValue.Text)) / 2;
 
@@ -395,7 +399,8 @@ namespace WormGearGenerator
             {
                 Power_WG = float.Parse(PowerValue_Gear.Text);
                 Velocity_WG = float.Parse(VelocityValue_Gear.Text);
-                Power = Power_WG * KPD;
+                //Power = Power_WG * KPD;
+                Power = Power_WG / KPD;
                 Velocity = Velocity_WG * Peredat;
                 Moment_WG = (float)((60000 * Power_WG) / (2 * Math.PI * Velocity_WG));
                 Moment = (float)((60000 * Power) / (2 * Math.PI * Velocity));
@@ -408,14 +413,16 @@ namespace WormGearGenerator
                 Power_WG = (float)((Math.PI * Velocity_WG * Moment_WG) / (30)) / 1000;
                 Moment = (Moment_WG / Peredat) * KPD;
                 Velocity = Velocity_WG * Peredat;
-                Power = Power_WG * KPD;
+               // Power = Power_WG * KPD;
+                Power = Power_WG / KPD;
             }
             else if (radioGearSel.IsChecked == true & RadioType_Calc2.IsChecked == true)
             {
                 Power_WG = float.Parse(PowerValue_Gear.Text);
                 Moment_WG = float.Parse(MomentValue_Gear.Text);
                 Velocity_WG = (float)((60000 * Power_WG) / (2 * Math.PI * Moment_WG));
-                Power = Power_WG * KPD;
+                //Power = Power_WG * KPD;
+                Power = Power_WG / KPD;
                 Velocity = Velocity_WG * Peredat;
                 Moment = (Moment_WG / Peredat) * KPD;
             }
@@ -507,7 +514,7 @@ namespace WormGearGenerator
             validation.temperature = temperature.Text;
 
             //Отображение расчетных данных в таблицах
-            RefreshTable_Model(aw, Module, Alpha, da1, d1, df1, da2, d2, df2, dae2);
+            RefreshTable_Model(aw, Module, Alpha, da1, d1, df1, h1, ha1, da2, d2, df2, dae2);
             RefreshTable_Calc(Fr, vk, Khl, Ft1, Fa1, Ft2, Fa2, Fn, contact_stress, bending_stress);
 
             //Изменение цвета заднего фона на белый
@@ -524,7 +531,7 @@ namespace WormGearGenerator
         /// Отображение данных в таблицах на вкладке "Модель"
         /// </summary>
         private void RefreshTable_Model(float aw_Table, float Module_Table, float Alpha_Table,
-            float DaWorm_Table, float DWorm_Table, float DfWorm_Table, float DaGear_Table, float DGear_Table, float DfGear_Table, float DaeGear_Table)
+            float DaWorm_Table, float DWorm_Table, float DfWorm_Table, float h1_Table, float h1a_Table, float DaGear_Table, float DGear_Table, float DfGear_Table, float DaeGear_Table)
         {
 
             ObservableCollection<Parameter_values> general = new ObservableCollection<Parameter_values>();
@@ -538,6 +545,8 @@ namespace WormGearGenerator
             worm.Add(new Parameter_values { parameter = "Наружный диаметр (da):", value = DaWorm_Table.ToString("0.00") + " мм" });
             worm.Add(new Parameter_values { parameter = "Средний диаметр (d):", value = DWorm_Table.ToString("0.00") + " мм" });
             worm.Add(new Parameter_values { parameter = "Диаметр впадин (df):", value = DfWorm_Table.ToString("0.00") + " мм" });
+            worm.Add(new Parameter_values { parameter = "Высота витка (h1):", value = h1_Table.ToString("0.00") + " мм" });
+            worm.Add(new Parameter_values { parameter = "Высота гол. витка (ha1):", value = h1a_Table.ToString("0.00") + " мм" });
             TableWorm_Model.ItemsSource = worm;
             TableWorm_Model.RowHeight = TableWorm_Model.Height / worm.Count;
 
@@ -798,7 +807,8 @@ namespace WormGearGenerator
         /// </summary>
         private void calc_LengthWorm_Click(object sender, RoutedEventArgs e)
         {
-            LengthValue.Text = (2 * Math.Sqrt(Math.Pow(dae2 / 2, 2) - Math.Pow((aw - da1 / 2), 2) + (Math.PI * Module / 2))).ToString("0.00");
+            LengthValue.Text = (2 * Math.Sqrt(Math.Pow(dae2 / 2, 2) -
+                Math.Pow((aw - da1 / 2), 2) + (Math.PI * Module / 2))).ToString("0.00");
             data_Touched();
         }
 
@@ -1715,6 +1725,7 @@ namespace WormGearGenerator
             string peredatExp = "";
             Dictionary<string, string> data;
 
+
             //Значение исходного параметра
             if (radioParam.IsChecked == true)
             {
@@ -1787,7 +1798,7 @@ namespace WormGearGenerator
                 {"Угол профиля", ProfileDeg_combo.Text},
                 {"Угол наклона зуба", DegTeethValue.Text + " °"},
                 {"Межосевое расстояние", itemsModel[0]},
-                {"Осевой угол зацепления", itemsModel[2] + " °"},
+                {"Осевой угол зацепления", itemsModel[2].Replace("град", "") + "°"},
                 {"Количество витков", Kol_vitkovValue.Text},
                 {"Количество оборотов витков", Kol_oborotovValue.Text},
                 {"Длина червяка", LengthValue.Text + " мм"},
@@ -1795,15 +1806,17 @@ namespace WormGearGenerator
                 {"Наружный диаметр червяка", itemsModel[3]},
                 {"Средний диаметр червяка", itemsModel[4]},
                 {"Диаметр впадин червяка", itemsModel[5]},
+                {"Высота витка", itemsModel[6]},
+                {"Высота головки витка", itemsModel[7]},
                 {"Количество зубьев колеса", Teeth_gearValue.Text},
                 {"Ширина червячного колеса", Width_gearValue.Text + " мм"},
                 {"Коэффициент смещения", Koef_smeshValue.Text},
                 {"Направление зубьев", teeth_direction},
                 {"Диаметр отверстия колеса", Hole_widthValue.Text + " мм"},
-                {"Наибольший диаметр колеса", itemsModel[6] + " мм"},
-                {"Наружный диаметр колеса", itemsModel[7]},
-                {"Средний диаметр колеса", itemsModel[8]},
-                { "Диаметр впадин колеса", itemsModel[9]},
+                {"Наибольший диаметр колеса", itemsModel[8]},
+                {"Наружный диаметр колеса", itemsModel[9]},
+                {"Средний диаметр колеса", itemsModel[10]},
+                { "Диаметр впадин колеса", itemsModel[11]},
                 {"Мощность на червяке", PowerValue.Text + " кВт"},
                 {"Скорость на червяке", VelocityValue.Text + " об/мин"},
                 {"Крутящий момент на червяке", MomentValue.Text + " Нм"},
@@ -1820,7 +1833,6 @@ namespace WormGearGenerator
                 {"Коэффициент Пуассона, червяк (μ)", Puasson_wormValue.Text},
                 {"Коэффициент Пуассона, колесо (μ)", Puasson_gearValue.Text },
                 { "Коэффцииент скорости", KvValue.Text},
-                { "Требуемый срок службы ", timeValue.Text},
                 { "Радиальная сила (Fr)", itemsCalc[0]},
                 { "Нормальная сила (Fn)", itemsCalc[1]},
                 { "Скорость скольжения (vk)", itemsCalc[2]},

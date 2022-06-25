@@ -69,7 +69,7 @@ namespace WormGearGenerator.Helpers
                     case "length_Worm":
 
                         if (float.TryParse(length_Worm, out float length_Worm_parsed))
-                            validateError(errors,"length_Worm", "Значение витков должно быть в диапазоне от 1 до 10000 мм", () => (length_Worm_parsed > 1) & (length_Worm_parsed < 10000));
+                            validateError(errors,"length_Worm", "Значение длины червяка должно быть в диапазоне от 1 до 10000 мм", () => (length_Worm_parsed > 1) & (length_Worm_parsed < 10000));
                         else
                             addError(errors, columnName, "Некорректный ввод данных");
                         break;
@@ -313,7 +313,7 @@ namespace WormGearGenerator.Helpers
         }
 
         //Проверка поля на ошибку
-        public bool validateError( Dictionary<string, string> dict, string property, string message, Func<bool> ruleCheck)
+        private bool validateError( Dictionary<string, string> dict, string property, string message, Func<bool> ruleCheck)
         {
             bool check = ruleCheck();
             if (!check)

@@ -289,12 +289,26 @@
                                     <StackPanel Height="32" Width="32">
                                         <Image Source="img/Left.png"/>
                                     </StackPanel>
+                                    <RadioButton.ToolTip>
+                                        <ToolTip  Foreground="Black">
+                                            <StackPanel>
+                                                <TextBlock Text="Левое" />
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </RadioButton.ToolTip>
                                 </RadioButton>
                                 <RadioButton x:Name="radioRight" Grid.Column="1" Margin="0,12,0,0"
                                              RenderTransformOrigin="-0.071,-0.032" Height="32" Width="70">
                                     <StackPanel Height="32" Width="32">
                                         <Image Source="img/Right.png"/>
                                     </StackPanel>
+                                    <RadioButton.ToolTip>
+                                        <ToolTip  Foreground="Black">
+                                            <StackPanel>
+                                                <TextBlock Text="Правое" />
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </RadioButton.ToolTip>
                                 </RadioButton>
                             </Grid>
                             <Button x:Name="calc_WidthGear" HorizontalAlignment="Left" Margin="137,14.8,0,0" Grid.Row="2" VerticalAlignment="Top" Width="25" Height="22" Background="White" BorderBrush="White" Click="calc_WidthGear_Click">
@@ -511,11 +525,11 @@
                 <StackPanel x:Name="stackModel" HorizontalAlignment="Left" Height="440" Margin="696,17,0,-197.8" VerticalAlignment="Top" Width="200">
                     <Label Content="Общие параметры" Height="22" FontWeight="Bold" FontSize="10" Padding="5,0" Background="#FFD0CFCF"/>
                     <DataGrid x:Name="TableGeneral_Model" ColumnWidth="135" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                              ScrollViewer.HorizontalScrollBarVisibility="Disabled" HeadersVisibility="None" Height="119" Width="200" ColumnHeaderHeight="22" BorderBrush="Black" FontSize="12" CanUserResizeRows="False" IsReadOnly="True" GridLinesVisibility="Horizontal" FontFamily="Times New Roman" />
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled" HeadersVisibility="None" Height="91" Width="200" ColumnHeaderHeight="22" BorderBrush="Black" FontSize="12" CanUserResizeRows="False" IsReadOnly="True" GridLinesVisibility="Horizontal" FontFamily="Times New Roman" />
                     <Label Content="Червяк" Height="22" FontWeight="Bold" Padding="5,0" FontSize="10" Background="#FFD0CFCF"/>
-                    <DataGrid x:Name="TableWorm_Model"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" Height="120" Width="200" ColumnWidth="135" ColumnHeaderHeight="22" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" BorderBrush="Black" FontSize="12" IsReadOnly="True" HeadersVisibility="None" GridLinesVisibility="Horizontal" FontFamily="Times New Roman"/>
+                    <DataGrid x:Name="TableWorm_Model"  ScrollViewer.HorizontalScrollBarVisibility="Disabled" Height="145" Width="200" ColumnWidth="135" ColumnHeaderHeight="22" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" BorderBrush="Black" FontSize="12" IsReadOnly="True" HeadersVisibility="None" GridLinesVisibility="Horizontal" FontFamily="Times New Roman"/>
                     <Label Content="Червячное колесо" Height="22" FontWeight="Bold" Padding="5,0" FontSize="10" Background="#FFD0CFCF"/>
-                    <DataGrid x:Name="TableGear_Model" Height="133" ColumnWidth="135" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ColumnHeaderHeight="22" BorderBrush="Black" Margin="0" FontSize="12" IsReadOnly="True" HeadersVisibility="None" GridLinesVisibility="Horizontal" FontFamily="Times New Roman"/>
+                    <DataGrid x:Name="TableGear_Model" Height="108" ColumnWidth="135" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" ColumnHeaderHeight="22" BorderBrush="Black" Margin="0" FontSize="12" IsReadOnly="True" HeadersVisibility="None" GridLinesVisibility="Horizontal" FontFamily="Times New Roman"/>
                 </StackPanel>
 
             </Grid>
@@ -841,7 +855,10 @@
                                     <TextBox.ToolTip>
                                         <ToolTip  Foreground="Black">
                                             <StackPanel>
-                                                <TextBlock Text="Предел усталостной прочности изгиба" />
+                                                <TextBlock Text="Предел прочности" />
+                                                <TextBlock Text="Пределом прочности называют характеристику материала" />
+                                                <TextBlock Text="указывающую величину механических напряжений соответствующую" />
+                                                <TextBlock Text="максимальному значению нагрузки при испытаниях на растяжение." />
                                             </StackPanel>
                                         </ToolTip>
                                     </TextBox.ToolTip>
@@ -850,7 +867,9 @@
                                     <TextBox.ToolTip>
                                         <ToolTip  Foreground="Black">
                                             <StackPanel>
-                                                <TextBlock Text="Контактная усталостная прочность" />
+                                                <TextBlock Text="Предел текучести" />
+                                                <TextBlock Text="Механическая характеристика материала, характеризующая напряжение" />
+                                                <TextBlock Text="при котором деформации продолжают расти без увеличения нагрузки." />
                                             </StackPanel>
                                         </ToolTip>
                                     </TextBox.ToolTip>
@@ -860,6 +879,8 @@
                                         <ToolTip  Foreground="Black">
                                             <StackPanel>
                                                 <TextBlock Text="Модуль упругости червячного колеса" />
+                                                <TextBlock Text="Физическая величина, характеризующая способность материала" />
+                                                <TextBlock Text="сопротивляться растяжению, сжатию при упругой деформации" />
                                             </StackPanel>
                                         </ToolTip>
                                     </TextBox.ToolTip>
@@ -869,6 +890,8 @@
                                         <ToolTip  Foreground="Black">
                                             <StackPanel>
                                                 <TextBlock Text="Коэффициент Пуассона червячного колеса" />
+                                                <TextBlock Text="Величина отношения относительного поперечного сжатия к относительному продольному растяжению. " />
+                                                <TextBlock Text="Этот коэффициент зависит не от размеров тела, а от природы материала" />
                                             </StackPanel>
                                         </ToolTip>
                                     </TextBox.ToolTip>
@@ -878,6 +901,8 @@
                                         <ToolTip  Foreground="Black">
                                             <StackPanel>
                                                 <TextBlock Text="Коэффициент Пуассона червяка" />
+                                                <TextBlock Text="Величина отношения относительного поперечного сжатия к относительному продольному растяжению. " />
+                                                <TextBlock Text="Этот коэффициент зависит не от размеров тела, а от природы материала" />
                                             </StackPanel>
                                         </ToolTip>
                                     </TextBox.ToolTip>
@@ -887,6 +912,8 @@
                                         <ToolTip  Foreground="Black">
                                             <StackPanel>
                                                 <TextBlock Text="Модуль упругости червяка" />
+                                                <TextBlock Text="Физическая величина, характеризующая способность материала" />
+                                                <TextBlock Text="сопротивляться растяжению, сжатию при упругой деформации" />
                                             </StackPanel>
                                         </ToolTip>
                                     </TextBox.ToolTip>
@@ -896,7 +923,17 @@
                                 <Label Content="Контактные напряжения" Margin="4,13,0,-8" HorizontalContentAlignment="Center" Grid.Row="4" Padding="0" Height="23" VerticalAlignment="Top" HorizontalAlignment="Left" Width="136"/>
                                 <Label Content="Напряжения изгиба" Margin="236,13,150.2,-8" HorizontalContentAlignment="Center" Grid.Row="4" Padding="0" Height="23" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
                                 <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Margin="118.4,8,0,-12" Grid.Row="4" Width="211" Grid.ColumnSpan="2" Grid.Column="1"/>
-                                <TextBox x:Name="temperature" Text="{Binding temperature, ValidatesOnDataErrors = True, UpdateSourceTrigger =PropertyChanged}" Grid.Column="2" HorizontalAlignment="Left" Margin="75.8,13,0,-8" Grid.Row="4" TextWrapping="Wrap" Width="82"  IsEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Times New Roman"/>
+                                <TextBox x:Name="temperature" Text="{Binding temperature, ValidatesOnDataErrors = True, UpdateSourceTrigger =PropertyChanged}" ToolTipService.ShowOnDisabled="True" Grid.Column="2" HorizontalAlignment="Left" Margin="75.8,13,0,-8" Grid.Row="4" TextWrapping="Wrap" Width="82"  IsEnabled="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Times New Roman">
+                                    <TextBox.ToolTip>
+                                        <ToolTip  Foreground="Black">
+                                            <StackPanel>
+                                                <TextBlock Text="Температура масла при работе." />
+                                                <TextBlock Text="Передача работает с большим тепловыде­лением," />
+                                                <TextBlock Text="если отвод тепла будет недостаточен, передача перегреется." />
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </TextBox.ToolTip>
+                                </TextBox>
                                 <Label Content="Температура масла" Margin="122.4,13,0,-8" HorizontalContentAlignment="Center" Grid.Row="4" Padding="0" Height="23" VerticalAlignment="Top" HorizontalAlignment="Left" Width="113" Grid.Column="1" Grid.ColumnSpan="2"/>
                             </Grid>
                         </Grid>
